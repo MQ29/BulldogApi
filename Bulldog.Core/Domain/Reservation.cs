@@ -12,7 +12,20 @@ namespace Bulldog.Core.Domain
         public Service Service { get; protected set; }
         public Employee Employee { get; protected set; }
         public DateTime Date { get; protected set; }
-        public bool Status { get; protected set; }
+        public bool Status { get; protected set; } //unfinished false, finished true
 
+        protected Reservation()
+        {
+            
+        }
+
+        public Reservation(Service service, Employee employee, DateTime date)
+        {
+            Id = Guid.NewGuid();
+            Service = service;
+            Employee = employee;
+            Date = date;
+            Status = false;
+        }
     }
 }

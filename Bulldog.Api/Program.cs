@@ -25,9 +25,11 @@ namespace Bulldog.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<IUserRepository, InMemoryUserRepository>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
             builder.Services.AddScoped<IServiceRepository, InMemoryServiceRepository>();
+            builder.Services.AddScoped<IReservationRepository, InMemoryReservationRepository>();
             builder.Services.AddSingleton(AutoMapperConfig.Initialize());
 
             var containerBuilder = new ContainerBuilder();
