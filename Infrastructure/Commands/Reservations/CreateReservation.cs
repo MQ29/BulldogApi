@@ -9,9 +9,9 @@ namespace Bulldog.Infrastructure.Commands.Reservations
 {
     public class CreateReservation : ICommand
     {
-        public Service Service { get; protected set; }
-        public Employee Employee { get; protected set; }
-        public DateTime Date { get; protected set; }
-        public bool Status { get; protected set; }
+        public Guid ServiceId { get; set; }
+        public Guid EmployeeId { get; set; }
+        public DateTime Date { get; set; }
+        public bool Status { get; set; }
     }
 }

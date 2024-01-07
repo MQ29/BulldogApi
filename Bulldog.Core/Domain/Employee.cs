@@ -21,6 +21,7 @@ namespace Bulldog.Core.Domain
         {
             Id = Guid.NewGuid();
             UserId = userId;
+            Services = new List<Service>();
         }
 
 

@@ -9,21 +9,21 @@ namespace Bulldog.Core.Domain
     public class Reservation
     {
         public Guid Id { get; protected set; }
-        public Service Service { get; protected set; }
-        public Employee Employee { get; protected set; }
+        public Guid ServiceId { get; protected set; }
+        public Guid EmployeeId { get; protected set; }
         public DateTime Date { get; protected set; }
-        public bool Status { get; protected set; } //unfinished false, finished true
+        public bool Status { get; protected set; }//unfinished false, finished true
 
         protected Reservation()
         {
             
         }
 
-        public Reservation(Service service, Employee employee, DateTime date)
+        public Reservation(Guid serviceId, Guid employeeId, DateTime date)
         {
             Id = Guid.NewGuid();
-            Service = service;
-            Employee = employee;
+            ServiceId = serviceId;
+            EmployeeId = employeeId;
             Date = date;
             Status = false;
         }

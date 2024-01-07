@@ -12,9 +12,9 @@ namespace Bulldog.Infrastructure.Services
 {
     public class ServiceService : IServiceService
     {
-        private readonly IServiceRepository _serviceRepository;
+        private readonly Core.Repositories.IServiceRepository _serviceRepository;
         private readonly IMapper _mapper;
-        public ServiceService(IServiceRepository serviceRepository, IMapper mapper)
+        public ServiceService(Core.Repositories.IServiceRepository serviceRepository, IMapper mapper)
         {
             _serviceRepository = serviceRepository;
             _mapper = mapper;

@@ -17,9 +17,10 @@ namespace Bulldog.Api.Controllers
             _reservationService = reservationService;
         }
         [HttpPost]
-        public async Task Post([FromBody] CreateReservation request)
+        public async Task<IActionResult> Post([FromBody] CreateReservation request)
         {
-            await _reservationService.Create(request.Service, request.Employee, request.Date);
+            await _reservationService.Create(request.ServiceId, request.EmployeeId, request.Date);
+            return Ok();
         }
     }
 }

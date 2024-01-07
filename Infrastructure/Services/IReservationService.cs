@@ -10,6 +10,6 @@ namespace Bulldog.Infrastructure.Services
 {
     public interface IReservationService
     {
-        Task Create(Service service, Employee employee, DateTime date);
+        Task Create(Guid serviceId, Guid employeeId, DateTime date);
     }
 }
