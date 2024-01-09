@@ -11,6 +11,8 @@ namespace Bulldog.Infrastructure.Services
     {
         void Create(string name, decimal price, int duration);
         ServiceDto Get(string name);
+        ServiceDto Get(Guid employeeId);
+
 
     }
 }

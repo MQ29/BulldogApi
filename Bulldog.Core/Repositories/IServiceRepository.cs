@@ -11,6 +11,7 @@ namespace Bulldog.Core.Repositories
     {
         Service Get(Guid Id);
         Service Get(string name);
+        Service GetByEmployeeId(Guid employeeId);
         void Add(Service service);
         void Update(Service service);
         void Remove(Service service);

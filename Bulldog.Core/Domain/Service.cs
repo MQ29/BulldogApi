@@ -9,6 +9,7 @@ namespace Bulldog.Core.Domain
     public class Service
     {
         public Guid Id { get; protected set; }
+        public Guid EmployeeId { get; set; }
         public string Name { get; protected set; }
         public decimal Price { get; protected set; }
         public int Duration { get; protected set; }

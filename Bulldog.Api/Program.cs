@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Bulldog.Core.Repositories;
+using Bulldog.Infrastructure.EF;
 using Bulldog.Infrastructure.Mappers;
 using Bulldog.Infrastructure.Repositories;
 using Bulldog.Infrastructure.Services;
@@ -30,9 +31,10 @@ namespace Bulldog.Api
             builder.Services.AddScoped<IEmployeeRepository, InMemoryEmployeeRepository>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-            builder.Services.AddScoped<IServiceRepository, InMemoryServiceRepository>();
-            builder.Services.AddScoped<IReservationRepository, InMemoryReservationRepository>();
+            builder.Services.AddScoped<IServiceRepository, EFServiceRepository>();
+            builder.Services.AddScoped<IReservationRepository, EFReservationRepository>();
             builder.Services.AddSingleton(AutoMapperConfig.Initialize());
+            builder.Services.AddDbContext<BulldogDbContext>();
 
             var containerBuilder = new ContainerBuilder();
 

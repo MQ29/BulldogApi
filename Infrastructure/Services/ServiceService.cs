@@ -12,7 +12,7 @@ namespace Bulldog.Infrastructure.Services
 {
     public class ServiceService : IServiceService
     {
-        private readonly Core.Repositories.IServiceRepository _serviceRepository;
+        private readonly IServiceRepository _serviceRepository;
         private readonly IMapper _mapper;
         public ServiceService(Core.Repositories.IServiceRepository serviceRepository, IMapper mapper)
         {
@@ -32,6 +32,12 @@ namespace Bulldog.Infrastructure.Services
         {
             var service = _serviceRepository.Get(name);
             return _mapper.Map<Service, ServiceDto>(service);
+        }
+
+        public ServiceDto Get(Guid employeeId)
+        {
+            var service = _serviceRepository.GetByEmployeeId(employeeId);
+            return _mapper.Map<ServiceDto>(service);
         }
     }
 }
