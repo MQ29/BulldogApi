@@ -28,7 +28,7 @@ namespace Bulldog.Api
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<IUserRepository, InMemoryUserRepository>();
-            builder.Services.AddScoped<IEmployeeRepository, InMemoryEmployeeRepository>();
+            builder.Services.AddScoped<IEmployeeRepository, EFEmployeeRepository>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IServiceRepository, EFServiceRepository>();

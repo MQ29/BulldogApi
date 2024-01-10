@@ -19,12 +19,9 @@ namespace Bulldog.Infrastructure.Services
             _serviceRepository = serviceRepository;
             _mapper = mapper;
         }
-        public void Create(string name, decimal price, int duration)
+        public void Create(Guid Id,string name, decimal price, int duration, Guid employeeId)
         {
-            var service = _serviceRepository.Get(name);
-            if (service != null)
-                throw new Exception($"Service:{name} already exists");
-            service = new Service(name, price, duration);
+            var service = new Service(name, price, duration, employeeId);
             _serviceRepository.Add(service);
         }
 

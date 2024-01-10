@@ -34,7 +34,7 @@ namespace Bulldog.Api.Controllers
         [HttpPost]
         public void Post([FromBody] CreateService request) //dodac employeeId
         {
-            _serviceService.Create(request.Name, request.Price, request.Duration);
+            _serviceService.Create(request.Id,request.Name, request.Price, request.Duration, request.EmployeeId);
         }
     }
 }

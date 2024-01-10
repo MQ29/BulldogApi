@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bulldog.Core.Domain;
 using Bulldog.Core.Repositories;
+using Bulldog.Infrastructure.Services.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;

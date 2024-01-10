@@ -10,6 +10,5 @@ namespace Bulldog.Infrastructure.Commands.Employees
     public class CreateEmployee : ICommand
     {
         public Guid UserId { get; set; }
-        public IEnumerable<Service> Services { get; set; }
     }
 }

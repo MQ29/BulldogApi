@@ -19,8 +19,16 @@ namespace Bulldog.Infrastructure.Repositories
         }
         public void Add(Service service)
         {
-            _context.Add(service);
-            _context.SaveChanges();
+            var serviceToFind = _context.Services.FirstOrDefault(x => x.Id == service.Id);
+            if (serviceToFind != null)
+            {
+                throw new Exception("Service already exists");
+            }
+            else
+            {
+                _context.Add(service);
+                _context.SaveChanges();
+            }
         }
 
         public Service Get(Guid Id)

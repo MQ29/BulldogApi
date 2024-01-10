@@ -23,6 +23,11 @@ namespace Bulldog.Infrastructure.Repositories
         public Service Get(string name)
             => _services.SingleOrDefault(x => x.Name == name);
 
+        public Service GetByEmployeeId(Guid employeeId)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Remove(Service service)
         {
         }

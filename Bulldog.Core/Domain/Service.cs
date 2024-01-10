@@ -18,12 +18,13 @@ namespace Bulldog.Core.Domain
         {
 
         }
-        public Service(string name, decimal price, int duration)
+        public Service(string name, decimal price, int duration, Guid employeeId)
         {
             Id = Guid.NewGuid();
             Name = name;
             Price = price;
             Duration = duration;
+            EmployeeId = employeeId;
         }
 
         public void SetName(string name)

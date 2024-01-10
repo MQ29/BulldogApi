@@ -9,7 +9,7 @@ namespace Bulldog.Infrastructure.Services
 {
     public interface IServiceService
     {
-        void Create(string name, decimal price, int duration);
+        void Create(Guid Id, string name, decimal price, int duration, Guid employeeId);
         ServiceDto Get(string name);
         ServiceDto Get(Guid employeeId);
 
