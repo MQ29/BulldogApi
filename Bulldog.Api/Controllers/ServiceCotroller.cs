@@ -1,6 +1,7 @@
 ﻿using Bulldog.Core.Repositories;
 using Bulldog.Infrastructure.Commands.Users;
 using Bulldog.Infrastructure.Services;
+using Bulldog.Infrastructure.Services.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -18,23 +19,21 @@ namespace Bulldog.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllServices()
+        public async Task<IList<ServiceDto>> GetAllServices()
         {
-            var services = _serviceService.GetAll();
-            return Ok(services);
+            return await _serviceService.GetAll();
         }
 
         [HttpGet("/services")]
-        public IActionResult GetServices(Guid employeeId)
+        public async Task<ServiceDto> GetServices(Guid employeeId)
         {
-            var service = _serviceService.GetByEmployeeIdAsync(employeeId);
-            return Ok(service);
+            return await _serviceService.GetByEmployeeIdAsync(employeeId);
         }
 
         [HttpPost]
-        public void Post([FromBody] CreateService request) //dodac employeeId
+        public async Task Post([FromBody] CreateService request) //dodac employeeId
         {
-            _serviceService.Create(request.Id,request.Name, request.Price, request.Duration, request.EmployeeId);
+            await _serviceService.Create(request.Id,request.Name, request.Price, request.Duration, request.EmployeeId);
         }
     }
 }
