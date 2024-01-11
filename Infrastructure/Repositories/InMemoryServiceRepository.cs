@@ -11,29 +11,35 @@ namespace Bulldog.Infrastructure.Repositories
     public class InMemoryServiceRepository : IServiceRepository
     {
         private static ISet<Service> _services = new HashSet<Service>();
-        
-        public void Add(Service service)
-        {
-            _services.Add(service);
-        }
 
-        public Service Get(Guid Id)
-            => _services.SingleOrDefault(x => x.Id == Id);
-
-        public Service Get(string name)
-            => _services.SingleOrDefault(x => x.Name == name);
-
-        public Service GetByEmployeeId(Guid employeeId)
+        public Task AddAsync(Service service)
         {
             throw new NotImplementedException();
         }
 
-        public void Remove(Service service)
+        public Task<IList<Service>> GetAllAsync()
         {
+            throw new NotImplementedException();
         }
 
-        public void Update(Service service)
+        public Task<Service> GetByEmployeeIdAsync(Guid employeeId)
         {
+            throw new NotImplementedException();
+        }
+
+        public Task<Service> GetByIdAsync(Guid Id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveAsync(Service service)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAsync(Service service)
+        {
+            throw new NotImplementedException();
         }
     }
 }

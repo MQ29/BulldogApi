@@ -17,17 +17,17 @@ namespace Bulldog.Api.Controllers
             _serviceService = serviceService;
         }
 
-        [HttpGet("{name}")]
-        public IActionResult Get(string name)
+        [HttpGet]
+        public IActionResult GetAllServices()
         {
-            var service = _serviceService.Get(name);
-            return Ok(service);
+            var services = _serviceService.GetAll();
+            return Ok(services);
         }
 
         [HttpGet("/services")]
         public IActionResult GetServices(Guid employeeId)
         {
-            var service = _serviceService.Get(employeeId);
+            var service = _serviceService.GetByEmployeeIdAsync(employeeId);
             return Ok(service);
         }
 

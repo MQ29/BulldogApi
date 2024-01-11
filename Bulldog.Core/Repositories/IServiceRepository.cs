@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Bulldog.Core.Repositories
 {
-    public interface IServiceRepository
+    public interface IServiceRepository  
     {
-        Service Get(Guid Id);
-        Service Get(string name);
-        Service GetByEmployeeId(Guid employeeId);
-        void Add(Service service);
-        void Update(Service service);
-        void Remove(Service service);
+        Task<Service> GetByIdAsync(Guid Id);
+        Task<IList<Service>> GetAllAsync();
+        Task<Service> GetByEmployeeIdAsync(Guid employeeId);
+        Task AddAsync(Service service);
+        Task UpdateAsync(Service service);
+        Task RemoveAsync(Service service);
     }
 }

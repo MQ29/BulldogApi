@@ -9,9 +9,9 @@ namespace Bulldog.Infrastructure.Services
 {
     public interface IServiceService
     {
-        void Create(Guid Id, string name, decimal price, int duration, Guid employeeId);
-        ServiceDto Get(string name);
-        ServiceDto Get(Guid employeeId);
+        Task Create(Guid Id, string name, decimal price, int duration, Guid employeeId);
+        Task<ServiceDto> GetByEmployeeIdAsync(Guid employeeId);
+        Task<IList<ServiceDto>> GetAll();
 
 
     }

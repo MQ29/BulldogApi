@@ -1,6 +1,8 @@
 ﻿using Bulldog.Core.Domain;
 using Bulldog.Core.Repositories;
 using Bulldog.Infrastructure.EF;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,8 @@ namespace Bulldog.Infrastructure.Repositories
         {
             _context = context;
         }
-        public void Add(Service service)
+
+        public async Task AddAsync(Service service)
         {
             var serviceToFind = _context.Services.FirstOrDefault(x => x.Id == service.Id);
             if (serviceToFind != null)
@@ -26,12 +29,17 @@ namespace Bulldog.Infrastructure.Repositories
             }
             else
             {
-                _context.Add(service);
-                _context.SaveChanges();
+                await _context.AddAsync(service);
+                await _context.SaveChangesAsync();
             }
         }
 
-        public Service Get(Guid Id)
+        public async Task<IList<Service>> GetAllAsync()
+        {
+            return await _context.Services.ToListAsync();
+        }
+
+        public async Task<Service> GetByIdAsync(Guid Id)
         {
             var service = _context.Services.FirstOrDefault(x => x.Id == Id);
             if (service != null)
@@ -39,10 +47,10 @@ namespace Bulldog.Infrastructure.Repositories
                 return service;
             }
 
-            throw new Exception($"Service with id: {Id} not found."); 
+            throw new Exception($"Service with id: {Id} not found.");
         }
 
-        public Service GetByEmployeeId(Guid employeeId)
+        public async Task<Service> GetByEmployeeIdAsync(Guid employeeId)
         {
             var service = _context.Services.FirstOrDefault(x => x.EmployeeId == employeeId);
             if (service != null)
@@ -53,27 +61,14 @@ namespace Bulldog.Infrastructure.Repositories
             throw new Exception($"Service with EmployeeId: {employeeId} not found.");
         }
 
-        public Service Get(string name)
+        public Task RemoveAsync(Service service)
         {
-            var service = _context.Services.FirstOrDefault(x => x.Name == name);
-            if (service != null)
-            {
-                return service;
-            }
-
-            throw new Exception($"Service with name: {name} not found.");
+            throw new NotImplementedException();
         }
 
-        public void Remove(Service service)
+        public Task UpdateAsync(Service service)
         {
-            _context.Remove(service);
-            _context.SaveChanges();
-        }
-
-        public void Update(Service service)
-        {
-            _context.Update(service);
-            _context.SaveChanges();
+            throw new NotImplementedException();
         }
     }
 }

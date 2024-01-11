@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core.Pipeline;
 using Bulldog.Core.Domain;
 using Bulldog.Core.Repositories;
 using Bulldog.Infrastructure.Services.DTO;
@@ -19,22 +20,27 @@ namespace Bulldog.Infrastructure.Services
             _serviceRepository = serviceRepository;
             _mapper = mapper;
         }
-        public void Create(Guid Id,string name, decimal price, int duration, Guid employeeId)
+        public async Task Create(Guid Id,string name, decimal price, int duration, Guid employeeId)
         {
             var service = new Service(name, price, duration, employeeId);
-            _serviceRepository.Add(service);
+            await _serviceRepository.AddAsync(service);
         }
 
-        public ServiceDto Get(string name)
+        public async Task<ServiceDto> GetByEmployeeIdAsync(Guid employeeId)
         {
-            var service = _serviceRepository.Get(name);
-            return _mapper.Map<Service, ServiceDto>(service);
-        }
-
-        public ServiceDto Get(Guid employeeId)
-        {
-            var service = _serviceRepository.GetByEmployeeId(employeeId);
+            var service = await _serviceRepository.GetByEmployeeIdAsync(employeeId);
             return _mapper.Map<ServiceDto>(service);
+        }
+        public async Task<IList<ServiceDto>> GetAll()
+        {
+            var services = await _serviceRepository.GetAllAsync();
+            var serviceDtos = new List<ServiceDto>();
+            foreach (var service in services)
+            {
+                var serviceDto = _mapper.Map<ServiceDto>(service);
+                serviceDtos.Add(serviceDto);
+            }
+            return serviceDtos;
         }
     }
 }
