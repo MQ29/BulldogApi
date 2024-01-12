@@ -24,8 +24,8 @@ namespace Bulldog.Api.Controllers
             return await _serviceService.GetAll();
         }
 
-        [HttpGet("/services")]
-        public async Task<ServiceDto> GetServices(Guid employeeId)
+        [HttpGet("/services/{employeeId}")]
+        public async Task<IList<ServiceDto>> GetServices(Guid employeeId)
         {
             return await _serviceService.GetByEmployeeIdAsync(employeeId);
         }

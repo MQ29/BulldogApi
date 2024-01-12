@@ -26,9 +26,14 @@ namespace Bulldog.Infrastructure.Services
 
             // Następnie tworzysz rezerwację:
             var employee = new Employee(userId);
-
+            
             // Dodaj do repozytorium rezerwacji:
             await _employeeRepository.AddAsync(employee);
+        }
+
+        public async Task RemoveAsync(Guid Id)
+        {
+            await _employeeRepository.RemoveAsync(Id);
         }
     }
 }

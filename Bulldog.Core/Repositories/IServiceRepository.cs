@@ -11,7 +11,7 @@ namespace Bulldog.Core.Repositories
     {
         Task<Service> GetByIdAsync(Guid Id);
         Task<IList<Service>> GetAllAsync();
-        Task<Service> GetByEmployeeIdAsync(Guid employeeId);
+        Task<IList<Service>> GetByEmployeeIdAsync(Guid employeeId);
         Task AddAsync(Service service);
         Task UpdateAsync(Service service);
         Task RemoveAsync(Service service);

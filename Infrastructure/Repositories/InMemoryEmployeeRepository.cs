@@ -16,5 +16,15 @@ namespace Bulldog.Infrastructure.Repositories
             _employees.Add(employee);
             await Task.CompletedTask;
         }
+
+        public Task<Employee> GetAsync(Guid Id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveAsync(Guid Id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

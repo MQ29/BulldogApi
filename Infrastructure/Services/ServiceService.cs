@@ -26,10 +26,16 @@ namespace Bulldog.Infrastructure.Services
             await _serviceRepository.AddAsync(service);
         }
 
-        public async Task<ServiceDto> GetByEmployeeIdAsync(Guid employeeId)
+        public async Task<IList<ServiceDto>> GetByEmployeeIdAsync(Guid employeeId)
         {
-            var service = await _serviceRepository.GetByEmployeeIdAsync(employeeId);
-            return _mapper.Map<ServiceDto>(service);
+            var services = await _serviceRepository.GetByEmployeeIdAsync(employeeId);
+            var serviceDtos = new List<ServiceDto>();
+            foreach (var service in services)
+            {
+                var serviceDto = _mapper.Map<ServiceDto>(service);
+                serviceDtos.Add(serviceDto);
+            }
+            return serviceDtos;
         }
         public async Task<IList<ServiceDto>> GetAll()
         {
@@ -41,6 +47,11 @@ namespace Bulldog.Infrastructure.Services
                 serviceDtos.Add(serviceDto);
             }
             return serviceDtos;
+        }
+
+        public async Task Remove(Guid Id)
+        {
+           
         }
     }
 }

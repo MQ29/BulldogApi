@@ -50,15 +50,11 @@ namespace Bulldog.Infrastructure.Repositories
             throw new Exception($"Service with id: {Id} not found.");
         }
 
-        public async Task<Service> GetByEmployeeIdAsync(Guid employeeId)
+        public async Task<IList<Service>> GetByEmployeeIdAsync(Guid employeeId)
         {
-            var service = _context.Services.FirstOrDefault(x => x.EmployeeId == employeeId);
-            if (service != null)
-            {
-                return service;
-            }
-
-            throw new Exception($"Service with EmployeeId: {employeeId} not found.");
+            var services = await _context.Services.Where(x => x.EmployeeId == employeeId).ToListAsync();
+            return services;
+            //throw new Exception($"Service with EmployeeId: {employeeId} not found.");
         }
 
         public Task RemoveAsync(Service service)

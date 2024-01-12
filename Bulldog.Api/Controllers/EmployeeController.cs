@@ -15,11 +15,20 @@ namespace Bulldog.Api.Controllers
         {
             _employeeService = employeeService;
         }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateEmployee request)
         {
             await _employeeService.Create(request.UserId);
             return Ok();
+        }
+
+        [HttpDelete("employees/{Id}")]
+        public async Task<IActionResult> Remove(Guid Id)
+        {
+
+            await _employeeService.RemoveAsync(Id);
+            return NoContent();
         }
     }
 }

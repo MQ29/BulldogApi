@@ -41,5 +41,10 @@ namespace Bulldog.Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
+
+        Task<IList<Service>> IServiceRepository.GetByEmployeeIdAsync(Guid employeeId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
