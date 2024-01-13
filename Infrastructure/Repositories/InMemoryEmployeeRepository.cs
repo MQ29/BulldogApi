@@ -17,6 +17,11 @@ namespace Bulldog.Infrastructure.Repositories
             await Task.CompletedTask;
         }
 
+        public Task<IList<Employee>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<Employee> GetAsync(Guid Id)
         {
             throw new NotImplementedException();

@@ -30,6 +30,11 @@ namespace Bulldog.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<IList<Employee>> GetAllAsync()
+        {
+            return await _dbContext.Employees.ToListAsync();
+        }
+
         public async Task<Employee> GetAsync(Guid Id)
         {
             var employee = await _dbContext.Employees.FirstOrDefaultAsync(x => x.Id == Id);

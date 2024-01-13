@@ -31,9 +31,35 @@ namespace Bulldog.Infrastructure.Services
             await _employeeRepository.AddAsync(employee);
         }
 
+        public async Task<IList<EmployeeDto>> GetAll()
+        {
+            var employees = await _employeeRepository.GetAllAsync();
+            var employeesToReturn = new List<EmployeeDto>();
+            foreach (var employee in employees)
+            {
+                var employeeToReturn = _mapper.Map<EmployeeDto>(employee);
+                employeesToReturn.Add(employeeToReturn);
+            }
+            return employeesToReturn;
+        }
+
+        public async Task<EmployeeDto> GetById(Guid Id)
+        {
+            var employee = await _employeeRepository.GetAsync(Id);
+            if (employee != null)
+            {
+                var employeeToReturn = _mapper.Map<EmployeeDto>(employee);
+                return employeeToReturn;
+            }
+            throw new Exception($"Error while getting by Id: {Id}");
+            
+        }
+
         public async Task RemoveAsync(Guid Id)
         {
             await _employeeRepository.RemoveAsync(Id);
         }
+
+
     }
 }

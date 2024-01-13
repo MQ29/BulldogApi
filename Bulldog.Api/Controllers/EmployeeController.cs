@@ -1,6 +1,7 @@
 ﻿using Bulldog.Infrastructure.Commands.Employees;
 using Bulldog.Infrastructure.Commands.Reservations;
 using Bulldog.Infrastructure.Services;
+using Bulldog.Infrastructure.Services.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,20 @@ namespace Bulldog.Api.Controllers
         public EmployeeController(IEmployeeService employeeService)
         {
             _employeeService = employeeService;
+        }
+
+        [HttpGet("employees/{Id}")]
+        public async Task<IActionResult> Get(Guid Id)
+        {
+            var employee = await _employeeService.GetById(Id);
+            return Ok(employee);
+        }
+
+        [HttpGet("employees")]
+        public async Task<IActionResult> GetAll()
+        {
+            var employees = await _employeeService.GetAll();
+            return Ok(employees);
         }
 
         [HttpPost]

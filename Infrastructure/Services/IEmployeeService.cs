@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bulldog.Infrastructure.Services.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,7 @@ namespace Bulldog.Infrastructure.Services
     {
         Task Create(Guid userId);
         Task RemoveAsync(Guid Id);
+        Task<EmployeeDto> GetById(Guid Id);
+        Task<IList<EmployeeDto>> GetAll();
     }
 }
