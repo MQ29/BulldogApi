@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,20 +9,46 @@ namespace Bulldog.Core.Domain
 {
     public class Employee
     {
+        private ISet<Service> _services = new HashSet<Service>();
         public Guid Id { get; protected set; }
         public Guid UserId { get; protected set; }
-        public IEnumerable<Service> Services { get; protected set; }
+        public string Name { get; protected set; }
+        public IEnumerable<Service> Services
+        {
+            get { return _services; }
+            set { _services = new HashSet<Service>(value); }
+        }
 
         protected Employee()
         {
             
         }
 
-        public Employee(Guid userId)
+        public Employee(User user)
         {
             Id = Guid.NewGuid();
-            UserId = userId;
-            Services = new List<Service>();
+            UserId = user.Id;
+            Name = user.Username;
+        }
+
+        public void AddService(string name, decimal price, int duration, Guid employeeId)
+        {
+            var service = Services.FirstOrDefault(x => x.Name == name);
+            if (service != null)
+            {
+                throw new Exception($"Service with name: '{name}' already exists for employee: {Name}.");
+            }
+            _services.Add(Service.Create(name, price, duration, employeeId));
+        }
+
+        public void DeleteService(string name)
+        {
+            var service = Services.FirstOrDefault(x => x.Name == name);
+            if (service == null)
+            {
+                throw new Exception($"Service with name: '{name}' for employee: {Name} was not found.");
+            }
+            _services.Remove(service);
         }
 
 

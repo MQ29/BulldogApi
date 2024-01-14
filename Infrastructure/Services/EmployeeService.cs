@@ -14,20 +14,23 @@ namespace Bulldog.Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IUserRepository _userRepository;
 
-        public EmployeeService(IMapper mapper, IEmployeeRepository employeeRepository)
+        public EmployeeService(IMapper mapper, IEmployeeRepository employeeRepository, IUserRepository userRepository)
         {
             _mapper = mapper;
             _employeeRepository = employeeRepository;
+            _userRepository = userRepository;
         }
         public async Task Create(Guid userId)
         {
-            // Tutaj możesz wykorzystać identyfikatory do utworzenia obiektu Reservation.
-
-            // Następnie tworzysz rezerwację:
-            var employee = new Employee(userId);
-            
-            // Dodaj do repozytorium rezerwacji:
+            var user = await _userRepository.GetAsync(userId);
+            var employee = await _employeeRepository.GetAsync(userId);
+            if (employee != null)
+            {
+                throw new Exception($"Employee with id: '{userId}' already exists.");
+            }
+            employee = new Employee(user);
             await _employeeRepository.AddAsync(employee);
         }
 

@@ -15,7 +15,7 @@ namespace Bulldog.Core.Domain
         public string Email { get; protected set; }
         public string Username { get; protected set; }
         public string Password { get; protected set; }
-        public string Fullname { get; protected set; }
+        //public string Fullname { get; protected set; }
         public string Salt { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
 

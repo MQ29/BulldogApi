@@ -53,5 +53,8 @@ namespace Bulldog.Core.Domain
                 return;
             Duration = duration;
         }
+
+        public static Service Create(string name, decimal price, int duration, Guid employeeId)
+            => new Service(name, price, duration, employeeId);
     }
 }

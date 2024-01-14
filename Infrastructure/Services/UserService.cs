@@ -24,7 +24,7 @@ namespace Bulldog.Infrastructure.Services
         {
             var user = await _userRepository.GetAsync(email);
 
-            return _mapper.Map<User, UserDto>(user);
+            return _mapper.Map<UserDto>(user);
         }
 
         public async Task RegisterAsync(string email, string username, string password)
@@ -37,6 +37,5 @@ namespace Bulldog.Infrastructure.Services
             await _userRepository.AddAsync(user);
         }
 
-        
     }
 }
