@@ -19,6 +19,7 @@ namespace Bulldog.Infrastructure.Mappers
                 cfg.CreateMap<User, UserDto>();
                 cfg.CreateMap<Service, ServiceDto>();
                 cfg.CreateMap<Employee, EmployeeDto>();
+                cfg.CreateMap<AvailableDate, AvailableDateDto>();
             });
             return configuration.CreateMapper();
         }

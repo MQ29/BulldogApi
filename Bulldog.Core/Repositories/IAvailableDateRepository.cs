@@ -10,5 +10,6 @@ namespace Bulldog.Core.Repositories
     public interface IAvailableDateRepository
     {
         Task AddAsync(AvailableDate availableDate);
+        Task<IList<AvailableDate>> GetAsync(Guid Id);
     }
 }

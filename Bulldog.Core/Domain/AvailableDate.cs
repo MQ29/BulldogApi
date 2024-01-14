@@ -8,13 +8,13 @@ namespace Bulldog.Core.Domain
 {
     public class AvailableDate
     {
-        public Guid Id { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Color { get; set; }
-        public Guid EmployeeId { get; set; }
+        public Guid Id { get; protected set; }
+        public DateTime StartTime { get; protected set; }
+        public DateTime EndTime { get; protected set; }
+        public string Title { get; protected set; }
+        public string Description { get; protected set; }
+        public string Color { get; protected set; }
+        public Guid EmployeeId { get; protected set; }
 
         protected AvailableDate()
         {

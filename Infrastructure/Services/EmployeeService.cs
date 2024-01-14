@@ -65,6 +65,13 @@ namespace Bulldog.Infrastructure.Services
             return employeesToReturn;
         }
 
+        public async Task<IList<AvailableDateDto>> GetAvailableDates(Guid Id)
+        {
+            var availableDates = await _availableDateRepository.GetAsync(Id);
+            var availableDatesToReturn = _mapper.Map<IList<AvailableDateDto>>(availableDates);
+            return availableDatesToReturn;
+        }//TODO: Validation
+
         public async Task<EmployeeDto> GetById(Guid Id)
         {
             var employee = await _employeeRepository.GetAsync(Id);
@@ -74,7 +81,7 @@ namespace Bulldog.Infrastructure.Services
                 return employeeToReturn;
             }
             throw new Exception($"Error while getting by Id: {Id}");
-            
+
         }
 
         public async Task RemoveAsync(Guid Id)
