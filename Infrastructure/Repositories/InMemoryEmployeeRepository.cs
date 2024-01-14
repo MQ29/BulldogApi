@@ -31,5 +31,10 @@ namespace Bulldog.Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public Task UpdateAsync(Employee employee)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

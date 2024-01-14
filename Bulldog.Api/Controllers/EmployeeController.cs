@@ -1,4 +1,6 @@
-﻿using Bulldog.Infrastructure.Commands.Employees;
+﻿using Bulldog.Core.Domain;
+using Bulldog.Infrastructure.Commands.AvailableDates;
+using Bulldog.Infrastructure.Commands.Employees;
 using Bulldog.Infrastructure.Commands.Reservations;
 using Bulldog.Infrastructure.Services;
 using Bulldog.Infrastructure.Services.DTO;
@@ -44,6 +46,17 @@ namespace Bulldog.Api.Controllers
 
             await _employeeService.RemoveAsync(Id);
             return NoContent();
+        }
+
+        [HttpPost("InsertAvailableDate")]
+        public async Task<IActionResult> InsertAvailableDate(Guid employeeId, [FromBody] CreateAvailableDate availableDate)
+        {
+            await _employeeService.AddAvailableDate(employeeId, availableDate.StartTime, availableDate.EndTime, 
+                availableDate.Description, availableDate.Color, availableDate.Title);
+            return Ok();
+            // Logic to associate the available date with the specified employee
+            // and save it to the data,base
+
         }
     }
 }

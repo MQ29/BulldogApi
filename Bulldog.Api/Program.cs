@@ -33,6 +33,7 @@ namespace Bulldog.Api
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IServiceRepository, EFServiceRepository>();
             builder.Services.AddScoped<IReservationRepository, EFReservationRepository>();
+            builder.Services.AddScoped<IAvailableDateRepository, EFAvailableDateRepository>();
             builder.Services.AddSingleton(AutoMapperConfig.Initialize());
             builder.Services.AddDbContext<BulldogDbContext>();
 

@@ -21,11 +21,6 @@ namespace Bulldog.Infrastructure.Repositories
         }
         public async Task AddAsync(Employee employee)
         {
-            var employeeToFind = _dbContext.Employees.FirstOrDefault(x => x.UserId == employee.UserId);
-            if (employeeToFind != null)
-            {
-                throw new Exception($"Employee with userID: {employee.UserId} already exists.");
-            }
             await _dbContext.Employees.AddAsync(employee);
             await _dbContext.SaveChangesAsync();
         }
@@ -37,12 +32,7 @@ namespace Bulldog.Infrastructure.Repositories
 
         public async Task<Employee> GetAsync(Guid Id)
         {
-            var employee = await _dbContext.Employees.FirstOrDefaultAsync(x => x.Id == Id);
-            if (employee == null)
-            {
-                throw new Exception($"Employee with Id: {Id} wasnt found.");
-            }
-            return employee;
+            return await _dbContext.Employees.FirstOrDefaultAsync(x => x.Id == Id);
         }
 
         public async Task RemoveAsync(Guid Id)
@@ -53,6 +43,11 @@ namespace Bulldog.Infrastructure.Repositories
                 throw new Exception($"Employee with Id: {Id} wasnt found.");
             }
             _dbContext.Employees.Remove(employee);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Employee employee)
+        {
             await _dbContext.SaveChangesAsync();
         }
     }

@@ -1,4 +1,5 @@
-﻿using Bulldog.Infrastructure.Services.DTO;
+﻿using Bulldog.Core.Domain;
+using Bulldog.Infrastructure.Services.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,7 @@ namespace Bulldog.Infrastructure.Services
         Task RemoveAsync(Guid Id);
         Task<EmployeeDto> GetById(Guid Id);
         Task<IList<EmployeeDto>> GetAll();
+        Task AddAvailableDate(Guid Id, DateTime startTime, DateTime endTime,
+            string title, string description, string color); 
     }
 }

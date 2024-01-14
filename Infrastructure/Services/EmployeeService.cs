@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bulldog.Core.Domain;
 using Bulldog.Core.Repositories;
+using Bulldog.Infrastructure.Migrations;
 using Bulldog.Infrastructure.Services.DTO;
 using System;
 using System.Collections.Generic;
@@ -15,13 +16,31 @@ namespace Bulldog.Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IAvailableDateRepository _availableDateRepository;
 
-        public EmployeeService(IMapper mapper, IEmployeeRepository employeeRepository, IUserRepository userRepository)
+        public EmployeeService(IMapper mapper, IEmployeeRepository employeeRepository,
+            IUserRepository userRepository, IAvailableDateRepository availableDateRepository)
         {
             _mapper = mapper;
             _employeeRepository = employeeRepository;
             _userRepository = userRepository;
+            _availableDateRepository = availableDateRepository;
         }
+
+        public async Task AddAvailableDate(Guid Id, DateTime startTime, DateTime endTime,
+            string title, string description, string color)
+        {
+            var employee = await _employeeRepository.GetAsync(Id);
+            if (employee == null)
+            {
+                throw new InvalidOperationException($"Employee with id {Id} not found.");
+            }
+            var availableDate = new AvailableDate(employee, startTime, endTime, title, description, color);
+            employee.AddAvailableDate(availableDate);
+            await _availableDateRepository.AddAsync(availableDate);
+            //await _employeeRepository.UpdateAsync(employee);
+        }
+
         public async Task Create(Guid userId)
         {
             var user = await _userRepository.GetAsync(userId);

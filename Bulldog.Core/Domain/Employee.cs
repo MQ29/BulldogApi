@@ -9,16 +9,16 @@ namespace Bulldog.Core.Domain
 {
     public class Employee
     {
-        private ISet<Service> _services = new HashSet<Service>();
+        private ICollection<Service> _services = new List<Service>();
         public Guid Id { get; protected set; }
         public Guid UserId { get; protected set; }
         public string Name { get; protected set; }
         public IEnumerable<Service> Services
         {
             get { return _services; }
-            set { _services = new HashSet<Service>(value); }
+            set { _services = new List<Service>(value); }
         }
-
+        public ICollection<AvailableDate> AvailableDates { get; set; } = new List<AvailableDate>();
         protected Employee()
         {
             
@@ -29,6 +29,11 @@ namespace Bulldog.Core.Domain
             Id = Guid.NewGuid();
             UserId = user.Id;
             Name = user.Username;
+        }
+
+        public void AddAvailableDate(AvailableDate availableDate)
+        {
+            AvailableDates.Add(availableDate);
         }
 
         public void AddService(string name, decimal price, int duration, Guid employeeId)
