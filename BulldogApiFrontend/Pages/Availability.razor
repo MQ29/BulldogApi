@@ -1,0 +1,98 @@
+﻿<h3>Availability</h3>
+@page "/availability"
+@page "/availability/{ServiceId:guid}/{EmployeeId:guid}"
+@using Bulldog.Infrastructure.Services.DTO
+@using BulldogApiFrontend.Services
+@inject IServiceApiService ServiceApiService
+
+@* @if (availableDates.Count > 0)
+{
+    @foreach (var date in availableDates)
+    {
+        <p>Start time: @date.StartTime.ToString()</p>
+        <p>End time: @date.EndTime.ToString()</p>
+    }
+}
+else
+{
+    <p>No dates to display</p>
+}
+
+<p>@ServiceId</p>
+<p>@EmployeeId</p> *@
+
+<div class="rz-p-12 rz-text-align-center">
+    <RadzenDatePicker @bind-Value=@value Inline="true" DateRender="OnDateRender" />
+</div>
+
+@if (value != null)
+{
+    <h3>Available Hours for @value.Value.Date.ToString("dd.MM.yyyy")</h3>
+    <div>
+        @if (selectedDateHour != null)
+        {
+            <span>Selected Hour: @selectedDateHour.Value.ToString("HH:mm")</span>
+        }
+    </div>
+
+    @if (availableDates.Any(ad => ad.StartTime.Date == value.Value.Date))
+    {
+        var selectedDateAvailableHours = availableDates
+            .Where(ad => ad.StartTime.Date == value.Value.Date)
+            .Select(ad => new { ad.StartTime, ad.EndTime });
+
+        foreach (var hourRange in selectedDateAvailableHours)
+        {
+            <button type="button" class="btn btn-outline-primary" @onclick="() => SelectHour(hourRange.StartTime)">
+                @hourRange.StartTime.ToString("HH:mm")
+            </button>
+        }
+    }
+    else
+    {
+        <p>No available hours for @value</p>
+    }
+}
+
+@code {
+    [Parameter]
+    public Guid ServiceId { get; set; }
+    [Parameter]
+    public Guid EmployeeId { get; set; }
+
+    DateTime? value = DateTime.Now;
+    IList<AvailableDateDto> availableDates = new List<AvailableDateDto>();
+    List<DateTime> disabledDates = new List<DateTime>();
+    DateTime? selectedDateHour;
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAvailableDates();
+    }
+
+    private void OnDateRender(Radzen.DateRenderEventArgs args)
+    {
+        args.Disabled = !availableDates.Any(ad => ad.StartTime.Date == args.Date.Date);
+        if (!args.Disabled)
+        {
+        }
+    }
+
+    private async Task LoadAvailableDates()
+    {
+        // Wywołaj API, aby pobrać dostępne daty
+        availableDates = await ServiceApiService.GetAvailableDates(EmployeeId);
+
+        // Jeśli istnieją dostępne daty, ustaw domyślną wartość na najwcześniejszą datę
+        if (availableDates != null && availableDates.Any())
+        {
+            value = availableDates.Min(date => date.StartTime);
+        }
+    }
+    private void SelectHour(DateTime selectedHour)
+    {
+        selectedDateHour = selectedHour;
+        // Obsługa wyboru godziny
+        // Możesz tu dodać kod do zapisania wybranej godziny w odpowiedniej zmiennej lub przekazać ją dalej.
+        // Na przykład: selectedDate = selectedHour;
+    }
+}

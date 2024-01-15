@@ -1,18 +1,22 @@
-﻿<h3>Form</h3>
+﻿<h3>Wybierz pracownika</h3>
 @page "/form"
 @page "/form/{Id:guid}"
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
 @inject IServiceApiService ServiceApiService
+@inject NavigationManager NavigationManager
 
-@foreach(var employee in employees)
-{
-    <p>@employee.Name</p>
-}
+<form @onsubmit="SubmitForm">
+    @foreach (var employee in employees)
+    {
+        <div>
+            <input type="checkbox" id="@employee.Id" @bind="@employee.IsSelected" />
+            <label for="@employee.Id">@employee.Name</label>
+        </div>
+    }
 
-
-
-
+    <button type="submit">Submit</button>
+</form>
 
 @code {
     [Parameter]
@@ -22,11 +26,21 @@
 
     protected async override Task OnInitializedAsync()
     {
-
         var apiService = await ServiceApiService.Get(Id);
         if (apiService != null)
             service = apiService;
         employees = await ServiceApiService.GetEmployyesForServiceId(Id);
+    }
 
+    private void SubmitForm()
+    {
+        var selectedEmployee = employees.FirstOrDefault(x => x.IsSelected == true);
+        if (selectedEmployee != null)
+            NavigationManager.NavigateTo($"/availability/{Id}/{selectedEmployee.Id}");
+        else
+        {
+            Console.WriteLine("Please select an employee before submitting the form.");
+        }
+        // Navigate to the next view with the selected employee IDs
     }
 }

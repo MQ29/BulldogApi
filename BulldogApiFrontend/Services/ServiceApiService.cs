@@ -36,6 +36,11 @@ namespace BulldogApiFrontend.Services
             return await _httpClient.GetFromJsonAsync<IList<ServiceDto>>("api/services");
         }
 
+        public async Task<IList<AvailableDateDto>> GetAvailableDates(Guid employeeId)
+        {
+            return await _httpClient.GetFromJsonAsync<IList<AvailableDateDto>>($"employees/{employeeId}/availableDates");
+        }
+
         public async Task<IList<EmployeeDto>> GetEmployyesForServiceId(Guid Id)
         {
             try

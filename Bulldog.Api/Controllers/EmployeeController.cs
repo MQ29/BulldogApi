@@ -68,7 +68,7 @@ namespace Bulldog.Api.Controllers
 
         }
 
-        [HttpGet("employees/{Id}/availableDates")]
+        [HttpGet("{Id}/availableDates")]
         public async Task<IActionResult> GetAvailableDates(Guid Id)
         {
             var availableDates = await _employeeService.GetAvailableDates(Id);
