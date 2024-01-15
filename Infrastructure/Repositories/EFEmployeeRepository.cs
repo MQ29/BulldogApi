@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -50,5 +51,12 @@ namespace Bulldog.Infrastructure.Repositories
         {
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<IList<Employee>> GetEmployeesForServiceIdAsync(Guid serviceId)
+        {
+            var employees = await _dbContext.Employees.Where(x => x.Services.Any(x => x.Id == serviceId)).ToListAsync();
+            return employees;
+        }
+
     }
 }

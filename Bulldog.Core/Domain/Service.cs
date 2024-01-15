@@ -18,13 +18,13 @@ namespace Bulldog.Core.Domain
         {
 
         }
-        public Service(string name, decimal price, int duration, Guid employeeId)
+        public Service(string name, decimal price, int duration, Employee employee)
         {
             Id = Guid.NewGuid();
             Name = name;
             Price = price;
             Duration = duration;
-            EmployeeId = employeeId;
+            EmployeeId = employee.Id;
         }
 
         public void SetName(string name)
@@ -54,7 +54,7 @@ namespace Bulldog.Core.Domain
             Duration = duration;
         }
 
-        public static Service Create(string name, decimal price, int duration, Guid employeeId)
-            => new Service(name, price, duration, employeeId);
+        public static Service Create(string name, decimal price, int duration, Employee employee)
+            => new Service(name, price, duration, employee);
     }
 }

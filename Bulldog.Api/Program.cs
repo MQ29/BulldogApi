@@ -36,6 +36,16 @@ namespace Bulldog.Api
             builder.Services.AddScoped<IAvailableDateRepository, EFAvailableDateRepository>();
             builder.Services.AddSingleton(AutoMapperConfig.Initialize());
             builder.Services.AddDbContext<BulldogDbContext>();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder
+                    .WithOrigins("https://localhost:7184")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            }
+           );
 
             var containerBuilder = new ContainerBuilder();
 
@@ -49,6 +59,10 @@ namespace Bulldog.Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            app.UseCors("AllowSpecificOrigin");
 
             app.UseAuthorization();
 

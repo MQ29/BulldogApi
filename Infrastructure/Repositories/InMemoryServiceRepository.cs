@@ -37,6 +37,11 @@ namespace Bulldog.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
+        public Task RemoveAsync(Guid Id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task UpdateAsync(Service service)
         {
             throw new NotImplementedException();

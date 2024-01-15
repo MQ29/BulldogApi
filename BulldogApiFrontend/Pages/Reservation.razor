@@ -1,0 +1,48 @@
+﻿@using Bulldog.Infrastructure.Services.DTO
+@using BulldogApiFrontend.Services
+@page "/reservation"
+<h3>Reservation</h3>
+@inject IServiceApiService ServiceApiService
+
+@if (services != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Usługa</th>
+                <th>Cena</th>
+                <th>Czas trwania</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var service in services)
+            {
+                <tr>
+                    <td>@service.Name</td>
+                    <td>@service.Price zł</td>
+                    <td>@service.Duration min</td>
+                    <td>
+                        <a href="@($"form/{service.Id}")" class="btn btn-primary">Umów</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Loading services...</p>
+}
+
+
+
+@code {
+    private IList<ServiceDto> services;
+    protected override async Task OnInitializedAsync()
+    {
+        services = await ServiceApiService.GetAllServies();
+    }
+
+}

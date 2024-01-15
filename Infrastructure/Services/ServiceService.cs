@@ -13,16 +13,21 @@ namespace Bulldog.Infrastructure.Services
 {
     public class ServiceService : IServiceService
     {
+        
         private readonly IServiceRepository _serviceRepository;
         private readonly IMapper _mapper;
-        public ServiceService(Core.Repositories.IServiceRepository serviceRepository, IMapper mapper)
+        private readonly IEmployeeRepository _employeeRepository;
+
+        public ServiceService(Core.Repositories.IServiceRepository serviceRepository, IMapper mapper, IEmployeeRepository employeeRepository)
         {
             _serviceRepository = serviceRepository;
             _mapper = mapper;
+            _employeeRepository = employeeRepository;
         }
-        public async Task Create(Guid Id,string name, decimal price, int duration, Guid employeeId)
+        public async Task Create(Guid employeeId,string name, decimal price, int duration)
         {
-            var service = new Service(name, price, duration, employeeId);
+            var employee = await _employeeRepository.GetAsync(employeeId);
+            var service = new Service(name, price, duration, employee);
             await _serviceRepository.AddAsync(service);
         }
 
@@ -49,9 +54,21 @@ namespace Bulldog.Infrastructure.Services
             return serviceDtos;
         }
 
-        public async Task Remove(Guid Id)
+
+        public async Task RemoveAsync(Guid Id)
         {
-           
+            await _serviceRepository.RemoveAsync(Id);
+        }
+
+        public async Task<ServiceDto> GetAsync(Guid Id)
+        {
+            var service = await _serviceRepository.GetByIdAsync(Id);
+            if (service != null)
+            {
+                var serviceDto = _mapper.Map<ServiceDto>(service);
+                return serviceDto;
+            }
+            throw new Exception($"Service with Id: {Id} wasnt found.");
         }
     }
 }

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bulldog.Tests", "BulldogTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bulldog.Tests.EndToEnd", "Bulldog.Tests.EndToEnd\Bulldog.Tests.EndToEnd.csproj", "{BE0ACBF4-9587-4BBF-9246-2A4963FF2FB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulldogApiFrontend", "BulldogApiFrontend\BulldogApiFrontend.csproj", "{D8E63434-3C7D-40C6-A246-3C48652E8933}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulldogApiFrontend", "BulldogApiFrontend\BulldogApiFrontend.csproj", "{D8E63434-3C7D-40C6-A246-3C48652E8933}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

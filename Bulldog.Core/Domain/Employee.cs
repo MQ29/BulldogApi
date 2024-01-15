@@ -36,14 +36,14 @@ namespace Bulldog.Core.Domain
             AvailableDates.Add(availableDate);
         }
 
-        public void AddService(string name, decimal price, int duration, Guid employeeId)
+        public void AddService(string name, decimal price, int duration, Employee employee)
         {
             var service = Services.FirstOrDefault(x => x.Name == name);
             if (service != null)
             {
                 throw new Exception($"Service with name: '{name}' already exists for employee: {Name}.");
             }
-            _services.Add(Service.Create(name, price, duration, employeeId));
+            _services.Add(Service.Create(name, price, duration, employee));
         }
 
         public void DeleteService(string name)

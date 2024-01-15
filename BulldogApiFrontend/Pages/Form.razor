@@ -1,0 +1,32 @@
+﻿<h3>Form</h3>
+@page "/form"
+@page "/form/{Id:guid}"
+@using Bulldog.Infrastructure.Services.DTO
+@using BulldogApiFrontend.Services
+@inject IServiceApiService ServiceApiService
+
+@foreach(var employee in employees)
+{
+    <p>@employee.Name</p>
+}
+
+
+
+
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    protected ServiceDto service { get; set; } = new ServiceDto();
+    private IList<EmployeeDto> employees { get; set; } = new List<EmployeeDto>();
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        var apiService = await ServiceApiService.Get(Id);
+        if (apiService != null)
+            service = apiService;
+        employees = await ServiceApiService.GetEmployyesForServiceId(Id);
+
+    }
+}

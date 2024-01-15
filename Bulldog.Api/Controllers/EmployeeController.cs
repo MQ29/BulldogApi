@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bulldog.Api.Controllers
 {
-    [Route("[controller]")]
+    [Route("employees")]
     [ApiController]
     public class EmployeeController : ControllerBase
     {
@@ -32,6 +32,15 @@ namespace Bulldog.Api.Controllers
             var employees = await _employeeService.GetAll();
             return Ok(employees);
         }
+
+        [HttpGet("by-service/{Id}")]
+        public async Task<IActionResult> GetByServiceId(Guid Id)
+        {
+            var employees = await _employeeService.GetByServiceId(Id);
+            return Ok(employees);
+        }
+
+        //TODO Employees for service id 
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateEmployee request)
@@ -65,5 +74,6 @@ namespace Bulldog.Api.Controllers
             var availableDates = await _employeeService.GetAvailableDates(Id);
             return Ok(availableDates);
         }
+
     }
 }

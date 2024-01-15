@@ -14,6 +14,6 @@ namespace Bulldog.Core.Repositories
         Task<IList<Service>> GetByEmployeeIdAsync(Guid employeeId);
         Task AddAsync(Service service);
         Task UpdateAsync(Service service);
-        Task RemoveAsync(Service service);
+        Task RemoveAsync(Guid Id);
     }
 }

@@ -57,14 +57,19 @@ namespace Bulldog.Infrastructure.Repositories
             //throw new Exception($"Service with EmployeeId: {employeeId} not found.");
         }
 
-        public Task RemoveAsync(Service service)
+        public Task UpdateAsync(Service service)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(Service service)
+        public async Task RemoveAsync(Guid Id)
         {
-            throw new NotImplementedException();
+            var service = await _context.Services.FirstOrDefaultAsync(x => x.Id == Id);
+            if (service != null)
+            {
+                _context.Remove(service);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

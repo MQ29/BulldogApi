@@ -20,6 +20,7 @@ namespace Bulldog.Infrastructure.Services
 
         public EmployeeService(IMapper mapper, IEmployeeRepository employeeRepository,
             IUserRepository userRepository, IAvailableDateRepository availableDateRepository)
+
         {
             _mapper = mapper;
             _employeeRepository = employeeRepository;
@@ -81,6 +82,18 @@ namespace Bulldog.Infrastructure.Services
                 return employeeToReturn;
             }
             throw new Exception($"Error while getting by Id: {Id}");
+
+        }
+
+        public async Task<IList<EmployeeDto>> GetByServiceId(Guid Id)
+        {
+            var employees = await _employeeRepository.GetEmployeesForServiceIdAsync(Id);
+            if (employees.Count > 0)
+            {
+                var employeesDto = _mapper.Map<IList<EmployeeDto>>(employees);
+                return employeesDto;
+            }
+            throw new Exception($"No employees found for service with id: {Id}");
 
         }
 
