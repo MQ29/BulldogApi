@@ -3,7 +3,7 @@
 @page "/reservation"
 <h3>Reservation</h3>
 @inject IServiceApiService ServiceApiService
-
+@inject IModalService modal
 @if (services != null)
 {
     <table class="table">
@@ -24,7 +24,8 @@
                     <td>@service.Price zł</td>
                     <td>@service.Duration min</td>
                     <td>
-                        <a href="@($"form/{service.Id}")" class="btn btn-primary">Umów</a>
+                         <a href="@($"form/{service.Id}")" class="btn btn-primary">Umów</a>
+                        <button @onclick="@(() => {AddServiceIdParameter(service.Id); modal.Show<Form>("Wybierz pracownika", parameters);})" class="btn btn-primary">Book</button>
                     </td>
                 </tr>
             }
@@ -40,9 +41,20 @@ else
 
 @code {
     private IList<ServiceDto> services;
+    private Guid selectedServiceId;
+    private ModalParameters parameters = new ModalParameters();
     protected override async Task OnInitializedAsync()
     {
         services = await ServiceApiService.GetAllServies();
+
+    }
+    private void AddServiceIdParameter(Guid serviceId)
+    {
+        parameters.Add(nameof(Form.Id), serviceId);
+    }
+    private void OpenModal()
+    {
+        modal.Show<Form>("", parameters);
     }
 
 }

@@ -1,4 +1,4 @@
-﻿<h3>Wybierz pracownika</h3>
+﻿<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-TM+HzgyFszvOX8XRvUZBteb4r4bJMyQ3wONtVaQ+tx3zxF2tfQpZUJSLS7etJl2g" crossorigin="anonymous">
 @page "/form"
 @page "/form/{Id:guid}"
 @using Bulldog.Infrastructure.Services.DTO
@@ -6,18 +6,27 @@
 @inject IServiceApiService ServiceApiService
 @inject NavigationManager NavigationManager
 
-<form @onsubmit="SubmitForm">
-    @foreach (var employee in employees)
-    {
-        <div>
-            <input type="checkbox" id="@employee.Id" @bind="@employee.IsSelected" />
-            <label for="@employee.Id">@employee.Name</label>
+@foreach (var employee in employees)
+{
+    <div class="card mb-3" style="cursor: pointer;" @onclick="@(() => SelectEmployee(employee))">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body text-right">
+                    <h5 class="card-title">@employee.Name</h5>
+                </div>
+            </div>
         </div>
+    </div>
+}
+<style>
+    /* Dodaj efekt hover dla kart */
+    .card:hover {
+        border-color: #007BFF; /* Dostosuj kolor tła przy najechaniu kursorem */
+        transition: background-color 0.3s ease; /* Dodaj płynność przejścia */
     }
-
-    <button type="submit">Submit</button>
-</form>
-
+</style>
 @code {
     [Parameter]
     public Guid Id { get; set; }
@@ -42,5 +51,23 @@
             Console.WriteLine("Please select an employee before submitting the form.");
         }
         // Navigate to the next view with the selected employee IDs
+    }
+
+    private void SelectEmployee(EmployeeDto employee)
+    {
+        // Oznacz wybranego pracownika
+        foreach (var emp in employees)
+        {
+            emp.IsSelected = (emp == employee);
+        }
+
+        // Pobierz wybranego pracownika
+        var selectedEmployee = employees.FirstOrDefault(x => x.IsSelected);
+
+        // Przekieruj do odpowiedniej strony, jeśli pracownik został wybrany
+        if (selectedEmployee != null)
+        {
+            NavigationManager.NavigateTo($"/availability/{Id}/{selectedEmployee.Id}");
+        }
     }
 }
