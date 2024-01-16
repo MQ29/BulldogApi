@@ -5,6 +5,8 @@
 @using BulldogApiFrontend.Services
 @inject IServiceApiService ServiceApiService
 @inject NavigationManager NavigationManager
+@inject IModalService modal
+
 
 @foreach (var employee in employees)
 {
@@ -32,6 +34,8 @@
     public Guid Id { get; set; }
     protected ServiceDto service { get; set; } = new ServiceDto();
     private IList<EmployeeDto> employees { get; set; } = new List<EmployeeDto>();
+    private ModalParameters parameters = new ModalParameters();
+
 
     protected async override Task OnInitializedAsync()
     {
@@ -67,7 +71,10 @@
         // Przekieruj do odpowiedniej strony, jeśli pracownik został wybrany
         if (selectedEmployee != null)
         {
-            NavigationManager.NavigateTo($"/availability/{Id}/{selectedEmployee.Id}");
+            parameters.Add(nameof(Availability.ServiceId), Id)
+                      .Add(nameof(Availability.EmployeeId), selectedEmployee.Id);
+            modal.Show<Availability>("Wybierz termin", parameters);
+            // NavigationManager.NavigateTo($"/availability/{Id}/{selectedEmployee.Id}");
         }
     }
 }

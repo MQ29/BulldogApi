@@ -1,0 +1,27 @@
+﻿@page "/Schedule"
+@using Bulldog.Infrastructure.Services.DTO
+@using BulldogApiFrontend.Services
+@inject IServiceApiService ServiceApiService
+<h3>EmployeeProfile</h3>
+
+<RadzenScheduler Data="@availableDates" TItem="AvailableDateDto" StartProperty="StartTime" EndProperty="EndTime" TextProperty="Title">
+    <RadzenMonthView />
+</RadzenScheduler>
+
+@code {
+    [Parameter]
+    public Guid EmployeeId { get; set; }
+    IList<AvailableDateDto> availableDates = new List<AvailableDateDto>();
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAvailableDates();
+    }
+    
+    private async Task LoadAvailableDates()
+    {
+        
+        availableDates = await ServiceApiService.GetAvailableDates(EmployeeId);
+
+        // Jeśli istnieją dostępne daty, ustaw domyślną wartość na najwcześniejszą datę
+    }
+}

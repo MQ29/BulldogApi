@@ -25,7 +25,6 @@ namespace Bulldog.Infrastructure.Repositories
             await _dbContext.Employees.AddAsync(employee);
             await _dbContext.SaveChangesAsync();
         }
-
         public async Task<IList<Employee>> GetAllAsync()
         {
             return await _dbContext.Employees.ToListAsync();
