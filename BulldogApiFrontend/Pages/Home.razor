@@ -1,19 +1,33 @@
 ﻿@page "/"
 @using Blazored.Modal
 @using Blazored.Modal.Services
+@using Bulldog.Infrastructure.Services.DTO
+@using BulldogApiFrontend.Services
 @inject NavigationManager NavigationManager
+@inject IServiceApiService ServiceApiService
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
-"/Schedule/{EmployeeId:guid}"
 <button class="btn btn-primary" @onclick=@Clicked>Schedule</button>
 
 @code
 {
+    IList<EmployeeDto> employees = new List<EmployeeDto>();
+    private EmployeeDto terry;
+    protected override async Task OnInitializedAsync()
+    {
+        employees = await ServiceApiService.GetAllEmployees();
+    }
+
     private void Clicked()
     {
-        
+        terry = employees.FirstOrDefault(x => x.Name == "terry");
+        if(terry == null)
+        {
+            Console.WriteLine("No employye found.");
+        }
+        NavigationManager.NavigateTo($"/Schedule/{terry.Id}");
     }
 }

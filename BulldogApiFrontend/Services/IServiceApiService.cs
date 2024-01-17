@@ -7,6 +7,7 @@ namespace BulldogApiFrontend.Services
         Task<IList<ServiceDto>> GetAllServies();
         Task<ServiceDto> Get(Guid Id);
         Task<IList<EmployeeDto>> GetEmployyesForServiceId(Guid Id);
+        Task<IList<EmployeeDto>> GetAllEmployees();
         Task<IList<AvailableDateDto>> GetAvailableDates(Guid employeeId);
     }
 }

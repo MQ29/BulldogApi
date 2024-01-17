@@ -1,11 +1,10 @@
-﻿@page "/Schedule"
+﻿@page "/Schedule/{EmployeeId:guid}"
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
 @inject IServiceApiService ServiceApiService
 <h3>EmployeeProfile</h3>
 
 <RadzenScheduler Data="@availableDates" TItem="AvailableDateDto" StartProperty="StartTime" EndProperty="EndTime" TextProperty="Title">
-    <RadzenMonthView />
 </RadzenScheduler>
 
 @code {

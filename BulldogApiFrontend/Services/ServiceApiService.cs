@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text;
 using Bulldog.Infrastructure.Services.DTO;
+using System.Collections.Generic;
 
 namespace BulldogApiFrontend.Services
 {
@@ -13,7 +14,6 @@ namespace BulldogApiFrontend.Services
         {
             _httpClient = httpClient;
         }
-
         public async Task<ServiceDto> Get(Guid Id)
         {
             try
@@ -39,6 +39,11 @@ namespace BulldogApiFrontend.Services
         public async Task<IList<AvailableDateDto>> GetAvailableDates(Guid employeeId)
         {
             return await _httpClient.GetFromJsonAsync<IList<AvailableDateDto>>($"employees/{employeeId}/availableDates");
+        }
+
+        public async Task<IList<EmployeeDto>> GetAllEmployees()
+        {
+            return await _httpClient.GetFromJsonAsync<IList<EmployeeDto>>("employees/all");
         }
 
         //public async Task<EmployeeDto> GetEmployee(Guid Id);

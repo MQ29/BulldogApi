@@ -34,8 +34,8 @@
     public Guid Id { get; set; }
     protected ServiceDto service { get; set; } = new ServiceDto();
     private IList<EmployeeDto> employees { get; set; } = new List<EmployeeDto>();
-    private ModalParameters parameters = new ModalParameters();
-
+    private ModalParameters parameters = new ModalParameters(); 
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
@@ -45,36 +45,42 @@
         employees = await ServiceApiService.GetEmployyesForServiceId(Id);
     }
 
-    private void SubmitForm()
-    {
-        var selectedEmployee = employees.FirstOrDefault(x => x.IsSelected == true);
-        if (selectedEmployee != null)
-            NavigationManager.NavigateTo($"/availability/{Id}/{selectedEmployee.Id}");
-        else
-        {
-            Console.WriteLine("Please select an employee before submitting the form.");
-        }
-        // Navigate to the next view with the selected employee IDs
-    }
+    // private void SubmitForm()
+    // {
+    //     var selectedEmployee = employees.FirstOrDefault(x => x.IsSelected == true);
+    //     if (selectedEmployee != null)
+    //         NavigationManager.NavigateTo($"/availability/{Id}/{selectedEmployee.Id}");
+    //     else
+    //     {
+    //         Console.WriteLine("Please select an employee before submitting the form.");
+    //     }
+    //     // Navigate to the next view with the selected employee IDs
+    // }
 
-    private void SelectEmployee(EmployeeDto employee)
+    private async void SelectEmployee(EmployeeDto employee)
     {
-        // Oznacz wybranego pracownika
+        await Close();
         foreach (var emp in employees)
         {
             emp.IsSelected = (emp == employee);
         }
 
-        // Pobierz wybranego pracownika
         var selectedEmployee = employees.FirstOrDefault(x => x.IsSelected);
+      
 
-        // Przekieruj do odpowiedniej strony, jeśli pracownik został wybrany
         if (selectedEmployee != null)
         {
             parameters.Add(nameof(Availability.ServiceId), Id)
                       .Add(nameof(Availability.EmployeeId), selectedEmployee.Id);
-            modal.Show<Availability>("Wybierz termin", parameters);
+            var options = new ModalOptions()
+                {
+                    AnimationType = ModalAnimationType.None
+                };
+            var availabilityModal = modal.Show<Availability>("Wybierz termin", parameters, options);
+            StateHasChanged();
             // NavigationManager.NavigateTo($"/availability/{Id}/{selectedEmployee.Id}");
         }
     }
+
+    private async Task Close() => await ModalInstance.CloseAsync();
 }

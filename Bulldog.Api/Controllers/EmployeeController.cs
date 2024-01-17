@@ -26,7 +26,7 @@ namespace Bulldog.Api.Controllers
             return Ok(employee);
         }
 
-        [HttpGet("employees")]
+        [HttpGet("all")]
         public async Task<IActionResult> GetAll()
         {
             var employees = await _employeeService.GetAll();

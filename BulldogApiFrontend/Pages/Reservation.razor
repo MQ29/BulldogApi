@@ -24,8 +24,8 @@
                     <td>@service.Price zł</td>
                     <td>@service.Duration min</td>
                     <td>
-                         <a href="@($"form/{service.Id}")" class="btn btn-primary">Umów</a>
-                        <button @onclick="@(() => {AddServiceIdParameter(service.Id); modal.Show<Form>("Wybierz pracownika", parameters);})" class="btn btn-primary">Book</button>
+                         @* <a href="@($"form/{service.Id}")" class="btn btn-primary">Umów</a> *@
+                        <button @onclick="@(() => {AddServiceIdParameter(service.Id); OpenModal();})" class="btn btn-primary">Book</button>
                     </td>
                 </tr>
             }
@@ -54,7 +54,12 @@ else
     }
     private void OpenModal()
     {
-        modal.Show<Form>("", parameters);
+        var options = new ModalOptions()
+            {
+                AnimationType = ModalAnimationType.None
+            };
+        modal.Show<Form>("Wybierz pracownika", parameters, options);
+
     }
 
 }
