@@ -17,26 +17,42 @@
             <span>Selected Hour: @selectedDateHour.Value.ToString("HH:mm")</span>
         }
     </div>
-
     @if (availableDates.Any(ad => ad.DayOfWeek == selectedDate.Value.DayOfWeek))
     {
-        var selectedDateAvailableHours = availableDates
+        var workingHours = availableDates
             .Where(ad => ad.DayOfWeek == selectedDate.Value.DayOfWeek)
-            .Select(ad => new { StartTime = selectedDate.Value.Date + ad.WorkingHours.StartTime, EndTime = selectedDate.Value.Date + ad.WorkingHours.EndTime });
+            .Select(ad => ad.WorkingHours)
+            .FirstOrDefault(); // Assuming there's only one set of working hours per day
 
-        foreach (var hourRange in selectedDateAvailableHours)
+        if (workingHours != null)
         {
-            <button type="button" class="btn btn-outline-primary" @onclick="() => SelectHour(hourRange.StartTime)">
-                @hourRange.StartTime.ToString("HH:mm")
-            </button>
+            var startDateTime = selectedDate.Value.Date + workingHours.StartTime;
+            var endDateTime = selectedDate.Value.Date + workingHours.EndTime;
+
+            var timeIntervals = GenerateTimeIntervals(startDateTime, endDateTime);
+
+            <div style="display: flex; overflow: auto; white-space: nowrap;">
+                @foreach (var timeInterval in timeIntervals.Take(visibleHours))
+                {
+                    <button type="button" class="btn btn-outline-primary" @onclick="() => SelectHour(timeInterval)">
+                        @timeInterval.ToString("HH:mm")
+                    </button>
+                }
+            </div>
+
+            if (timeIntervals.Count > visibleHours)
+            {
+                <button type="button" class="btn btn-link" @onclick="() => ScrollHours()">
+                    Show more hours
+                </button>
+            }
         }
     }
-
     else
     {
         <p>No available hours for @selectedDate</p>
     }
-    <!-- TODO: Wysyłanie jako formularz i aktualizacja w scheduler dla pracownika (stworzyć scheduler) -->
+    <!-- TODO: Sending as a form and updating the scheduler for the employee (create scheduler) -->
 }
 
 @code {
@@ -48,6 +64,7 @@
     DateTime? selectedDate = DateTime.Now.Date;
     IList<AvailableDateDto> availableDates = new List<AvailableDateDto>();
     DateTime? selectedDateHour;
+    private int visibleHours = 5; // Initial number of visible hours
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,15 +78,34 @@
 
     private async Task LoadAvailableDates()
     {
-        // Wywołaj API, aby pobrać dostępne daty
         availableDates = await ServiceApiService.GetAvailableDates(EmployeeId);
     }
 
     private void SelectHour(DateTime selectedHour)
     {
         selectedDateHour = selectedHour;
-        // Obsługa wyboru godziny
-        // Możesz tu dodać kod do zapisania wybranej godziny w odpowiedniej zmiennej lub przekazać ją dalej.
-        // Na przykład: selectedDateHour = selectedHour;
+        // Handle the selected hour
+        // For example: selectedDateHour = selectedHour;
+    }
+
+    private void ScrollHours()
+    {
+        // Increase the number of visible hours
+        visibleHours += 5; // You can adjust this based on your preference
+        StateHasChanged(); // Trigger a re-render to update the UI with the new set of visible hours
+    }
+
+    private List<DateTime> GenerateTimeIntervals(DateTime startTime, DateTime endTime)
+    {
+        var timeIntervals = new List<DateTime>();
+
+        DateTime currentInterval = startTime;
+        while (currentInterval <= endTime)
+        {
+            timeIntervals.Add(currentInterval);
+            currentInterval = currentInterval.AddMinutes(15);
+        }
+
+        return timeIntervals;
     }
 }

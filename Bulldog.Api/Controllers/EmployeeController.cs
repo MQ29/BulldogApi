@@ -57,16 +57,21 @@ namespace Bulldog.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("InsertAvailableDate")]
-        public async Task<IActionResult> InsertAvailableDate(Guid employeeId, [FromBody] CreateAvailableDate availableDate)
+        [HttpPost("InsertAvailableDate/{EmployeeId}")]
+        public async Task<IActionResult> InsertAvailableDate(Guid EmployeeId, [FromBody] IList<AvailableDateDto> availableDates)
         {
-            await _employeeService.AddAvailableDate(employeeId, availableDate.DayOfWeek, availableDate.IsOpen, 
-                availableDate.WorkingHours);
-            return Ok();
-            // Logic to associate the available date with the specified employee
-            // and save it to the data,base
-
+            try
+            {
+                await _employeeService.AddAvailableDate(EmployeeId, availableDates);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
         }
+
+        //ToDo Put InsertAvailableDate/{EmployeeId}
 
         [HttpGet("{Id}/availableDates")]
         public async Task<IActionResult> GetAvailableDates(Guid Id)

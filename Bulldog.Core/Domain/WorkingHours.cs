@@ -4,5 +4,11 @@
     {
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
+
+        public WorkingHours(TimeSpan startTime, TimeSpan endTime)
+        {
+            StartTime = startTime;
+            EndTime = endTime;
+        }
     }
 }

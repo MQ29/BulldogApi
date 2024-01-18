@@ -11,6 +11,6 @@ namespace BulldogApiFrontend.Services
         Task<IList<EmployeeDto>> GetEmployyesForServiceId(Guid Id);
         Task<IList<EmployeeDto>> GetAllEmployees();
         Task<IList<AvailableDateDto>> GetAvailableDates(Guid employeeId);
-        Task<AvailableDateDto> SaveAvailability(Guid EmployeeId, CreateAvailableDate availableDates);
+        Task AddAvailabilityDates(Guid employeeId, IList<AvailableDateDto> availableDates);
     }
 }

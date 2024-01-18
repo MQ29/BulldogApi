@@ -63,108 +63,113 @@ namespace BulldogApiFrontend.Services
             }
         }
 
-        public async Task<AvailableDateDto> SaveAvailability(Guid EmployeeId, CreateAvailableDate availableDates)
+        public async Task AddAvailabilityDates(Guid EmployeeId, IList<AvailableDateDto> availableDates)
         {
-            var response = await _httpClient.PostAsJsonAsync("employees/InsertAvailableDate", availableDates);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var responseBody = await response.Content.ReadAsStreamAsync();
-
-                var addedavailableDates = await JsonSerializer.DeserializeAsync<AvailableDateDto>(responseBody, new JsonSerializerOptions
+                var response = await _httpClient.PostAsJsonAsync($"employees/InsertAvailableDate/{EmployeeId}", availableDates);
+                if (response.IsSuccessStatusCode)
                 {
-                    PropertyNameCaseInsensitive = true
-                });
+                    var responseBody = await response.Content.ReadAsStreamAsync();
 
-                return addedavailableDates;
+                    var addedavailableDates = await JsonSerializer.DeserializeAsync<IList<AvailableDateDto>>(responseBody, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}");
+                    throw new Exception($"Error while creating availabilityDates. Status code: {response.StatusCode}");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine($"Error: {response.StatusCode}");
-                throw new Exception($"Error while creating a book. Status code: {response.StatusCode}");
+                Console.WriteLine($"Error in service: {ex.Message}");
             }
         }
 
-        //public async Task<IList<AvailableDateDto>> GetAvailableDates()
-        //{
+            //public async Task<IList<AvailableDateDto>> GetAvailableDates()
+            //{
 
-        //}
+            //}
 
-        //public async Task<ServiceDto> GetBook(int id)
-        //{
-        //    var response = await _httpClient.GetStreamAsync($"/api/books/{id}");
-        //    var book = await JsonSerializer.DeserializeAsync<ServiceDto>(response, new JsonSerializerOptions
-        //    {
-        //        PropertyNameCaseInsensitive = true
-        //    });
-        //    return book;
-        //}
+            //public async Task<ServiceDto> GetBook(int id)
+            //{
+            //    var response = await _httpClient.GetStreamAsync($"/api/books/{id}");
+            //    var book = await JsonSerializer.DeserializeAsync<ServiceDto>(response, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+            //    return book;
+            //}
 
-        //public async Task<ServiceDto> CreateBook(ServiceDto bookForCreationDto) //serviceForCreation?
-        //{
-        //    try
-        //    {
-        //        var response = await _httpClient.PostAsJsonAsync("api/books", bookForCreationDto);
+            //public async Task<ServiceDto> CreateBook(ServiceDto bookForCreationDto) //serviceForCreation?
+            //{
+            //    try
+            //    {
+            //        var response = await _httpClient.PostAsJsonAsync("api/books", bookForCreationDto);
 
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            var responseBody = await response.Content.ReadAsStreamAsync();
+            //        if (response.IsSuccessStatusCode)
+            //        {
+            //            var responseBody = await response.Content.ReadAsStreamAsync();
 
-        //            var addedDriver = await JsonSerializer.DeserializeAsync<ServiceDto>(responseBody, new JsonSerializerOptions
-        //            {
-        //                PropertyNameCaseInsensitive = true
-        //            });
+            //            var addedDriver = await JsonSerializer.DeserializeAsync<ServiceDto>(responseBody, new JsonSerializerOptions
+            //            {
+            //                PropertyNameCaseInsensitive = true
+            //            });
 
-        //            return addedDriver;
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine($"Error: {response.StatusCode}");
-        //            throw new Exception($"Error while creating a book. Status code: {response.StatusCode}");
-        //        }
-        //    }
-
-
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error: {ex.Message}");
-        //        throw ex;
-        //    }
-        //}
-
-        //public async Task<bool> Delete(int id)
-        //{
-        //    try
-        //    {
-        //        var response = await _httpClient.DeleteAsync($"/api/books/{id}");
-
-        //        return response.IsSuccessStatusCode;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error: {ex.Message}");
-        //        throw ex;
-        //    }
-        //}
-
-        //public async Task<bool> Update(ServiceDto BookDto)
-        //{
-        //    try
-        //    {
-        //        var bookToUpdate = _mapper.Map<BookForCreationDto>(BookDto);
-        //        var itemJson = new StringContent(JsonSerializer.Serialize(bookToUpdate), Encoding.UTF8, "application/json");
-
-        //        var response = await _httpClient.PutAsync($"api/books/{BookDto.Id}", itemJson);
-
-        //        return response.IsSuccessStatusCode;
-        //    }
+            //            return addedDriver;
+            //        }
+            //        else
+            //        {
+            //            Console.WriteLine($"Error: {response.StatusCode}");
+            //            throw new Exception($"Error while creating a book. Status code: {response.StatusCode}");
+            //        }
+            //    }
 
 
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error: {ex.Message}");
-        //        throw ex;
-        //    }
-        //}
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine($"Error: {ex.Message}");
+            //        throw ex;
+            //    }
+            //}
 
-    }
+            //public async Task<bool> Delete(int id)
+            //{
+            //    try
+            //    {
+            //        var response = await _httpClient.DeleteAsync($"/api/books/{id}");
+
+            //        return response.IsSuccessStatusCode;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine($"Error: {ex.Message}");
+            //        throw ex;
+            //    }
+            //}
+
+            //public async Task<bool> Update(ServiceDto BookDto)
+            //{
+            //    try
+            //    {
+            //        var bookToUpdate = _mapper.Map<BookForCreationDto>(BookDto);
+            //        var itemJson = new StringContent(JsonSerializer.Serialize(bookToUpdate), Encoding.UTF8, "application/json");
+
+            //        var response = await _httpClient.PutAsync($"api/books/{BookDto.Id}", itemJson);
+
+            //        return response.IsSuccessStatusCode;
+            //    }
+
+
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine($"Error: {ex.Message}");
+            //        throw ex;
+            //    }
+            //}
+
+        }
 }

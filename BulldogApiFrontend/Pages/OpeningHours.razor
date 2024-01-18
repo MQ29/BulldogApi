@@ -61,8 +61,8 @@ else
     [Parameter]
     public Guid EmployeeId { get; set; }
     IList<AvailableDateDto> availableDates = new List<AvailableDateDto>();
-    private string selectedStartTime { get; set; }
-    private string selectedEndTime { get; set; }
+    private string selectedStartTime { get; set; } = "10:00";
+    private string selectedEndTime { get; set; } = "19:00";
     protected override async Task OnInitializedAsync()
     {
         await LoadAvailableDates();
@@ -81,9 +81,12 @@ else
             {
                 availableDates.Add(new AvailableDateDto
                     {
+                        Id = Guid.NewGuid(),
                         DayOfWeek = dayOfWeek,
+                        EmployeeId = EmployeeId,
                         IsOpen = true,
-                        WorkingHours = new WorkingHours(),
+                        WorkingHours = new WorkingHours(TimeSpan.Parse(selectedStartTime), TimeSpan.Parse(selectedEndTime)),
+                        Breaks = new List<Break>(),
                     });
             }
         }
@@ -111,7 +114,22 @@ else
 
     private async Task SaveAvailability()
     {
-        // await ServiceApiService.SaveAvailability(EmployeeId, availableDates);
-        //Logika dodanie do listy availabledates pracownika. 
+        try
+        {
+            foreach (var item in availableDates)
+            {
+                Console.WriteLine(item.Id);
+                Console.WriteLine(item.EmployeeId);
+                Console.WriteLine(item.IsOpen);
+                Console.WriteLine(item.WorkingHours.StartTime.ToString());
+                Console.WriteLine(item.WorkingHours.EndTime.ToString());
+            }
+            await ServiceApiService.AddAvailabilityDates(EmployeeId, availableDates);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in opening hours: {ex.Message}");
+        }
+        //Logika dodanie do listy availabledates pracownika
     }
 }

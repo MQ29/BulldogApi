@@ -5,6 +5,7 @@ using Bulldog.Infrastructure.Services.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,17 +28,26 @@ namespace Bulldog.Infrastructure.Services
             _availableDateRepository = availableDateRepository;
         }
 
-        public async Task AddAvailableDate(Guid employeeId, DayOfWeek dayOfWeek, bool isOpen, WorkingHours workingHours)
+        public async Task AddAvailableDate(Guid employeeId,IList<AvailableDateDto> availableDates)
         {
-            var employee = await _employeeRepository.GetAsync(employeeId);
-            if (employee == null)
+            try
             {
-                throw new InvalidOperationException($"Employee with id {employeeId} not found.");
+                var employee = await _employeeRepository.GetAsync(employeeId);
+                if (employee == null)
+                {
+                    throw new InvalidOperationException($"Employee with id {employeeId} not found.");
+                }
+                var mapppedAvilableDates = _mapper.Map<List<AvailableDate>>(availableDates);
+                foreach (var availableDate in mapppedAvilableDates)
+                {
+                    employee.AddAvailableDate(availableDate);
+                    await _availableDateRepository.AddAsync(availableDate);
+                }
             }
-            var availableDate = new AvailableDate(employeeId, dayOfWeek, isOpen, workingHours);
-            employee.AddAvailableDate(availableDate);
-            await _availableDateRepository.AddAsync(availableDate);
-            //await _employeeRepository.UpdateAsync(employee);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
         }
 
         public async Task Create(Guid userId)
