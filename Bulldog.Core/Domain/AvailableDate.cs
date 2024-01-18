@@ -9,27 +9,28 @@ namespace Bulldog.Core.Domain
     public class AvailableDate
     {
         public Guid Id { get; protected set; }
-        public DateTime StartTime { get; protected set; }
-        public DateTime EndTime { get; protected set; }
-        public string Title { get; protected set; }
-        public string Description { get; protected set; }
-        public string Color { get; protected set; }
+        public bool IsOpen { get; protected set; }
+        public DayOfWeek DayOfWeek { get; protected set; }
+        public ICollection<Break> Breaks { get; set; } = new List<Break>();
+        public WorkingHours WorkingHours { get; set; }
         public Guid EmployeeId { get; protected set; }
 
         protected AvailableDate()
         {
             
         }
-        public AvailableDate(Employee employee, DateTime startTime, DateTime endTime,
-            string title, string description, string color)
+        public AvailableDate(Guid employeeId, DayOfWeek dayOfWeek, bool isOpen, WorkingHours workingHours)
         {
             Id = Guid.NewGuid();
-            EmployeeId = employee.Id;
-            StartTime = startTime;
-            EndTime = endTime;
-            Title = title;
-            Description = description;
-            Color = color;
+            EmployeeId = employeeId;
+            DayOfWeek = dayOfWeek;
+            IsOpen = isOpen;
+            WorkingHours = workingHours;
+        }
+
+        public void AddBreaks(Break Break)
+        {
+            Breaks.Add(Break);
         }
     }
 }

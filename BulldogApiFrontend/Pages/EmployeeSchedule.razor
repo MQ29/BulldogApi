@@ -4,7 +4,8 @@
 @inject IServiceApiService ServiceApiService
 <h3>EmployeeProfile</h3>
 
-<RadzenScheduler Data="@availableDates" TItem="AvailableDateDto" StartProperty="StartTime" EndProperty="EndTime" TextProperty="Title">
+<RadzenScheduler Data="@availableDates" TItem="AvailableDateDto" StartProperty="StartTime" EndProperty="EndTime" TextProperty="Title"
+                 SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect>
 </RadzenScheduler>
 
 @code {
@@ -15,12 +16,25 @@
     {
         await LoadAvailableDates();
     }
-    
+
     private async Task LoadAvailableDates()
     {
-        
+
         availableDates = await ServiceApiService.GetAvailableDates(EmployeeId);
 
         // Jeśli istnieją dostępne daty, ustaw domyślną wartość na najwcześniejszą datę
+    }
+
+    private async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
+    {
+        if(args.View.Text != "Year")
+        {
+
+        }
+    }
+
+    private async Task OnAppointmentSelect()
+    {
+        
     }
 }

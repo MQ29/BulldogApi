@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text;
 using Bulldog.Infrastructure.Services.DTO;
 using System.Collections.Generic;
+using Bulldog.Infrastructure.Commands.AvailableDates;
 
 namespace BulldogApiFrontend.Services
 {
@@ -59,6 +60,27 @@ namespace BulldogApiFrontend.Services
             {
                 Console.WriteLine($"Error retrieving employyes for service with Id: {ex.Message}");
                 throw;
+            }
+        }
+
+        public async Task<AvailableDateDto> SaveAvailability(Guid EmployeeId, CreateAvailableDate availableDates)
+        {
+            var response = await _httpClient.PostAsJsonAsync("employees/InsertAvailableDate", availableDates);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStreamAsync();
+
+                var addedavailableDates = await JsonSerializer.DeserializeAsync<AvailableDateDto>(responseBody, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return addedavailableDates;
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.StatusCode}");
+                throw new Exception($"Error while creating a book. Status code: {response.StatusCode}");
             }
         }
 

@@ -17,9 +17,30 @@ namespace Bulldog.Infrastructure.EF
         public DbSet<Service> Services { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<AvailableDate> AvailableDates { get; set; }
+        public DbSet<Break> Breaks { get; set; }
+
+        public BulldogDbContext() { }
 
         public BulldogDbContext(DbContextOptions<BulldogDbContext> options) :base(options)
         {
+
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AvailableDate>()
+                .HasKey(ad => ad.Id);
+
+            modelBuilder.Entity<AvailableDate>()
+                .OwnsOne(ad => ad.WorkingHours);
+
+            modelBuilder.Entity<AvailableDate>()
+                .HasMany(ad => ad.Breaks)
+                .WithOne()
+                .HasForeignKey(b => b.AvailableDateId);
+
+            // Dodaj inne konfiguracje dla pozostałych klas
+
+            base.OnModelCreating(modelBuilder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

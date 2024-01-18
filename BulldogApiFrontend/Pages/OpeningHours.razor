@@ -1,0 +1,117 @@
+﻿@page "/openinghours/{EmployeeId:guid}"
+@using Bulldog.Core.Domain
+@using Bulldog.Infrastructure.Services.DTO
+@using BulldogApiFrontend.Services
+
+@inject IServiceApiService ServiceApiService
+
+<h3>Godziny otwarcia</h3>
+
+@if (availableDates != null && availableDates.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Dzień</th>
+                <th scope="col">Godziny otwarcia</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var availableDate in availableDates)
+            {
+                <tr>
+                    <td>@availableDate.DayOfWeek</td>
+                    <td>
+                        <div>
+                            <input type="checkbox" @bind="availableDate.IsOpen" />
+                            @if (availableDate.IsOpen)
+                            {
+                                <div>
+                                    <label>Rozpoczęcie:</label>
+                                    <select @bind="selectedStartTime">
+                                        @foreach (var hour in TimeHelper.GetHoursList())
+                                        {
+                                            <option value="@hour">@hour</option>
+                                        }
+                                    </select>
+
+                                    <label>Zakończenie:</label>
+                                    <select @bind="selectedEndTime">
+                                        @foreach (var hour in TimeHelper.GetHoursList())
+                                        {
+                                            <option value="@hour">@hour</option>
+                                        }
+                                    </select>
+                                </div>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-primary" @onclick="SaveAvailability">Zapisz dostępność</button>
+}
+else
+{
+    <p>Brak dostępnych dat.</p>
+}
+
+@code {
+    [Parameter]
+    public Guid EmployeeId { get; set; }
+    IList<AvailableDateDto> availableDates = new List<AvailableDateDto>();
+    private string selectedStartTime { get; set; }
+    private string selectedEndTime { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAvailableDates();
+    }
+
+    private async Task LoadAvailableDates()
+    {
+        // Wywołaj API, aby pobrać dostępne daty
+        availableDates = await ServiceApiService.GetAvailableDates(EmployeeId);
+
+        // Jeśli żadne daty nie są dostępne, utwórz domyślne obiekty AvailableDateDto dla każdego dnia tygodnia
+        if (availableDates == null || !availableDates.Any())
+        {
+            availableDates = new List<AvailableDateDto>();
+            foreach (DayOfWeek dayOfWeek in Enum.GetValues(typeof(DayOfWeek)))
+            {
+                availableDates.Add(new AvailableDateDto
+                    {
+                        DayOfWeek = dayOfWeek,
+                        IsOpen = true,
+                        WorkingHours = new WorkingHours(),
+                    });
+            }
+        }
+    }
+
+    private static class TimeHelper
+    {
+        public static List<string> GetHoursList()
+        {
+            var hoursList = new List<string>();
+
+            for (int hours = 0; hours < 24; hours++)
+            {
+                for (int minutes = 0; minutes < 60; minutes += 15)
+                {
+                    var time = new TimeSpan(hours, minutes, 0);
+                    var timeString = time.ToString("hh\\:mm");
+                    hoursList.Add(timeString);
+                }
+            }
+
+            return hoursList;
+        }
+    }
+
+    private async Task SaveAvailability()
+    {
+        // await ServiceApiService.SaveAvailability(EmployeeId, availableDates);
+        //Logika dodanie do listy availabledates pracownika. 
+    }
+}

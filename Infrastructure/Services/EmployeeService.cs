@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Bulldog.Core.Domain;
 using Bulldog.Core.Repositories;
-using Bulldog.Infrastructure.Migrations;
 using Bulldog.Infrastructure.Services.DTO;
 using System;
 using System.Collections.Generic;
@@ -28,15 +27,14 @@ namespace Bulldog.Infrastructure.Services
             _availableDateRepository = availableDateRepository;
         }
 
-        public async Task AddAvailableDate(Guid Id, DateTime startTime, DateTime endTime,
-            string title, string description, string color)
+        public async Task AddAvailableDate(Guid employeeId, DayOfWeek dayOfWeek, bool isOpen, WorkingHours workingHours)
         {
-            var employee = await _employeeRepository.GetAsync(Id);
+            var employee = await _employeeRepository.GetAsync(employeeId);
             if (employee == null)
             {
-                throw new InvalidOperationException($"Employee with id {Id} not found.");
+                throw new InvalidOperationException($"Employee with id {employeeId} not found.");
             }
-            var availableDate = new AvailableDate(employee, startTime, endTime, title, description, color);
+            var availableDate = new AvailableDate(employeeId, dayOfWeek, isOpen, workingHours);
             employee.AddAvailableDate(availableDate);
             await _availableDateRepository.AddAsync(availableDate);
             //await _employeeRepository.UpdateAsync(employee);

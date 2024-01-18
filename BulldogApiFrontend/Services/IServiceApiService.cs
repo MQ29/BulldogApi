@@ -1,4 +1,6 @@
-﻿using Bulldog.Infrastructure.Services.DTO;
+﻿using Bulldog.Core.Domain;
+using Bulldog.Infrastructure.Commands.AvailableDates;
+using Bulldog.Infrastructure.Services.DTO;
 
 namespace BulldogApiFrontend.Services
 {
@@ -9,5 +11,6 @@ namespace BulldogApiFrontend.Services
         Task<IList<EmployeeDto>> GetEmployyesForServiceId(Guid Id);
         Task<IList<EmployeeDto>> GetAllEmployees();
         Task<IList<AvailableDateDto>> GetAvailableDates(Guid employeeId);
+        Task<AvailableDateDto> SaveAvailability(Guid EmployeeId, CreateAvailableDate availableDates);
     }
 }

@@ -28,32 +28,42 @@ namespace Bulldog.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsOpen")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("AvailableDates");
+                });
+
+            modelBuilder.Entity("Bulldog.Core.Domain.Break", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AvailableDateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AvailableDateId");
+
+                    b.ToTable("Breaks");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Employee", b =>
@@ -160,6 +170,37 @@ namespace Bulldog.Infrastructure.Migrations
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsOne("Bulldog.Core.Domain.WorkingHours", "WorkingHours", b1 =>
+                        {
+                            b1.Property<Guid>("AvailableDateId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<TimeSpan>("EndTime")
+                                .HasColumnType("time");
+
+                            b1.Property<TimeSpan>("StartTime")
+                                .HasColumnType("time");
+
+                            b1.HasKey("AvailableDateId");
+
+                            b1.ToTable("AvailableDates");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AvailableDateId");
+                        });
+
+                    b.Navigation("WorkingHours")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Bulldog.Core.Domain.Break", b =>
+                {
+                    b.HasOne("Bulldog.Core.Domain.AvailableDate", null)
+                        .WithMany("Breaks")
+                        .HasForeignKey("AvailableDateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Service", b =>
@@ -169,6 +210,11 @@ namespace Bulldog.Infrastructure.Migrations
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Bulldog.Core.Domain.AvailableDate", b =>
+                {
+                    b.Navigation("Breaks");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Employee", b =>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bulldog.Core.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,9 @@ namespace Bulldog.Infrastructure.Commands.AvailableDates
 {
     public class CreateAvailableDate : ICommand
     {
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Color { get; set; }
+        public bool IsOpen { get; set; }
+        public DayOfWeek DayOfWeek { get; set; }
+        public List<Break> Breaks { get; set; }
+        public WorkingHours WorkingHours { get; set; }
     }
 }

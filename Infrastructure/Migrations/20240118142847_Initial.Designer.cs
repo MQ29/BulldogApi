@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bulldog.Infrastructure.Migrations
 {
     [DbContext(typeof(BulldogDbContext))]
-    [Migration("20240108182715_initial")]
-    partial class initial
+    [Migration("20240118142847_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,11 +25,59 @@ namespace Bulldog.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Bulldog.Core.Domain.AvailableDate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsOpen")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("AvailableDates");
+                });
+
+            modelBuilder.Entity("Bulldog.Core.Domain.Break", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AvailableDateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AvailableDateId");
+
+                    b.ToTable("Breaks");
+                });
+
             modelBuilder.Entity("Bulldog.Core.Domain.Employee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -71,7 +119,7 @@ namespace Bulldog.Infrastructure.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("EmployeeId")
+                    b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -101,10 +149,6 @@ namespace Bulldog.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Fullname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -122,15 +166,64 @@ namespace Bulldog.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Bulldog.Core.Domain.AvailableDate", b =>
+                {
+                    b.HasOne("Bulldog.Core.Domain.Employee", null)
+                        .WithMany("AvailableDates")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Bulldog.Core.Domain.WorkingHours", "WorkingHours", b1 =>
+                        {
+                            b1.Property<Guid>("AvailableDateId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<TimeSpan>("EndTime")
+                                .HasColumnType("time");
+
+                            b1.Property<TimeSpan>("StartTime")
+                                .HasColumnType("time");
+
+                            b1.HasKey("AvailableDateId");
+
+                            b1.ToTable("AvailableDates");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AvailableDateId");
+                        });
+
+                    b.Navigation("WorkingHours")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Bulldog.Core.Domain.Break", b =>
+                {
+                    b.HasOne("Bulldog.Core.Domain.AvailableDate", null)
+                        .WithMany("Breaks")
+                        .HasForeignKey("AvailableDateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Bulldog.Core.Domain.Service", b =>
                 {
                     b.HasOne("Bulldog.Core.Domain.Employee", null)
                         .WithMany("Services")
-                        .HasForeignKey("EmployeeId");
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Bulldog.Core.Domain.AvailableDate", b =>
+                {
+                    b.Navigation("Breaks");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Employee", b =>
                 {
+                    b.Navigation("AvailableDates");
+
                     b.Navigation("Services");
                 });
 #pragma warning restore 612, 618

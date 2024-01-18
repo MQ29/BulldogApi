@@ -11,6 +11,8 @@
 
 Welcome to your new app.
 <button class="btn btn-primary" @onclick=@Clicked>Schedule</button>
+<button class="btn btn-primary" @onclick=@ClickedHours>BuisnessHours</button>
+
 
 @code
 {
@@ -23,11 +25,20 @@ Welcome to your new app.
 
     private void Clicked()
     {
-        terry = employees.FirstOrDefault(x => x.Name == "terry");
+        terry = employees.FirstOrDefault(x => x.Name == "TerryDavis");
         if(terry == null)
         {
             Console.WriteLine("No employye found.");
         }
         NavigationManager.NavigateTo($"/Schedule/{terry.Id}");
+    }
+    private void ClickedHours()
+    {
+        terry = employees.FirstOrDefault(x => x.Name == "TerryDavis");
+        if (terry == null)
+        {
+            Console.WriteLine("No employye found.");
+        }
+        NavigationManager.NavigateTo($"/openinghours/{terry.Id}");
     }
 }

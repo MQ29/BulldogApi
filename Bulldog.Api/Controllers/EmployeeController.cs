@@ -60,8 +60,8 @@ namespace Bulldog.Api.Controllers
         [HttpPost("InsertAvailableDate")]
         public async Task<IActionResult> InsertAvailableDate(Guid employeeId, [FromBody] CreateAvailableDate availableDate)
         {
-            await _employeeService.AddAvailableDate(employeeId, availableDate.StartTime, availableDate.EndTime, 
-                availableDate.Description, availableDate.Color, availableDate.Title);
+            await _employeeService.AddAvailableDate(employeeId, availableDate.DayOfWeek, availableDate.IsOpen, 
+                availableDate.WorkingHours);
             return Ok();
             // Logic to associate the available date with the specified employee
             // and save it to the data,base
@@ -74,6 +74,8 @@ namespace Bulldog.Api.Controllers
             var availableDates = await _employeeService.GetAvailableDates(Id);
             return Ok(availableDates);
         }
+
+        
 
     }
 }
