@@ -12,7 +12,7 @@ namespace Bulldog.Core.Domain
         public bool IsOpen { get; protected set; }
         public DayOfWeek DayOfWeek { get; protected set; }
         public ICollection<Break> Breaks { get; set; } = new List<Break>();
-        public WorkingHours WorkingHours { get; set; }
+        public WorkingHours? WorkingHours { get; set; }
         public Guid EmployeeId { get; protected set; }
 
         protected AvailableDate()

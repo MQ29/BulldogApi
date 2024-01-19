@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bulldog.Core.Domain;
+using Bulldog.Infrastructure.Commands.AvailableDates;
 using Bulldog.Infrastructure.Services.DTO;
 using System;
 using System.Collections.Generic;
@@ -19,8 +20,13 @@ namespace Bulldog.Infrastructure.Mappers
                 cfg.CreateMap<User, UserDto>();
                 cfg.CreateMap<Service, ServiceDto>();
                 cfg.CreateMap<Employee, EmployeeDto>();
+                cfg.CreateMap<EmployeeDto, Employee>();
                 cfg.CreateMap<AvailableDate, AvailableDateDto>();
                 cfg.CreateMap<AvailableDateDto, AvailableDate>();
+                cfg.CreateMap<CreateAvailableDate, AvailableDate>();
+                cfg.CreateMap<AvailableDate, CreateAvailableDate>();
+
+
             });
             return configuration.CreateMapper();
         }

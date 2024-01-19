@@ -28,20 +28,23 @@
                             {
                                 <div>
                                     <label>Rozpoczęcie:</label>
-                                    <select @bind="selectedStartTime">
-                                        @foreach (var hour in TimeHelper.GetHoursList())
+                                    <select @bind="availableDate.WorkingHours.StartTime">
+                                        @foreach (var time in TimeHelper.GetHoursList())
                                         {
-                                            <option value="@hour">@hour</option>
+                                            var timeSpanValue = TimeSpan.Parse(time);
+                                            <option value="@timeSpanValue" selected="@IsHourSelected(timeSpanValue, availableDate.WorkingHours.StartTime)">@time</option>
                                         }
                                     </select>
 
                                     <label>Zakończenie:</label>
-                                    <select @bind="selectedEndTime">
-                                        @foreach (var hour in TimeHelper.GetHoursList())
+                                    <select @bind="availableDate.WorkingHours.EndTime">
+                                        @foreach (var time in TimeHelper.GetHoursList())
                                         {
-                                            <option value="@hour">@hour</option>
+                                            var timeSpanValue = TimeSpan.Parse(time);
+                                            <option value="@timeSpanValue" selected="@IsHourSelected(timeSpanValue, availableDate.WorkingHours.EndTime)">@time</option>
                                         }
                                     </select>
+
                                 </div>
                             }
                         </div>
@@ -61,8 +64,9 @@ else
     [Parameter]
     public Guid EmployeeId { get; set; }
     IList<AvailableDateDto> availableDates = new List<AvailableDateDto>();
-    private string selectedStartTime { get; set; } = "10:00";
+    private string selectedStartTime { get; set; } = "11:00";
     private string selectedEndTime { get; set; } = "19:00";
+    private bool Mode = true;
     protected override async Task OnInitializedAsync()
     {
         await LoadAvailableDates();
@@ -70,12 +74,11 @@ else
 
     private async Task LoadAvailableDates()
     {
-        // Wywołaj API, aby pobrać dostępne daty
         availableDates = await ServiceApiService.GetAvailableDates(EmployeeId);
 
-        // Jeśli żadne daty nie są dostępne, utwórz domyślne obiekty AvailableDateDto dla każdego dnia tygodnia
         if (availableDates == null || !availableDates.Any())
         {
+            Mode = false;
             availableDates = new List<AvailableDateDto>();
             foreach (DayOfWeek dayOfWeek in Enum.GetValues(typeof(DayOfWeek)))
             {
@@ -112,24 +115,30 @@ else
         }
     }
 
+    private bool IsHourSelected(TimeSpan optionValue, TimeSpan selectedTime)
+    {
+        return optionValue == selectedTime;
+    }
+
+
     private async Task SaveAvailability()
     {
         try
         {
-            foreach (var item in availableDates)
+            if (Mode == false)
             {
-                Console.WriteLine(item.Id);
-                Console.WriteLine(item.EmployeeId);
-                Console.WriteLine(item.IsOpen);
-                Console.WriteLine(item.WorkingHours.StartTime.ToString());
-                Console.WriteLine(item.WorkingHours.EndTime.ToString());
+                Console.WriteLine("Nie Istnieją");
+                await ServiceApiService.AddAvailabilityDates(EmployeeId, availableDates);
             }
-            await ServiceApiService.AddAvailabilityDates(EmployeeId, availableDates);
+            else
+            {
+                Console.WriteLine("Istnieją");
+                await ServiceApiService.UpdateAvailabilityDates(EmployeeId, availableDates);
+            }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error in opening hours: {ex.Message}");
         }
-        //Logika dodanie do listy availabledates pracownika
     }
 }

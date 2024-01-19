@@ -11,7 +11,7 @@ namespace Bulldog.Infrastructure.Commands.AvailableDates
     {
         public bool IsOpen { get; set; }
         public DayOfWeek DayOfWeek { get; set; }
-        public List<Break> Breaks { get; set; }
+        public List<Break>? Breaks { get; set; }
         public WorkingHours WorkingHours { get; set; }
     }
 }

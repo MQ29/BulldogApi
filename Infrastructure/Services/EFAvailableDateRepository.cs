@@ -26,9 +26,20 @@ namespace Bulldog.Infrastructure.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<IList<AvailableDate>> GetAsync(Guid Id)
+        public async Task<IList<AvailableDate>> GetAsync(Guid employeeId)
         {
-            return await _dbContext.AvailableDates.Where(x => x.EmployeeId == Id).ToListAsync();
+            return await _dbContext.AvailableDates.Where(x => x.EmployeeId == employeeId).ToListAsync();
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return (await _dbContext.SaveChangesAsync() >= 0);
+        }
+
+        public async Task Update(AvailableDate availableDate)
+        {
+            _dbContext.AvailableDates.Update(availableDate);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Bulldog.Core.Domain;
 using Bulldog.Core.Repositories;
+using Bulldog.Infrastructure.Commands.AvailableDates;
 using Bulldog.Infrastructure.Services.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +30,7 @@ namespace Bulldog.Infrastructure.Services
             _availableDateRepository = availableDateRepository;
         }
 
-        public async Task AddAvailableDate(Guid employeeId,IList<AvailableDateDto> availableDates)
+        public async Task AddAvailableDate(Guid employeeId, IList<AvailableDateDto> availableDates)
         {
             try
             {
@@ -110,6 +112,28 @@ namespace Bulldog.Infrastructure.Services
             await _employeeRepository.RemoveAsync(Id);
         }
 
+        public async Task UpdateAvailableDates(Guid employeeId, IList<AvailableDateDto> availableDates)
+        {
+            try
+            {
+                var employee = await _employeeRepository.GetAsync(employeeId);
+                if (employee == null)
+                {
+                    throw new InvalidOperationException($"Employee with id {employeeId} not found.");
+                }
+                else
+                {
+                    var mappedAvailableDates = _mapper.Map<List<AvailableDate>>(availableDates);
+                    employee.AvailableDates = mappedAvailableDates;
+                    await _availableDateRepository.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
 
     }
 }
+

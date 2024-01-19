@@ -36,6 +36,14 @@ namespace Bulldog.Core.Domain
             AvailableDates.Add(availableDate);
         }
 
+        public void ClearAvailableDates()
+        {
+            foreach (var availableDate in AvailableDates)
+            {
+                AvailableDates.Remove(availableDate);
+            }
+        }
+
         public void AddService(string name, decimal price, int duration, Employee employee)
         {
             var service = Services.FirstOrDefault(x => x.Name == name);
@@ -55,7 +63,6 @@ namespace Bulldog.Core.Domain
             }
             _services.Remove(service);
         }
-
 
     }
 

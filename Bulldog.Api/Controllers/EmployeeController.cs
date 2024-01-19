@@ -70,8 +70,20 @@ namespace Bulldog.Api.Controllers
                 return StatusCode(500, $"Internal server error: {ex}");
             }
         }
-
         //ToDo Put InsertAvailableDate/{EmployeeId}
+        [HttpPut("UpdateAvailableDates/{EmployeeId}")]
+        public async Task<IActionResult> UpdateAvailableDate(Guid EmployeeId, [FromBody] IList<AvailableDateDto> availableDates)
+        {
+            try
+            {
+                await _employeeService.UpdateAvailableDates(EmployeeId, availableDates);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+        }
 
         [HttpGet("{Id}/availableDates")]
         public async Task<IActionResult> GetAvailableDates(Guid Id)

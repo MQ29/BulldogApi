@@ -73,7 +73,8 @@
 
     private void OnDateRender(Radzen.DateRenderEventArgs args)
     {
-        args.Disabled = !availableDates.Any(ad => ad.DayOfWeek == args.Date.DayOfWeek);
+        args.Disabled = !availableDates.Any(ad =>
+            ad.DayOfWeek == args.Date.DayOfWeek && ad.IsOpen);
     }
 
     private async Task LoadAvailableDates()
