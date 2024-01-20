@@ -19,28 +19,23 @@
     </div>
     @if (availableDates.Any(ad => ad.DayOfWeek == selectedDate.Value.DayOfWeek))
     {
-        var workingHours = availableDates
+        var availableDate = availableDates
             .Where(ad => ad.DayOfWeek == selectedDate.Value.DayOfWeek)
-            .Select(ad => ad.WorkingHours)
             .FirstOrDefault(); // Assuming there's only one set of working hours per day
 
-        if (workingHours != null)
+        if (availableDate != null)
         {
-            var startDateTime = selectedDate.Value.Date + workingHours.StartTime;
-            var endDateTime = selectedDate.Value.Date + workingHours.EndTime;
-
-            var timeIntervals = GenerateTimeIntervals(startDateTime, endDateTime);
-
+            Console.WriteLine("są availabedates");
             <div style="display: flex; overflow: auto; white-space: nowrap;">
-                @foreach (var timeInterval in timeIntervals.Take(visibleHours))
+                @foreach (var availableHour in availableDate.AvailableHours.Take(visibleHours))
                 {
-                    <button type="button" class="btn btn-outline-primary" @onclick="() => SelectHour(timeInterval)">
-                        @timeInterval.ToString("HH:mm")
+                    <button type="button" class="btn btn-outline-primary" @onclick="() => SelectHour(availableHour.Hour)">
+                        @availableHour.Hour.ToString("HH:mm")
                     </button>
                 }
             </div>
 
-            if (timeIntervals.Count > visibleHours)
+            @if (availableDate.AvailableHours.Any() && availableDate.AvailableHours.Count > visibleHours)
             {
                 <button type="button" class="btn btn-link" @onclick="() => ScrollHours()">
                     Show more hours
@@ -94,19 +89,5 @@
         // Increase the number of visible hours
         visibleHours += 5; // You can adjust this based on your preference
         StateHasChanged(); // Trigger a re-render to update the UI with the new set of visible hours
-    }
-
-    private List<DateTime> GenerateTimeIntervals(DateTime startTime, DateTime endTime)
-    {
-        var timeIntervals = new List<DateTime>();
-
-        DateTime currentInterval = startTime;
-        while (currentInterval <= endTime)
-        {
-            timeIntervals.Add(currentInterval);
-            currentInterval = currentInterval.AddMinutes(15);
-        }
-
-        return timeIntervals;
     }
 }

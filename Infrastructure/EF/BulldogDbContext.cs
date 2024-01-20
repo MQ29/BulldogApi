@@ -18,7 +18,7 @@ namespace Bulldog.Infrastructure.EF
         public DbSet<Employee> Employees { get; set; }
         public DbSet<AvailableDate> AvailableDates { get; set; }
         public DbSet<Break> Breaks { get; set; }
-
+        public DbSet<AvailableHour> AvailableHours { get; set; }
         public BulldogDbContext() { }
 
         public BulldogDbContext(DbContextOptions<BulldogDbContext> options) :base(options)

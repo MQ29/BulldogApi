@@ -64,6 +64,13 @@ namespace Bulldog.Core.Domain
             _services.Remove(service);
         }
 
+        public void GenerateAvailableHours()
+        {
+            foreach (var availableDate in AvailableDates)
+            {
+                availableDate.GenerateAvailableHours();
+            }
+        }
     }
 
   

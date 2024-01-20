@@ -12,8 +12,9 @@ namespace Bulldog.Infrastructure.Services.DTO
         public Guid Id { get;  set; }
         public bool IsOpen { get; set; }
         public DayOfWeek DayOfWeek { get;  set; }
-        public List<Break> Breaks { get;  set; }
+        public ICollection<Break>? Breaks { get; set; } 
         public WorkingHours? WorkingHours { get; set; }
+        public ICollection<AvailableHour> AvailableHours { get; set; } = new List<AvailableHour>();
         public Guid EmployeeId { get;  set; }
     }
 }

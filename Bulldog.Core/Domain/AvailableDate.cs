@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Bulldog.Core.Domain
 {
@@ -11,10 +12,10 @@ namespace Bulldog.Core.Domain
         public Guid Id { get; protected set; }
         public bool IsOpen { get; protected set; }
         public DayOfWeek DayOfWeek { get; protected set; }
-        public ICollection<Break> Breaks { get; set; } = new List<Break>();
+        public ICollection<Break>? Breaks { get; set; } = new List<Break>();
         public WorkingHours? WorkingHours { get; set; }
+        public ICollection<AvailableHour>? AvailableHours { get; set; } = new List<AvailableHour>();
         public Guid EmployeeId { get; protected set; }
-
         protected AvailableDate()
         {
             
@@ -27,6 +28,18 @@ namespace Bulldog.Core.Domain
             IsOpen = isOpen;
             WorkingHours = workingHours;
         }
+
+        public void GenerateAvailableHours()
+        {
+            DateTime currentInterval = DateTime.Today + WorkingHours.StartTime;
+
+            while (currentInterval < DateTime.Today + WorkingHours.EndTime)
+            {
+                AvailableHours.Add(new AvailableHour { Hour = currentInterval });
+                currentInterval = currentInterval.AddMinutes(15);
+            }
+        }
+
 
         public void AddBreaks(Break Break)
         {

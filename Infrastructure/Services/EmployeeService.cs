@@ -43,6 +43,7 @@ namespace Bulldog.Infrastructure.Services
                 foreach (var availableDate in mapppedAvilableDates)
                 {
                     employee.AddAvailableDate(availableDate);
+                    availableDate.GenerateAvailableHours();
                     await _availableDateRepository.AddAsync(availableDate);
                 }
             }
@@ -124,7 +125,17 @@ namespace Bulldog.Infrastructure.Services
                 else
                 {
                     var mappedAvailableDates = _mapper.Map<List<AvailableDate>>(availableDates);
+                    foreach (var existingAvailableDate in employee.AvailableDates)
+                    {
+                        existingAvailableDate.AvailableHours.Clear();
+                    }
+
                     employee.AvailableDates = mappedAvailableDates;
+
+                    foreach (var availableDate in employee.AvailableDates)
+                    {
+                        availableDate.GenerateAvailableHours();
+                    }
                     await _availableDateRepository.SaveChangesAsync();
                 }
             }
