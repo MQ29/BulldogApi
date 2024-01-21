@@ -14,7 +14,6 @@ namespace Bulldog.Core.Domain
         public DayOfWeek DayOfWeek { get; protected set; }
         public ICollection<Break>? Breaks { get; set; } = new List<Break>();
         public WorkingHours? WorkingHours { get; set; }
-        public ICollection<AvailableHour>? AvailableHours { get; set; } = new List<AvailableHour>();
         public Guid EmployeeId { get; protected set; }
         protected AvailableDate()
         {
@@ -28,18 +27,6 @@ namespace Bulldog.Core.Domain
             IsOpen = isOpen;
             WorkingHours = workingHours;
         }
-
-        public void GenerateAvailableHours()
-        {
-            DateTime currentInterval = DateTime.Today + WorkingHours.StartTime;
-
-            while (currentInterval < DateTime.Today + WorkingHours.EndTime)
-            {
-                AvailableHours.Add(new AvailableHour { Hour = currentInterval });
-                currentInterval = currentInterval.AddMinutes(15);
-            }
-        }
-
 
         public void AddBreaks(Break Break)
         {

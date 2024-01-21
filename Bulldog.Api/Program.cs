@@ -36,6 +36,7 @@ namespace Bulldog.Api
             builder.Services.AddScoped<IAvailableDateRepository, EFAvailableDateRepository>();
             builder.Services.AddSingleton(AutoMapperConfig.Initialize());
             builder.Services.AddDbContext<BulldogDbContext>();
+            builder.Services.AddScoped<IAvailableHourRepository, AvailableHourRepository>();
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",

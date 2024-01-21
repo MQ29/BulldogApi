@@ -3,13 +3,17 @@ using Bulldog.Core.Domain;
 using Bulldog.Core.Repositories;
 using Bulldog.Infrastructure.Commands.AvailableDates;
 using Bulldog.Infrastructure.Services.DTO;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Bulldog.Infrastructure.Services
 {
@@ -19,15 +23,17 @@ namespace Bulldog.Infrastructure.Services
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IUserRepository _userRepository;
         private readonly IAvailableDateRepository _availableDateRepository;
+        private readonly IAvailableHourRepository _availableHourRepository;
 
         public EmployeeService(IMapper mapper, IEmployeeRepository employeeRepository,
-            IUserRepository userRepository, IAvailableDateRepository availableDateRepository)
+            IUserRepository userRepository, IAvailableDateRepository availableDateRepository, IAvailableHourRepository availableHourRepository)
 
         {
             _mapper = mapper;
             _employeeRepository = employeeRepository;
             _userRepository = userRepository;
             _availableDateRepository = availableDateRepository;
+            _availableHourRepository = availableHourRepository;
         }
 
         public async Task AddAvailableDate(Guid employeeId, IList<AvailableDateDto> availableDates)
@@ -43,8 +49,31 @@ namespace Bulldog.Infrastructure.Services
                 foreach (var availableDate in mapppedAvilableDates)
                 {
                     employee.AddAvailableDate(availableDate);
-                    availableDate.GenerateAvailableHours();
                     await _availableDateRepository.AddAsync(availableDate);
+                }
+                DateTime currentDate = DateTime.Today;
+
+                for (int i = 0; i < 14; i++) //2 tygodnie, magic number powinno sie to dac ustawic
+                {
+                    var availableDateByDay = await _availableDateRepository.GetByDayOfWeek(currentDate.DayOfWeek);
+                    if (availableDateByDay.IsOpen)
+                    {
+                        Console.WriteLine($"Otwarte:{availableDateByDay.DayOfWeek}");
+                        DateTime Interval = currentDate + availableDateByDay.WorkingHours.StartTime;
+
+                        while (Interval < currentDate + availableDateByDay.WorkingHours.EndTime)
+                        {
+                            var availableHour = new AvailableHour(employee.Id, Interval);
+                            employee.AddAvailableHour(availableHour);
+                            await _availableHourRepository.AddAsync(availableHour);
+                            Interval = Interval.AddMinutes(15);
+                        }
+                        currentDate = currentDate.AddDays(1);
+                    }
+                    else
+                    {
+                        currentDate = currentDate.AddDays(1);
+                    }
                 }
             }
             catch (Exception ex)
@@ -52,7 +81,6 @@ namespace Bulldog.Infrastructure.Services
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
-
         public async Task Create(Guid userId)
         {
             var user = await _userRepository.GetAsync(userId);
@@ -125,18 +153,30 @@ namespace Bulldog.Infrastructure.Services
                 else
                 {
                     var mappedAvailableDates = _mapper.Map<List<AvailableDate>>(availableDates);
-                    foreach (var existingAvailableDate in employee.AvailableDates)
-                    {
-                        existingAvailableDate.AvailableHours.Clear();
-                    }
-
                     employee.AvailableDates = mappedAvailableDates;
-
-                    foreach (var availableDate in employee.AvailableDates)
-                    {
-                        availableDate.GenerateAvailableHours();
-                    }
                     await _availableDateRepository.SaveChangesAsync();
+
+                    await _availableHourRepository.EmptyTableAsync();
+                    DateTime currentDate = DateTime.Today;
+                    for (int i = 0; i < 14; i++) // 14 dni, czyli 2 tygodnie
+                    {
+                        var availableDate = await _availableDateRepository.GetByDayOfWeek(currentDate.DayOfWeek);
+                        if (availableDate.IsOpen)
+                        {
+                            DateTime Interval = currentDate + availableDate.WorkingHours.StartTime;
+
+                            while (Interval < currentDate + availableDate.WorkingHours.EndTime)
+                            {
+                                await _availableHourRepository.AddAsync(new AvailableHour(employee.Id, Interval));
+                                Interval = Interval.AddMinutes(15);
+                            }
+                            currentDate = currentDate.AddDays(1);// Przejście do następnego dnia
+                        }
+                        else
+                        {
+                            currentDate = currentDate.AddDays(1);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -144,6 +184,7 @@ namespace Bulldog.Infrastructure.Services
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
+
 
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Bulldog.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,8 +62,8 @@ namespace Bulldog.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsOpen = table.Column<bool>(type: "bit", nullable: false),
                     DayOfWeek = table.Column<int>(type: "int", nullable: false),
-                    WorkingHours_StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    WorkingHours_EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    WorkingHours_StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    WorkingHours_EndTime = table.Column<TimeSpan>(type: "time", nullable: true),
                     EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -71,6 +71,26 @@ namespace Bulldog.Infrastructure.Migrations
                     table.PrimaryKey("PK_AvailableDates", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AvailableDates_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AvailableHours",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Hour = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AvailableHours", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AvailableHours_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id",
@@ -124,6 +144,11 @@ namespace Bulldog.Infrastructure.Migrations
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AvailableHours_EmployeeId",
+                table: "AvailableHours",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Breaks_AvailableDateId",
                 table: "Breaks",
                 column: "AvailableDateId");
@@ -137,6 +162,9 @@ namespace Bulldog.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AvailableHours");
+
             migrationBuilder.DropTable(
                 name: "Breaks");
 

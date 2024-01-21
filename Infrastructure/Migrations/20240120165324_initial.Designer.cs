@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bulldog.Infrastructure.Migrations
 {
     [DbContext(typeof(BulldogDbContext))]
-    [Migration("20240120111617_availablehours")]
-    partial class availablehours
+    [Migration("20240120165324_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,15 +53,18 @@ namespace Bulldog.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AvailableDateId")
+                    b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Hour")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AvailableDateId");
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("AvailableHours");
                 });
@@ -217,9 +220,9 @@ namespace Bulldog.Infrastructure.Migrations
 
             modelBuilder.Entity("Bulldog.Core.Domain.AvailableHour", b =>
                 {
-                    b.HasOne("Bulldog.Core.Domain.AvailableDate", null)
+                    b.HasOne("Bulldog.Core.Domain.Employee", null)
                         .WithMany("AvailableHours")
-                        .HasForeignKey("AvailableDateId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -244,14 +247,14 @@ namespace Bulldog.Infrastructure.Migrations
 
             modelBuilder.Entity("Bulldog.Core.Domain.AvailableDate", b =>
                 {
-                    b.Navigation("AvailableHours");
-
                     b.Navigation("Breaks");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Employee", b =>
                 {
                     b.Navigation("AvailableDates");
+
+                    b.Navigation("AvailableHours");
 
                     b.Navigation("Services");
                 });

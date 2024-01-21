@@ -13,5 +13,6 @@ namespace Bulldog.Core.Repositories
         Task<IList<AvailableDate>> GetAsync(Guid employeeId);
         Task<bool> SaveChangesAsync();
         Task Update(AvailableDate availableDate);
+        Task<AvailableDate> GetByDayOfWeek(DayOfWeek dayOfWeek);
     }
 }

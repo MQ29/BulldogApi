@@ -32,7 +32,17 @@ namespace Bulldog.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
+        public void Reload(Employee employee)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task RemoveAsync(Guid Id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> SaveChangesAsync()
         {
             throw new NotImplementedException();
         }

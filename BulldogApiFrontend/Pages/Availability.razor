@@ -21,16 +21,18 @@
     {
         var availableDate = availableDates
             .Where(ad => ad.DayOfWeek == selectedDate.Value.DayOfWeek)
-            .FirstOrDefault(); // Assuming there's only one set of working hours per day
+            .FirstOrDefault();
+        // Assuming there's only one set of working hours per day
 
         if (availableDate != null)
         {
             Console.WriteLine("są availabedates");
+            Console.WriteLine(availableDate.AvailableHours.Count);
             <div style="display: flex; overflow: auto; white-space: nowrap;">
-                @foreach (var availableHour in availableDate.AvailableHours.Take(visibleHours))
+                @foreach (var availableHour in availableDate.AvailableHours)
                 {
                     <button type="button" class="btn btn-outline-primary" @onclick="() => SelectHour(availableHour.Hour)">
-                        @availableHour.Hour.ToString("HH:mm")
+                        @availableHour.Hour.Hour
                     </button>
                 }
             </div>
@@ -69,7 +71,7 @@
     private void OnDateRender(Radzen.DateRenderEventArgs args)
     {
         args.Disabled = !availableDates.Any(ad =>
-            ad.DayOfWeek == args.Date.DayOfWeek && ad.IsOpen);
+            ad.DayOfWeek == args.Date.DayOfWeek && ad.IsOpen && args.Date >= DateTime.Now.Date);
     }
 
     private async Task LoadAvailableDates()

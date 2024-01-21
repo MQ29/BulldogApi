@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulldog.Infrastructure.Services
+namespace Bulldog.Infrastructure.Repositories
 {
     public class EFAvailableDateRepository : IAvailableDateRepository
     {
@@ -29,6 +29,11 @@ namespace Bulldog.Infrastructure.Services
         public async Task<IList<AvailableDate>> GetAsync(Guid employeeId)
         {
             return await _dbContext.AvailableDates.Where(x => x.EmployeeId == employeeId).ToListAsync();
+        }
+
+        public async Task<AvailableDate> GetByDayOfWeek(DayOfWeek dayOfWeek)
+        {
+            return await _dbContext.AvailableDates.FirstOrDefaultAsync(x => x.DayOfWeek == dayOfWeek);
         }
 
         public async Task<bool> SaveChangesAsync()

@@ -56,6 +56,14 @@ namespace Bulldog.Infrastructure.Repositories
             var employees = await _dbContext.Employees.Where(x => x.Services.Any(x => x.Id == serviceId)).ToListAsync();
             return employees;
         }
+        public async Task<bool> SaveChangesAsync()
+        {
+            return (await _dbContext.SaveChangesAsync() >= 0);
+        }
 
+        public void Reload(Employee employee)
+        {
+            _dbContext.Entry(employee).Reload();
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace Bulldog.Core.Domain
             get { return _services; }
             set { _services = new List<Service>(value); }
         }
+        public ICollection<AvailableHour>? AvailableHours { get; set; } = new List<AvailableHour>();
         public ICollection<AvailableDate> AvailableDates { get; set; } = new List<AvailableDate>();
         protected Employee()
         {
@@ -30,10 +31,25 @@ namespace Bulldog.Core.Domain
             UserId = user.Id;
             Name = user.Username;
         }
+        public void GenerateAvailableHours(DateTime date)
+        {
+            var availableDate = AvailableDates.FirstOrDefault(x => x.DayOfWeek == date.DayOfWeek);
+            DateTime Interval = date + availableDate.WorkingHours.StartTime;
 
+            while (Interval < DateTime.Today + availableDate.WorkingHours.EndTime)
+            {
+                AvailableHours.Add(new AvailableHour(Id, Interval));
+                Interval = Interval.AddMinutes(15);
+            }
+        }
         public void AddAvailableDate(AvailableDate availableDate)
         {
             AvailableDates.Add(availableDate);
+        }
+
+        public void AddAvailableHour(AvailableHour availableHour)
+        {
+            AvailableHours.Add(availableHour);
         }
 
         public void ClearAvailableDates()
@@ -64,13 +80,6 @@ namespace Bulldog.Core.Domain
             _services.Remove(service);
         }
 
-        public void GenerateAvailableHours()
-        {
-            foreach (var availableDate in AvailableDates)
-            {
-                availableDate.GenerateAvailableHours();
-            }
-        }
     }
 
   
