@@ -105,12 +105,22 @@ namespace Bulldog.Infrastructure.Services
             return employeesToReturn;
         }
 
+        public async Task<IList<AvailableHour>> GetAllAvailableHours(Guid Id)
+        {
+            return await _availableHourRepository.GetAvailableHours(Id);
+        }
+
         public async Task<IList<AvailableDateDto>> GetAvailableDates(Guid Id)
         {
             var availableDates = await _availableDateRepository.GetAsync(Id);
             var availableDatesToReturn = _mapper.Map<IList<AvailableDateDto>>(availableDates);
             return availableDatesToReturn;
         }//TODO: Validation
+
+        public async Task<IList<AvailableHour>> GetAvailableHours(Guid employeeId, DateTime date)
+        {
+            return await _availableHourRepository.GetAvailableForDayAsync(employeeId, date);
+        }
 
         public async Task<EmployeeDto> GetById(Guid Id)
         {

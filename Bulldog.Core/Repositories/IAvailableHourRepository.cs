@@ -11,7 +11,8 @@ namespace Bulldog.Core.Repositories
     {
         Task<bool> SaveChangesAsync();
         Task AddAsync(AvailableHour hour);
+        Task<IList<AvailableHour>> GetAvailableForDayAsync(Guid employeeId, DateTime date);
         Task EmptyTableAsync();
-
+        Task<IList<AvailableHour>> GetAvailableHours(Guid Id);
     }
 }

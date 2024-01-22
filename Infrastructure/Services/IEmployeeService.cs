@@ -19,5 +19,7 @@ namespace Bulldog.Infrastructure.Services
         Task AddAvailableDate(Guid employeeId, IList<AvailableDateDto> availableDates);
         Task<IList<AvailableDateDto>> GetAvailableDates(Guid Id);
         Task UpdateAvailableDates(Guid employeeId, IList<AvailableDateDto> availableDates);
+        Task<IList<AvailableHour>> GetAvailableHours(Guid employeeId, DateTime date);
+        Task<IList<AvailableHour>> GetAllAvailableHours(Guid Id);
     }
 }

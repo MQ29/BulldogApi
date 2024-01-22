@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Bulldog.Infrastructure.Repositories
 {
@@ -32,6 +34,31 @@ namespace Bulldog.Infrastructure.Repositories
                 _dbContext.AvailableHours.RemoveRange(entitiesToRemove);
                 await _dbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task<IList<AvailableHour>> GetAvailableForDayAsync(Guid employeeId, DateTime date)
+        {
+            var employee = await _dbContext.Employees.FirstOrDefaultAsync(x => x.Id == employeeId);
+            if (employee != null)
+            {
+                var availableHours = await _dbContext.AvailableHours.Where(x => x.EmployeeId == employeeId && x.IsAvailable && x.Hour.Date == date.Date)
+                    .OrderBy(x => x.Hour).ToListAsync();
+                if (availableHours.Count > 0)
+                {
+                    return availableHours;
+                }
+            }
+            throw new Exception($"employee with id {employeeId} wasnt found.");
+        }
+
+        public async Task<IList<AvailableHour>> GetAvailableHours(Guid Id)
+        {
+            var employee = await _dbContext.Employees.FirstOrDefaultAsync(x => x.Id == Id);
+            if (employee != null)
+            {
+                return await _dbContext.AvailableHours.Where(x => x.EmployeeId == Id && x.IsAvailable).ToListAsync();
+            }
+            throw new Exception($"employee with id {Id} wasnt found.");
         }
 
         public async Task<bool> SaveChangesAsync()

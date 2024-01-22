@@ -5,7 +5,7 @@
 @inject IServiceApiService ServiceApiService
 
 <div class="rz-p-12 rz-text-align-center">
-    <RadzenDatePicker @bind-Value=@selectedDate Inline="true" DateRender="OnDateRender" />
+    <RadzenDatePicker @bind-Value=@selectedDate Inline="true" DateRender="OnDateRender" Change="() => OnDateSelected(selectedDate.Value)" />
 </div>
 
 @if (selectedDate != null)
@@ -22,22 +22,23 @@
         var availableDate = availableDates
             .Where(ad => ad.DayOfWeek == selectedDate.Value.DayOfWeek)
             .FirstOrDefault();
-        // Assuming there's only one set of working hours per day
 
         if (availableDate != null)
         {
-            Console.WriteLine("są availabedates");
-            Console.WriteLine(availableDate.AvailableHours.Count);
+
             <div style="display: flex; overflow: auto; white-space: nowrap;">
-                @foreach (var availableHour in availableDate.AvailableHours)
+                @foreach (var availableHour in availableHoursForDay)
                 {
-                    <button type="button" class="btn btn-outline-primary" @onclick="() => SelectHour(availableHour.Hour)">
-                        @availableHour.Hour.Hour
-                    </button>
+                    if(availableHour.IsAvailable)
+                    {
+                        <button type="button" class="btn btn-outline-primary" @onclick="() => SelectHour(availableHour.Hour)">
+                            @availableHour.Hour.ToString("HH:mm")
+                        </button>
+                    }
                 }
             </div>
 
-            @if (availableDate.AvailableHours.Any() && availableDate.AvailableHours.Count > visibleHours)
+            @if (availableHoursForDay.Any() && availableHoursForDay.Count > visibleHours)
             {
                 <button type="button" class="btn btn-link" @onclick="() => ScrollHours()">
                     Show more hours
@@ -61,22 +62,39 @@
     DateTime? selectedDate = DateTime.Now.Date;
     IList<AvailableDateDto> availableDates = new List<AvailableDateDto>();
     DateTime? selectedDateHour;
+    IList<AvailableHour> availableHoursForDay = new List<AvailableHour>();
+    IList<AvailableHour> allAvailableHours = new List<AvailableHour>();
     private int visibleHours = 5; // Initial number of visible hours
 
     protected override async Task OnInitializedAsync()
     {
         await LoadAvailableDates();
+        await LoadAvailableHours();
+        if (selectedDate.HasValue)
+        {
+            await LoadAvailableHoursForDay(selectedDate.Value);
+        }
     }
 
     private void OnDateRender(Radzen.DateRenderEventArgs args)
     {
         args.Disabled = !availableDates.Any(ad =>
-            ad.DayOfWeek == args.Date.DayOfWeek && ad.IsOpen && args.Date >= DateTime.Now.Date);
+            ad.DayOfWeek == args.Date.DayOfWeek && ad.IsOpen && args.Date >= DateTime.Now.Date) || !allAvailableHours.Any(x => x.Hour.Date == args.Date);
     }
 
     private async Task LoadAvailableDates()
     {
         availableDates = await ServiceApiService.GetAvailableDates(EmployeeId);
+    }
+
+    private async Task LoadAvailableHoursForDay(DateTime date)
+    {
+        availableHoursForDay = await ServiceApiService.GetAvailableHoursForDay(EmployeeId, date);
+    }
+
+    private async Task LoadAvailableHours()
+    {
+        allAvailableHours = await ServiceApiService.GetAllAvailableHours(EmployeeId);
     }
 
     private void SelectHour(DateTime selectedHour)
@@ -92,4 +110,15 @@
         visibleHours += 5; // You can adjust this based on your preference
         StateHasChanged(); // Trigger a re-render to update the UI with the new set of visible hours
     }
+
+    private async Task OnDateSelected(DateTime? newSelectedDate)
+    {
+        if (newSelectedDate.HasValue)
+        {
+            selectedDate = newSelectedDate.Value;
+            await LoadAvailableHoursForDay(selectedDate.Value);
+            StateHasChanged();
+        }
+    }
 }
+

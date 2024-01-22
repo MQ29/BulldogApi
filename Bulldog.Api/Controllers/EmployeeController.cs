@@ -92,7 +92,20 @@ namespace Bulldog.Api.Controllers
             return Ok(availableDates);
         }
 
-        
+        [HttpGet("{Id}/availableHours/{date}")]
+        public async Task<IActionResult> GetAvailableHoursForDay(Guid Id, DateTime date)
+        {
+            var availableHours = await _employeeService.GetAvailableHours(Id, date);
+            return Ok(availableHours);
+        }
+
+        [HttpGet("{Id}/availableHours")]
+        public async Task<IActionResult> GetAvailableHours(Guid Id)
+        {
+            var availableHours = await _employeeService.GetAllAvailableHours(Id);
+            return Ok(availableHours);
+        }
+
 
     }
 }

@@ -4,6 +4,8 @@ using System.Text;
 using Bulldog.Infrastructure.Services.DTO;
 using System.Collections.Generic;
 using Bulldog.Infrastructure.Commands.AvailableDates;
+using Bulldog.Core.Domain;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BulldogApiFrontend.Services
 {
@@ -104,6 +106,15 @@ namespace BulldogApiFrontend.Services
             }
         }
 
+        public async Task<IList<AvailableHour>> GetAvailableHoursForDay(Guid employeeId, DateTime date)
+        {
+            return await _httpClient.GetFromJsonAsync<IList<AvailableHour>>($"employees/{employeeId}/availableHours/{date.ToString("yyyy-MM-dd")}");
+        }
 
+        public async Task<IList<AvailableHour>> GetAllAvailableHours(Guid employeeId)
+        {
+            return await _httpClient.GetFromJsonAsync<IList<AvailableHour>>($"employees/{employeeId}/availableHours");
+        }
     }
 }
+
