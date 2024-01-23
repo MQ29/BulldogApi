@@ -13,8 +13,8 @@ namespace Bulldog.Tests.Services
     {
         public async Task Test()
         {
-            var userRepositoryMock = new Mock<IUserRepository>();
-            var userServiceMock = new Mock<IUserService>();
+            //var userRepositoryMock = new Mock<IUserRepository>();
+            //var userServiceMock = new Mock<IUserService>();
         }
     }
 }

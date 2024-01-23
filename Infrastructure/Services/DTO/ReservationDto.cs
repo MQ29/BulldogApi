@@ -9,10 +9,11 @@ namespace Bulldog.Infrastructure.Services.DTO
 {
     public class ReservationDto
     {
-        public Guid Id { get; protected set; }
-        public Service Service { get; protected set; }
-        public Employee Employee { get; protected set; }
-        public DateTime Date { get; protected set; }
-        public bool Status { get; protected set; }
+        public Guid Id { get;  set; }
+        public Guid UserId { get; set; }
+        public Guid ServiceId { get;  set; }
+        public Guid EmployeeId { get;  set; }
+        public DateTime Date { get;  set; }
+        public bool IsFinsished { get;  set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@page "/"
+
 @using Blazored.Modal
 @using Blazored.Modal.Services
 @using Bulldog.Infrastructure.Services.DTO
@@ -34,7 +35,7 @@ Welcome to your new app.
     }
     private void ClickedHours()
     {
-        terry = employees.FirstOrDefault(x => x.Name == "TerryDavis");
+        terry = employees.FirstOrDefault(x => x.Name == "terrydavis@wp.pl");
         if (terry == null)
         {
             Console.WriteLine("No employye found.");

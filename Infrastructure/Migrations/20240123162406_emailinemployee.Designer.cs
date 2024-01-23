@@ -4,6 +4,7 @@ using Bulldog.Infrastructure.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bulldog.Infrastructure.Migrations
 {
     [DbContext(typeof(BulldogDbContext))]
-    partial class BulldogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240123162406_emailinemployee")]
+    partial class emailinemployee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace Bulldog.Infrastructure.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("AvailableDates", (string)null);
+                    b.ToTable("AvailableDates");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.AvailableHour", b =>
@@ -63,7 +66,7 @@ namespace Bulldog.Infrastructure.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("AvailableHours", (string)null);
+                    b.ToTable("AvailableHours");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Break", b =>
@@ -85,7 +88,7 @@ namespace Bulldog.Infrastructure.Migrations
 
                     b.HasIndex("AvailableDateId");
 
-                    b.ToTable("Breaks", (string)null);
+                    b.ToTable("Breaks");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Employee", b =>
@@ -107,7 +110,7 @@ namespace Bulldog.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Reservation", b =>
@@ -138,7 +141,7 @@ namespace Bulldog.Infrastructure.Migrations
 
                     b.HasIndex("UserId1");
 
-                    b.ToTable("Reservations", (string)null);
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Service", b =>
@@ -164,7 +167,7 @@ namespace Bulldog.Infrastructure.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("Services", (string)null);
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.User", b =>
@@ -373,7 +376,7 @@ namespace Bulldog.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Bulldog.Core.Domain.AvailableDate.WorkingHours#Bulldog.Core.Domain.WorkingHours", "WorkingHours", b1 =>
+                    b.OwnsOne("Bulldog.Core.Domain.WorkingHours", "WorkingHours", b1 =>
                         {
                             b1.Property<Guid>("AvailableDateId")
                                 .HasColumnType("uniqueidentifier");
@@ -386,7 +389,7 @@ namespace Bulldog.Infrastructure.Migrations
 
                             b1.HasKey("AvailableDateId");
 
-                            b1.ToTable("AvailableDates", (string)null);
+                            b1.ToTable("AvailableDates");
 
                             b1.WithOwner()
                                 .HasForeignKey("AvailableDateId");

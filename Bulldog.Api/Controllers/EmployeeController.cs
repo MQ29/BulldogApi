@@ -4,6 +4,7 @@ using Bulldog.Infrastructure.Commands.Employees;
 using Bulldog.Infrastructure.Commands.Reservations;
 using Bulldog.Infrastructure.Services;
 using Bulldog.Infrastructure.Services.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,7 +46,7 @@ namespace Bulldog.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateEmployee request)
         {
-            await _employeeService.Create(request.UserId);
+            await _employeeService.Create(request.Email);
             return Ok();
         }
 

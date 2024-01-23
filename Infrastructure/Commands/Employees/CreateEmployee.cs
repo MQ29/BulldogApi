@@ -9,6 +9,6 @@ namespace Bulldog.Infrastructure.Commands.Employees
 {
     public class CreateEmployee : ICommand
     {
-        public Guid UserId { get; set; }
+        public string Email { get; set; }
     }
 }

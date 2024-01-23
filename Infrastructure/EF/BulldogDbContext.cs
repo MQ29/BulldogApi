@@ -1,4 +1,5 @@
 ﻿using Bulldog.Core.Domain;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Bulldog.Infrastructure.EF
 {
-    public class BulldogDbContext : DbContext
+    public class BulldogDbContext : IdentityDbContext<User>
     {
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<User> Users { get; set; }

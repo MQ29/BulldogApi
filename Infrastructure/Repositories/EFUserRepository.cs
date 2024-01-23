@@ -31,16 +31,16 @@ namespace Bulldog.Infrastructure.Repositories
             return await _dbContext.Users.ToListAsync();
         }
 
-        public async Task<User> GetAsync(Guid Id)
+        public async Task<User> GetByEmail(string email)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == Id);
+            var user =  await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if (user == null)
+            {
+                throw new Exception($"User wit email: {email} wasnt found.");
+            }
+            return user;
         }
-        public async Task<User> GetAsync(string email)
-        {
-            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
-        }
-
-        public async Task RemoveAsync(Guid Id)
+        public async Task RemoveAsync(string Id)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == Id);
             if (user == null)

@@ -11,7 +11,7 @@ namespace Bulldog.Infrastructure.Services
 {
     public interface IEmployeeService
     {
-        Task Create(Guid userId);
+        Task Create(string email);
         Task RemoveAsync(Guid Id);
         Task<EmployeeDto> GetById(Guid Id);
         Task<IList<EmployeeDto>> GetByServiceId(Guid Id);

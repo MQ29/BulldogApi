@@ -27,6 +27,11 @@ namespace Bulldog.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
+        public Task<Employee> GetByEmailAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IList<Employee>> GetEmployeesForServiceIdAsync(Guid serviceId)
         {
             throw new NotImplementedException();

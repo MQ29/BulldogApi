@@ -22,5 +22,6 @@ namespace Bulldog.Api.Controllers
             await _reservationService.Create(request.ServiceId, request.EmployeeId, request.Date);
             return Ok();
         }
+
     }
 }

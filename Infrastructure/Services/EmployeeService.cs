@@ -21,19 +21,19 @@ namespace Bulldog.Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IAvailableDateRepository _availableDateRepository;
         private readonly IAvailableHourRepository _availableHourRepository;
+        private readonly IUserRepository _userRepository;
 
         public EmployeeService(IMapper mapper, IEmployeeRepository employeeRepository,
-            IUserRepository userRepository, IAvailableDateRepository availableDateRepository, IAvailableHourRepository availableHourRepository)
+             IAvailableDateRepository availableDateRepository, IAvailableHourRepository availableHourRepository, IUserRepository userRepository)
 
         {
             _mapper = mapper;
             _employeeRepository = employeeRepository;
-            _userRepository = userRepository;
             _availableDateRepository = availableDateRepository;
             _availableHourRepository = availableHourRepository;
+            _userRepository = userRepository;
         }
 
         public async Task AddAvailableDate(Guid employeeId, IList<AvailableDateDto> availableDates)
@@ -81,13 +81,13 @@ namespace Bulldog.Infrastructure.Services
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
-        public async Task Create(Guid userId)
+        public async Task Create(string email)
         {
-            var user = await _userRepository.GetAsync(userId);
-            var employee = await _employeeRepository.GetAsync(userId);
+            var user = await _userRepository.GetByEmail(email);
+            var employee = await _employeeRepository.GetByEmailAsync(email);
             if (employee != null)
             {
-                throw new Exception($"Employee with id: '{userId}' already exists.");
+                throw new Exception($"Employee with id: '{email}' already exists.");
             }
             employee = new Employee(user);
             await _employeeRepository.AddAsync(employee);

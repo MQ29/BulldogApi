@@ -1,6 +1,7 @@
 ﻿@using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
 @page "/reservation"
+@attribute [Authorize]
 <h3>Reservation</h3>
 @inject IServiceApiService ServiceApiService
 @inject IModalService modal

@@ -65,5 +65,10 @@ namespace Bulldog.Infrastructure.Repositories
         {
             _dbContext.Entry(employee).Reload();
         }
+
+        public async Task<Employee> GetByEmailAsync(string email)
+        {
+            return await _dbContext.Employees.FirstOrDefaultAsync(x => x.Email == email);
+        }
     }
 }

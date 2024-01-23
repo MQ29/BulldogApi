@@ -38,12 +38,7 @@
                 }
             </div>
 
-            @if (availableHoursForDay.Any() && availableHoursForDay.Count > visibleHours)
-            {
-                <button type="button" class="btn btn-link" @onclick="() => ScrollHours()">
-                    Show more hours
-                </button>
-            }
+            <button class="btn btn-primary" @onclick="PostReservation">Dalej</button>
         }
     }
     else
@@ -100,8 +95,11 @@
     private void SelectHour(DateTime selectedHour)
     {
         selectedDateHour = selectedHour;
-        // Handle the selected hour
-        // For example: selectedDateHour = selectedHour;
+    }
+
+    private void PostReservation()
+    {
+        
     }
 
     private void ScrollHours()

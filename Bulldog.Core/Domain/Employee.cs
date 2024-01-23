@@ -11,8 +11,9 @@ namespace Bulldog.Core.Domain
     {
         private ICollection<Service> _services = new List<Service>();
         public Guid Id { get; protected set; }
-        public Guid UserId { get; protected set; }
-        public string Name { get; protected set; }
+        public string UserId { get; protected set; }
+        public string Email { get; protected set; }
+        public string? Name { get; protected set; }
         public IEnumerable<Service> Services
         {
             get { return _services; }
@@ -28,8 +29,9 @@ namespace Bulldog.Core.Domain
         public Employee(User user)
         {
             Id = Guid.NewGuid();
+            Name = user.UserName;
             UserId = user.Id;
-            Name = user.Username;
+            Email = user.Email;
         }
         public void GenerateAvailableHours(DateTime date)
         {
