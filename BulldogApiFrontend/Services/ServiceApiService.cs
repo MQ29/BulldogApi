@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Bulldog.Infrastructure.Commands.AvailableDates;
 using Bulldog.Core.Domain;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Bulldog.Infrastructure.Migrations;
 
 namespace BulldogApiFrontend.Services
 {
@@ -115,6 +116,18 @@ namespace BulldogApiFrontend.Services
         {
             return await _httpClient.GetFromJsonAsync<IList<AvailableHour>>($"employees/{employeeId}/availableHours");
         }
+
+        public async Task<EmployeeDto> GetByEmailAsync(string email)  
+        {
+            return await _httpClient.GetFromJsonAsync<EmployeeDto>($"employees/{email}");
+        }
+
+        public Task<EmployeeDto> GetByUserIdAsync(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+       
     }
 }
 

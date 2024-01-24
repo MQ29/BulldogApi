@@ -14,6 +14,7 @@ namespace Bulldog.Infrastructure.Services
         Task Create(string email);
         Task RemoveAsync(Guid Id);
         Task<EmployeeDto> GetById(Guid Id);
+        Task<EmployeeDto> GetByEmail(string email);
         Task<IList<EmployeeDto>> GetByServiceId(Guid Id);
         Task<IList<EmployeeDto>> GetAll();
         Task AddAvailableDate(Guid employeeId, IList<AvailableDateDto> availableDates);

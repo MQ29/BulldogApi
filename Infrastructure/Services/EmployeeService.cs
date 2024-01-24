@@ -146,6 +146,17 @@ namespace Bulldog.Infrastructure.Services
 
         }
 
+        public async Task<EmployeeDto> GetByEmail(string email)
+        {
+            var employee = await _employeeRepository.GetByEmailAsync(email);
+            if (employee != null)
+            {
+                var mappedemployee = _mapper.Map<EmployeeDto>(employee);
+                return mappedemployee;
+            }
+            throw new Exception($"Employee with email: {email} wasnt found.");
+        }
+
         public async Task RemoveAsync(Guid Id)
         {
             await _employeeRepository.RemoveAsync(Id);

@@ -70,5 +70,10 @@ namespace Bulldog.Infrastructure.Repositories
         {
             return await _dbContext.Employees.FirstOrDefaultAsync(x => x.Email == email);
         }
+
+        public async Task<Employee> GetByUserIdAsync(string userId)
+        {
+            return await _dbContext.Employees.FirstOrDefaultAsync(x => x.UserId == userId);
+        }
     }
 }

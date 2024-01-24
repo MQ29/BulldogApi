@@ -49,7 +49,8 @@ namespace BulldogApiFrontend.Identity
                     var claims = new List<Claim>
                     {
                         new(ClaimTypes.Name, userInfo.Email),
-                        new(ClaimTypes.Email, userInfo.Email)
+                        new(ClaimTypes.Email, userInfo.Email),
+                        new(ClaimTypes.NameIdentifier, userInfo.Id)
                     };
 
                     // add any additional claims

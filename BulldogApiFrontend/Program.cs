@@ -16,6 +16,7 @@ namespace BulldogApiFrontend
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after"); //cotojest
             builder.Configuration.AddJsonFile("appsettings.json");
+            builder.Services.AddBlazoredModal();
             builder.Services.AddScoped<CookieHandler>();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
@@ -23,7 +24,6 @@ namespace BulldogApiFrontend
 sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7112") });
             builder.Services.AddScoped<IServiceApiService, ServiceApiService>();
-            builder.Services.AddBlazoredModal();
             builder.Services.AddScoped<DialogService>();
             builder.Services.AddHttpClient(
     "Auth",

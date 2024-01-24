@@ -1,7 +1,7 @@
 ﻿@using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
 @page "/reservation"
-@attribute [Authorize]
+@* @attribute [Authorize] *@
 <h3>Reservation</h3>
 @inject IServiceApiService ServiceApiService
 @inject IModalService modal
@@ -55,11 +55,19 @@ else
     }
     private void OpenModal()
     {
-        var options = new ModalOptions()
-            {
-                AnimationType = ModalAnimationType.None
-            };
-        modal.Show<Form>("Wybierz pracownika", parameters, options);
+        try
+        {
+            Console.WriteLine("OpenModal() called");
+            var options = new ModalOptions()
+                {
+                    AnimationType = ModalAnimationType.None
+                };
+            modal.Show<Form>("Wybierz pracownika", parameters, options);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error opening modal: {ex.Message}");
+        }
 
     }
 

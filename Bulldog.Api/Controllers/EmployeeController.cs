@@ -27,6 +27,13 @@ namespace Bulldog.Api.Controllers
             return Ok(employee);
         }
 
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetByEmail(string email)
+        {
+            var employee = await _employeeService.GetByEmail(email);
+            return Ok(employee);
+        }
+
         [HttpGet("all")]
         public async Task<IActionResult> GetAll()
         {

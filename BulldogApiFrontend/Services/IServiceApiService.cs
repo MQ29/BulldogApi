@@ -1,11 +1,14 @@
 ﻿using Bulldog.Core.Domain;
 using Bulldog.Infrastructure.Commands.AvailableDates;
+using Bulldog.Infrastructure.Migrations;
 using Bulldog.Infrastructure.Services.DTO;
 
 namespace BulldogApiFrontend.Services
 {
     public interface IServiceApiService
     {
+        Task<EmployeeDto> GetByUserIdAsync(string userId);
+        Task<EmployeeDto> GetByEmailAsync(string userMail);
         Task<IList<ServiceDto>> GetAllServies();
         Task<ServiceDto> Get(Guid Id);
         Task<IList<EmployeeDto>> GetEmployyesForServiceId(Guid Id);
