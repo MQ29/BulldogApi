@@ -10,7 +10,7 @@ namespace Bulldog.Infrastructure.Services.DTO
     public class ReservationDto
     {
         public Guid Id { get;  set; }
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public Guid ServiceId { get;  set; }
         public Guid EmployeeId { get;  set; }
         public DateTime Date { get;  set; }

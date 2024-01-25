@@ -9,7 +9,7 @@ namespace Bulldog.Core.Domain
     public class Reservation
     {
         public Guid Id { get; protected set; }
-        public Guid UserId { get; protected set; }
+        public string UserId { get; protected set; }
         public Guid ServiceId { get; protected set; }
         public Guid EmployeeId { get; protected set; }
         public DateTime Date { get; protected set; }
@@ -20,9 +20,10 @@ namespace Bulldog.Core.Domain
             
         }
 
-        public Reservation(Guid serviceId, Guid employeeId, DateTime date)
+        public Reservation(string userId, Guid serviceId, Guid employeeId, DateTime date)
         {
             Id = Guid.NewGuid();
+            UserId = userId;
             ServiceId = serviceId;
             EmployeeId = employeeId;
             Date = date;

@@ -10,7 +10,7 @@ using System.Text.Json;
 namespace Bulldog.Api.Controllers
 {
     [ApiController]
-    [Route("api/services")]
+    [Route("api/services")] //route do zmiany
     public class ServiceController : ControllerBase
     {
         private readonly IServiceService _serviceService;

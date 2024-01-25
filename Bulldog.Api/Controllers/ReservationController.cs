@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bulldog.Api.Controllers
 {
-    [Route("[controller]")]
+    [Route("Reservations")]
     [ApiController]
     public class ReservationController : ControllerBase
     {
@@ -19,7 +19,8 @@ namespace Bulldog.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateReservation request)
         {
-            await _reservationService.Create(request.ServiceId, request.EmployeeId, request.Date);
+
+            await _reservationService.Create(request.UserId, request.ServiceId, request.EmployeeId, request.Date);
             return Ok();
         }
 

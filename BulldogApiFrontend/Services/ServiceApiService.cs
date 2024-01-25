@@ -127,7 +127,31 @@ namespace BulldogApiFrontend.Services
             throw new NotImplementedException();
         }
 
-       
+        public async Task AddReservation(Reservation reservation)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync($"Reservations", reservation);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseBody = await response.Content.ReadAsStreamAsync();
+
+                    var addedavailableDates = await JsonSerializer.DeserializeAsync<IList<AvailableDateDto>>(responseBody, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}");
+                    throw new Exception($"Error while creating reservation. Status code: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in service: {ex.Message}");
+            }
+        }
     }
 }
 

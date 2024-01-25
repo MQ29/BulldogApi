@@ -2,8 +2,9 @@
 @using Bulldog.Core.Domain
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
+@using System.Security.Claims
 @inject IServiceApiService ServiceApiService
-
+@inject AuthenticationStateProvider Auth
 <div class="rz-p-12 rz-text-align-center">
     <RadzenDatePicker @bind-Value=@selectedDate Inline="true" DateRender="OnDateRender" Change="() => OnDateSelected(selectedDate.Value)" />
 </div>
@@ -69,6 +70,13 @@
         {
             await LoadAvailableHoursForDay(selectedDate.Value);
         }
+        var authenticationState = await Auth.GetAuthenticationStateAsync();
+        var user = authenticationState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userEmail = user.FindFirstValue(ClaimTypes.Email);
+        }
+
     }
 
     private void OnDateRender(Radzen.DateRenderEventArgs args)
@@ -99,7 +107,8 @@
 
     private void PostReservation()
     {
-        
+
+        var reservation = new Reservation();
     }
 
     private void ScrollHours()

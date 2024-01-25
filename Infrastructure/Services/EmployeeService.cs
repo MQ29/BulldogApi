@@ -125,36 +125,37 @@ namespace Bulldog.Infrastructure.Services
         public async Task<EmployeeDto> GetById(Guid Id)
         {
             var employee = await _employeeRepository.GetAsync(Id);
-            if (employee != null)
+            if (employee is null)
             {
-                var employeeToReturn = _mapper.Map<EmployeeDto>(employee);
-                return employeeToReturn;
+                throw new Exception($"Error while getting by Id: {Id}");
             }
-            throw new Exception($"Error while getting by Id: {Id}");
+            var employeeToReturn = _mapper.Map<EmployeeDto>(employee);
+            return employeeToReturn;
 
         }
 
         public async Task<IList<EmployeeDto>> GetByServiceId(Guid Id)
         {
             var employees = await _employeeRepository.GetEmployeesForServiceIdAsync(Id);
-            if (employees.Count > 0)
+            if (employees.Count == 0)
             {
-                var employeesDto = _mapper.Map<IList<EmployeeDto>>(employees);
-                return employeesDto;
+                throw new Exception($"No employees found for service with id: {Id}");
             }
-            throw new Exception($"No employees found for service with id: {Id}");
+            var employeesDto = _mapper.Map<IList<EmployeeDto>>(employees);
+            return employeesDto;
 
         }
 
         public async Task<EmployeeDto> GetByEmail(string email)
         {
             var employee = await _employeeRepository.GetByEmailAsync(email);
-            if (employee != null)
+            if (employee is null)
             {
-                var mappedemployee = _mapper.Map<EmployeeDto>(employee);
-                return mappedemployee;
+                throw new Exception($"Employee with email: {email} wasnt found.");
             }
-            throw new Exception($"Employee with email: {email} wasnt found.");
+            var mappedemployee = _mapper.Map<EmployeeDto>(employee);
+            return mappedemployee;
+
         }
 
         public async Task RemoveAsync(Guid Id)
@@ -167,36 +168,33 @@ namespace Bulldog.Infrastructure.Services
             try
             {
                 var employee = await _employeeRepository.GetAsync(employeeId);
-                if (employee == null)
+                if (employee is null)
                 {
                     throw new InvalidOperationException($"Employee with id {employeeId} not found.");
                 }
-                else
+                var mappedAvailableDates = _mapper.Map<List<AvailableDate>>(availableDates);
+                employee.AvailableDates = mappedAvailableDates;
+                await _availableDateRepository.SaveChangesAsync();
+
+                await _availableHourRepository.EmptyTableAsync();
+                DateTime currentDate = DateTime.Today;
+                for (int i = 0; i < 14; i++) // 14 dni, czyli 2 tygodnie
                 {
-                    var mappedAvailableDates = _mapper.Map<List<AvailableDate>>(availableDates);
-                    employee.AvailableDates = mappedAvailableDates;
-                    await _availableDateRepository.SaveChangesAsync();
-
-                    await _availableHourRepository.EmptyTableAsync();
-                    DateTime currentDate = DateTime.Today;
-                    for (int i = 0; i < 14; i++) // 14 dni, czyli 2 tygodnie
+                    var availableDate = await _availableDateRepository.GetByDayOfWeek(currentDate.DayOfWeek);
+                    if (availableDate.IsOpen)
                     {
-                        var availableDate = await _availableDateRepository.GetByDayOfWeek(currentDate.DayOfWeek);
-                        if (availableDate.IsOpen)
-                        {
-                            DateTime Interval = currentDate + availableDate.WorkingHours.StartTime;
+                        DateTime Interval = currentDate + availableDate.WorkingHours.StartTime;
 
-                            while (Interval < currentDate + availableDate.WorkingHours.EndTime)
-                            {
-                                await _availableHourRepository.AddAsync(new AvailableHour(employee.Id, Interval));
-                                Interval = Interval.AddMinutes(15);
-                            }
-                            currentDate = currentDate.AddDays(1);// Przejście do następnego dnia
-                        }
-                        else
+                        while (Interval < currentDate + availableDate.WorkingHours.EndTime)
                         {
-                            currentDate = currentDate.AddDays(1);
+                            await _availableHourRepository.AddAsync(new AvailableHour(employee.Id, Interval));
+                            Interval = Interval.AddMinutes(15);
                         }
+                        currentDate = currentDate.AddDays(1);// Przejście do następnego dnia
+                    }
+                    else
+                    {
+                        currentDate = currentDate.AddDays(1);
                     }
                 }
             }

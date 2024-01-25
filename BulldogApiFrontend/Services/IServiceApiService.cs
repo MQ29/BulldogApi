@@ -18,5 +18,6 @@ namespace BulldogApiFrontend.Services
         Task<IList<AvailableHour>> GetAllAvailableHours(Guid employeeId);
         Task AddAvailabilityDates(Guid employeeId, IList<AvailableDateDto> availableDates);
         Task<bool> UpdateAvailabilityDates(Guid EmployeeId,IList<AvailableDateDto> availableDates);
+        Task AddReservation(Reservation reservation);
     }
 }

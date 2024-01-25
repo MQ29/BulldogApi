@@ -21,14 +21,11 @@ namespace Bulldog.Infrastructure.Services
             _mapper = mapper;
             _reservationRepository = reservationRepository;
         }
-        public async Task Create(Guid serviceId, Guid employeeId, DateTime date)
+        public async Task Create(string userId, Guid serviceId, Guid employeeId, DateTime date)
         {
-            // Tutaj możesz wykorzystać identyfikatory do utworzenia obiektu Reservation.
 
-            // Następnie tworzysz rezerwację:
-            var reservation = new Reservation(serviceId, employeeId, date);
+            var reservation = new Reservation(userId, serviceId, employeeId, date);
 
-            // Dodaj do repozytorium rezerwacji:
             await _reservationRepository.AddAsync(reservation);
         }
 
