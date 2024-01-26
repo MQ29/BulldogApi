@@ -39,7 +39,6 @@ namespace Bulldog.Infrastructure.EF
                 .WithOne()
                 .HasForeignKey(b => b.AvailableDateId);
 
-            // Dodaj inne konfiguracje dla pozostałych klas
 
             base.OnModelCreating(modelBuilder);
         }

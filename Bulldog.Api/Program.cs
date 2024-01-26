@@ -4,10 +4,15 @@ using Autofac.Extensions.DependencyInjection;
 using Bulldog.Core.Domain;
 using Bulldog.Core.Repositories;
 using Bulldog.Infrastructure.EF;
+using Bulldog.Infrastructure.Helpers;
 using Bulldog.Infrastructure.Mappers;
 using Bulldog.Infrastructure.Repositories;
 using Bulldog.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace Bulldog.Api
 {
@@ -18,13 +23,9 @@ namespace Bulldog.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
+            ConfigurationManager configuration = builder.Configuration;
             builder.Services.AddAuthorization();
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<IEmployeeRepository, EFEmployeeRepository>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
@@ -32,11 +33,35 @@ namespace Bulldog.Api
             builder.Services.AddScoped<IServiceRepository, EFServiceRepository>();
             builder.Services.AddScoped<IReservationRepository, EFReservationRepository>();
             builder.Services.AddScoped<IAvailableDateRepository, EFAvailableDateRepository>();
+            builder.Services.AddScoped<IAvailableHourRepository, AvailableHourRepository>();
             builder.Services.AddScoped<IUserRepository, EFUserRepository>();
             builder.Services.AddSingleton(AutoMapperConfig.Initialize());
             builder.Services.AddDbContext<BulldogDbContext>();
-            builder.Services.AddScoped<IAvailableHourRepository, AvailableHourRepository>();
-            builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<BulldogDbContext>();
+            builder.Services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<BulldogDbContext>()
+                .AddDefaultTokenProviders();
+            builder.Services.Configure<JwtSection>(builder.Configuration.GetSection("JwtSection"));
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.SaveToken = true;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidAudience = configuration["JWT:ValidAudience"],
+                        ValidIssuer = configuration["JWT:ValidIssuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+                    };
+                });
+            
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
@@ -47,7 +72,10 @@ namespace Bulldog.Api
                     .AllowCredentials());
             }
            );
-
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
             var containerBuilder = new ContainerBuilder();
 
             var app = builder.Build();
@@ -64,12 +92,11 @@ namespace Bulldog.Api
             app.UseRouting();
 
             app.UseCors("AllowSpecificOrigin");
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
             app.MapControllers();
-            app.MapIdentityApi<User>();
 
             app.Run();
         }
