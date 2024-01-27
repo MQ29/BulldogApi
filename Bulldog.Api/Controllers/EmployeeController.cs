@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bulldog.Api.Controllers
 {
+    [Authorize]
     [Route("employees")]
     [ApiController]
     public class EmployeeController : ControllerBase

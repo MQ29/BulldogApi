@@ -12,7 +12,7 @@ namespace Bulldog.Core.Domain
         public string UserId { get; protected set; }
         public Guid ServiceId { get; protected set; }
         public Guid EmployeeId { get; protected set; }
-        public DateTime Date { get; protected set; }
+        public DateTime? Date { get; protected set; }
         public bool IsFinsished { get; protected set; }//unfinished false, finished true
 
         protected Reservation()
@@ -20,7 +20,7 @@ namespace Bulldog.Core.Domain
             
         }
 
-        public Reservation(string userId, Guid serviceId, Guid employeeId, DateTime date)
+        public Reservation(string userId, Guid serviceId, Guid employeeId, DateTime? date)
         {
             Id = Guid.NewGuid();
             UserId = userId;

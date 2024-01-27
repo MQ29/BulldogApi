@@ -1,12 +1,8 @@
 ﻿@page "/openinghours"
-@attribute [Authorize]
 @using Bulldog.Core.Domain
 @using Bulldog.Infrastructure.Services.DTO
-@using BulldogApiFrontend.Identity
 @using BulldogApiFrontend.Services
 @using System.Security.Claims
-@inject IAccountManagement Acct
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IServiceApiService ServiceApiService
 
 <h3>Godziny otwarcia</h3>
@@ -74,16 +70,16 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authenticationState.User;
-        if (user.Identity != null && user.Identity.IsAuthenticated)
-        {
-            var userEmail = user.FindFirstValue(ClaimTypes.Email);
-            Console.WriteLine($"Email usera:{userEmail}");
-            var employee = await ServiceApiService.GetByEmailAsync(userEmail);
-            EmployeeId = employee.Id;
-            await LoadAvailableDates(employee.Id);
-        }
+        // var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        // var user = authenticationState.User;
+        // if (user.Identity != null && user.Identity.IsAuthenticated)
+        // {
+        //     var userEmail = user.FindFirstValue(ClaimTypes.Email);
+        //     Console.WriteLine($"Email usera:{userEmail}");
+        //     var employee = await ServiceApiService.GetByEmailAsync(userEmail);
+        //     EmployeeId = employee.Id;
+        //     await LoadAvailableDates(employee.Id);
+        // }
 
     }
 

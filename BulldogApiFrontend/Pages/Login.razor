@@ -1,77 +1,53 @@
 ﻿@page "/login"
-@using BulldogApiFrontend.Identity
-@inject IAccountManagement Acct
+@using Bulldog.Core.Domain
+@using BulldogApiFrontend.Services
+@inject IAuthenticationService AuthenticationService;
 
-<AuthorizeView>
-    <Authorized>
-        <div class="alert alert-success">You are logged in as @context.User.Identity?.Name.</div>
-    </Authorized>
-    <NotAuthorized>
-        <h1>Login</h1>
-        @if (errors)
-        {
-            @foreach (var error in errorList)
-            {
-                <div class="alert alert-danger">@error</div>
-            }
-        }
-        <div class="flex-outer">
-            <div>
-                <label for="email">
-                    Email:
-                </label>
-                <input required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
-            </div>
 
-            <div>
-                <label for="password">
-                    Password:
-                </label>
-                <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
-            </div>
-            <div>
-                <button @onclick="DoLoginAsync">Login</button>
-            </div>
+<fieldset disabled="@(expiration is not null)">
+    <EditForm Model="@model" OnValidSubmit="SubmitAsync">
+        <div>
+            <label for="username">Username:</label>
+            <InputText @bind-Value="@model.Username" id="username" name="username" required />
         </div>
-    </NotAuthorized>
-</AuthorizeView>
+        <div>
+            <label for="password">Password:</label>
+            <InputText type="password" @bind-Value="@model.Password" id="password" name="password" required />
+        </div>
+        <div>
+            <button type="submit">Login</button>
+        </div>
+    </EditForm>
+</fieldset>
+
+@if (expiration is not null)
+{
+    <p>You are logged in until @expiration?.ToLongTimeString()</p>
+}
+
+@if (errorMessage is not null)
+{
+    <p class="error">@errorMessage</p>
+}
 
 @code {
-    private bool success, errors;
-    private string email = string.Empty;
-    private string password = string.Empty;
-    private string[] errorList = [];
+    private LoginModel model = new LoginModel();
+    private DateTime? expiration;
+    private string? errorMessage;
 
-    public async Task DoLoginAsync()
+    private async Task SubmitAsync()
     {
-        success = errors = false;
-        errorList = [];
-
-        if (string.IsNullOrWhiteSpace(email))
+        try
         {
-            errors = true;
-            errorList = ["Email is required."];
-            return;
+            expiration = await AuthenticationService.LoginAsync(model);
+
+            errorMessage = null;
         }
-
-        if (string.IsNullOrWhiteSpace(password))
+        catch (Exception ex)
         {
-            errors = true;
-            errorList = ["Password is required."];
-            return;
-        }
+            expiration = null;
 
-        var result = await Acct.LoginAsync(email!, password!);
-
-        if (result.Succeeded)
-        {
-            success = true;
-            email = password = string.Empty;
-        }
-        else
-        {
-            errors = true;
-            errorList = result.ErrorList;
+            errorMessage = ex.Message;
         }
     }
 }

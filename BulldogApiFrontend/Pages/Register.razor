@@ -1,10 +1,10 @@
 ﻿@page "/register"
-@using BulldogApiFrontend.Identity
-@inject IAccountManagement Acct
-
+@using Bulldog.Core.Domain
+@using BulldogApiFrontend.Services
+@inject ServiceApiService ServiceApiService
 <AuthorizeView>
     <Authorized>
-        <div class="alert alert-success">You are logged in as @context.User.Identity?.Name.</div>
+        @* <div class="alert alert-success">You are logged in as @context.User.Identity?.Name.</div> *@
     </Authorized>
     <NotAuthorized>
         <h1>Register</h1>
@@ -27,22 +27,23 @@
                     <label for="email">
                         Email:
                     </label>
-                    <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
+                    <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="registerModel.Email" />
+                </div>
+
+                <div>
+                    <label for="username">
+                        Username:
+                    </label>
+                    <input required id="username" name="usernameInput" placeholder="Enter your username" type="text" @bind-value="registerModel.Username" />
                 </div>
 
                 <div>
                     <label for="password">
                         Password:
                     </label>
-                    <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" /><br />
+                    <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="registerModel.Password" /><br />
                 </div>
 
-                <div>
-                    <label for="confirmPassword">
-                        Retype password:
-                    </label>
-                    <input required id="confirmPassword" name="confirmPasswordInput" placeholder="Re-enter your password" type="password" @bind-value="confirmPassword" />
-                </div>
 
                 <div>
                     <button @onclick="DoRegisterAsync">Register</button>
@@ -53,56 +54,21 @@
 </AuthorizeView>
 
 @code {
-    private bool success, errors;
-    private string email = string.Empty;
-    private string password = string.Empty;
-    private string confirmPassword = string.Empty;
-    private string[] errorList = [];
-
+    private RegisterModel registerModel = new RegisterModel(); 
+    private bool success = false;
+    private bool errors = false;
+    private List<string> errorList = new List<string>();
     public async Task DoRegisterAsync()
     {
-        success = errors = false;
-        errorList = [];
-
-        if (string.IsNullOrWhiteSpace(email))
-        {
-            errors = true;
-            errorList = ["Email is required."];
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(password))
-        {
-            errors = true;
-            errorList = ["Password is required."];
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(confirmPassword))
-        {
-            errors = true;
-            errorList = ["Please confirm your password."];
-            return;
-        }
-
-        if (password != confirmPassword)
-        {
-            errors = true;
-            errorList = ["Passwords don't match."];
-            return;
-        }
-
-        var result = await Acct.RegisterAsync(email!, password!);
-
-        if (result.Succeeded)
-        {
-            success = true;
-            email = password = confirmPassword = string.Empty;
-        }
-        else
-        {
-            errors = true;
-            errorList = result.ErrorList;
-        }
+        // try
+        // {
+        //     await ServiceApiService.Register(registerModel);
+        //     success = true;
+        // }
+        // catch (Exception ex)
+        // {
+        //     errors = true;
+        //     errorList.Add($"Błąd rejestracji: {ex.Message}");
+        // }
     }
 }

@@ -3,12 +3,12 @@
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
 @using System.Security.Claims
+@using System.IdentityModel.Tokens.Jwt
 @inject IServiceApiService ServiceApiService
-@inject AuthenticationStateProvider Auth
+@inject IAuthenticationService AuthenticationService
 <div class="rz-p-12 rz-text-align-center">
     <RadzenDatePicker @bind-Value=@selectedDate Inline="true" DateRender="OnDateRender" Change="() => OnDateSelected(selectedDate.Value)" />
 </div>
-
 @if (selectedDate != null)
 {
     <h3>Available Hours for @selectedDate.Value.Date.ToString("dd.MM.yyyy")</h3>
@@ -61,6 +61,7 @@
     IList<AvailableHour> availableHoursForDay = new List<AvailableHour>();
     IList<AvailableHour> allAvailableHours = new List<AvailableHour>();
     private int visibleHours = 5; // Initial number of visible hours
+    private string UserId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,13 +71,19 @@
         {
             await LoadAvailableHoursForDay(selectedDate.Value);
         }
-        var authenticationState = await Auth.GetAuthenticationStateAsync();
-        var user = authenticationState.User;
-        if (user.Identity != null && user.Identity.IsAuthenticated)
+
+        var jwtToken = await AuthenticationService.GetJwtAsync();
+        if (!string.IsNullOrEmpty(jwtToken))
         {
-            var userEmail = user.FindFirstValue(ClaimTypes.Email);
+            UserId = GetIdFromToken(jwtToken);
         }
 
+    }
+
+    private string GetIdFromToken(string token)
+    {
+        var jwt = new JwtSecurityToken(token);
+        return jwt.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
     }
 
     private void OnDateRender(Radzen.DateRenderEventArgs args)
@@ -107,8 +114,15 @@
 
     private void PostReservation()
     {
-
-        var reservation = new Reservation();
+        try
+        {
+            Reservation reservation = new Reservation(UserId, ServiceId, EmployeeId, selectedDateHour);
+            ServiceApiService.AddReservation(reservation);
+        }
+        catch (Exception Ex)
+        {
+            Console.WriteLine(Ex.Message);
+        }
     }
 
     private void ScrollHours()

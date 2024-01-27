@@ -7,6 +7,7 @@ using Bulldog.Infrastructure.Commands.AvailableDates;
 using Bulldog.Core.Domain;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Bulldog.Infrastructure.Migrations;
+using Blazored.SessionStorage;
 
 namespace BulldogApiFrontend.Services
 {
@@ -14,10 +15,11 @@ namespace BulldogApiFrontend.Services
     {
         private readonly HttpClient _httpClient;
 
-        public ServiceApiService(HttpClient httpClient)
+        public ServiceApiService(IHttpClientFactory factory)
         {
-            _httpClient = httpClient;
+            _httpClient = factory.CreateClient("ServerApi");
         }
+
         public async Task<ServiceDto> Get(Guid Id)
         {
             try
@@ -136,7 +138,7 @@ namespace BulldogApiFrontend.Services
                 {
                     var responseBody = await response.Content.ReadAsStreamAsync();
 
-                    var addedavailableDates = await JsonSerializer.DeserializeAsync<IList<AvailableDateDto>>(responseBody, new JsonSerializerOptions
+                    var addedReservation = await JsonSerializer.DeserializeAsync<ReservationDto>(responseBody, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
@@ -152,6 +154,7 @@ namespace BulldogApiFrontend.Services
                 Console.WriteLine($"Error in service: {ex.Message}");
             }
         }
+
     }
 }
 

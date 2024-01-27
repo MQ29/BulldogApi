@@ -1,7 +1,8 @@
+using Blazored.LocalStorage;
 using Blazored.Modal;
-using BulldogApiFrontend.Identity;
+using Blazored.SessionStorage;
+using BulldogApiFrontend.Handlers;
 using BulldogApiFrontend.Services;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
@@ -15,20 +16,17 @@ namespace BulldogApiFrontend
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after"); //cotojest
+            builder.Services.AddTransient<AuthenticationHandler>();
+            builder.Services.AddHttpClient("ServerApi")
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.Configuration["ServerUrl"] ?? ""))
+                .AddHttpMessageHandler<AuthenticationHandler>();
             builder.Configuration.AddJsonFile("appsettings.json");
             builder.Services.AddBlazoredModal();
-            builder.Services.AddScoped<CookieHandler>();
-            builder.Services.AddAuthorizationCore();
-            builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
-            builder.Services.AddScoped(
-sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7112") });
             builder.Services.AddScoped<IServiceApiService, ServiceApiService>();
+            builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<DialogService>();
-            builder.Services.AddHttpClient(
-    "Auth",
-    opt => opt.BaseAddress = new Uri(builder.Configuration["AuthUrl"]!))
-    .AddHttpMessageHandler<CookieHandler>();
+            builder.Services.AddBlazoredLocalStorageAsSingleton();
+
             await builder.Build().RunAsync();
         }
     }

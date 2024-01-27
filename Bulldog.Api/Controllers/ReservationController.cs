@@ -2,11 +2,13 @@
 using Bulldog.Infrastructure.Commands.Reservations;
 using Bulldog.Infrastructure.Commands.Users;
 using Bulldog.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bulldog.Api.Controllers
 {
+    [Authorize]
     [Route("Reservations")]
     [ApiController]
     public class ReservationController : ControllerBase
