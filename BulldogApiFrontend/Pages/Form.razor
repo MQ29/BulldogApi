@@ -6,6 +6,7 @@
 @inject IServiceApiService ServiceApiService
 @inject NavigationManager NavigationManager
 @inject IModalService modal
+@inject IDialogService DialogService
 
 
 @foreach (var employee in employees)
@@ -33,7 +34,7 @@
     public Guid Id { get; set; }
     protected ServiceDto service { get; set; } = new ServiceDto();
     private IList<EmployeeDto> employees { get; set; } = new List<EmployeeDto>();
-    private ModalParameters parameters = new ModalParameters(); 
+    private DialogParameters mudparameters = new DialogParameters();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
     protected async override Task OnInitializedAsync()
@@ -65,17 +66,15 @@
         }
 
         var selectedEmployee = employees.FirstOrDefault(x => x.IsSelected);
-      
+
 
         if (selectedEmployee != null)
         {
-            parameters.Add(nameof(Availability.ServiceId), Id)
-                      .Add(nameof(Availability.EmployeeId), selectedEmployee.Id);
-            var options = new ModalOptions()
-                {
-                    AnimationType = ModalAnimationType.None
-                };
-            var availabilityModal = modal.Show<Availability>("Wybierz termin", parameters, options);
+            mudparameters.Add(nameof(Availability.ServiceId), Id);
+            mudparameters.Add(nameof(Availability.EmployeeId), selectedEmployee.Id);
+            
+            var options = new MudBlazor.DialogOptions { CloseOnEscapeKey = true };
+            DialogService.Show<Availability>("Wybierz termin", mudparameters, options);
             StateHasChanged();
             // NavigationManager.NavigateTo($"/availability/{Id}/{selectedEmployee.Id}");
         }

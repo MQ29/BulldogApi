@@ -5,6 +5,7 @@ using BulldogApiFrontend.Handlers;
 using BulldogApiFrontend.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 using Radzen;
 
 namespace BulldogApiFrontend
@@ -26,6 +27,7 @@ namespace BulldogApiFrontend
             builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<DialogService>();
             builder.Services.AddBlazoredLocalStorageAsSingleton();
+            builder.Services.AddMudServices();
 
             await builder.Build().RunAsync();
         }

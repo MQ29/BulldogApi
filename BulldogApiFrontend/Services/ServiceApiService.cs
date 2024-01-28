@@ -155,6 +155,19 @@ namespace BulldogApiFrontend.Services
             }
         }
 
+        public async Task Register(RegisterModel registerModel)
+        {
+            var response = await _httpClient.PostAsJsonAsync("Authenticate/register", registerModel);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Rejestracja nie powiodla sie");
+            }
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            var addedUser = await JsonSerializer.DeserializeAsync<RegisterModel>(responseBody, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
     }
 }
 

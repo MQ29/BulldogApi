@@ -1,74 +1,80 @@
 ﻿@page "/register"
 @using Bulldog.Core.Domain
+@using BulldogApiFrontend.Models
 @using BulldogApiFrontend.Services
-@inject ServiceApiService ServiceApiService
-<AuthorizeView>
-    <Authorized>
-        @* <div class="alert alert-success">You are logged in as @context.User.Identity?.Name.</div> *@
-    </Authorized>
-    <NotAuthorized>
-        <h1>Register</h1>
-        @if (success)
-        {
-            <div class="alert alert-success">You successfully registered. Now you can <a href="login">login</a>.</div>
-        }
-        else
-        {
-            if (errors)
-            {
-                foreach (var error in errorList)
+@using System.Text.Json
+@using System.Net
+@inject IServiceApiService ServiceApiService
+@inject IHttpClientFactory _httpClientFactory
+@inject NavigationManager NavigationManager
+<div class="ma-6 d-flex justify-content-center">
+    <MudCard Width="500px">
+        <MudForm Model="registerModel" @ref="form" Validation="validationModel.ValidateValue">
+        <MudCardContent>
+            @if(!string.IsNullOrEmpty(APIErrorMessages))
                 {
-                    <div class="alert alert-danger">@error</div>
+                    <MudAlert Class="d-flex justify-center" Severity="Severity.Error" Variant="MudBlazor.Variant.Filled" Dense="true">
+                        @APIErrorMessages
+                    </MudAlert>
                 }
-            }
-            <div class="flex-outer">
-
-                <div>
-                    <label for="email">
-                        Email:
-                    </label>
-                    <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="registerModel.Email" />
-                </div>
-
-                <div>
-                    <label for="username">
-                        Username:
-                    </label>
-                    <input required id="username" name="usernameInput" placeholder="Enter your username" type="text" @bind-value="registerModel.Username" />
-                </div>
-
-                <div>
-                    <label for="password">
-                        Password:
-                    </label>
-                    <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="registerModel.Password" /><br />
-                </div>
-
-
-                <div>
-                    <button @onclick="DoRegisterAsync">Register</button>
-                </div>
-            </div>
-        }
-    </NotAuthorized>
-</AuthorizeView>
+                <MudTextField @bind-Value="registerModel.Email"
+                          For="@(() => registerModel.Email)"
+                          Immediate="true"
+                          Label="Email">
+            </MudTextField>
+            <MudTextField @bind-Value="registerModel.Username"
+                          For="@(() => registerModel.Username)"
+                          Immediate="true"
+                          Label="Username">
+            </MudTextField>
+            <MudTextField @bind-Value="registerModel.Password"
+                          For="@(() => registerModel.Password)"
+                          Immediate="true"
+                          Label="Password" InputType="InputType.Password">
+            </MudTextField>
+        </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="DoRegisterAsync">Register</MudButton>
+            </MudCardActions>
+    </MudForm>
+</MudCard>
+</div>
 
 @code {
-    private RegisterModel registerModel = new RegisterModel(); 
+    private RegisterModel registerModel = new RegisterModel();
     private bool success = false;
     private bool errors = false;
     private List<string> errorList = new List<string>();
+    RegistrationValidationVm validationModel;
+    MudForm form;
+    string APIErrorMessages;
+    protected override Task OnInitializedAsync()
+    {
+        var httpClient = _httpClientFactory.CreateClient("ServerApi");
+        validationModel = new RegistrationValidationVm(httpClient);
+        return base.OnInitializedAsync();
+    }
     public async Task DoRegisterAsync()
     {
-        // try
-        // {
-        //     await ServiceApiService.Register(registerModel);
-        //     success = true;
-        // }
-        // catch (Exception ex)
-        // {
-        //     errors = true;
-        //     errorList.Add($"Błąd rejestracji: {ex.Message}");
-        // }
+        await form.Validate();
+        if(form.IsValid)
+        {
+            var httpClient = _httpClientFactory.CreateClient("ServerApi");
+            var response = await httpClient.PostAsJsonAsync("Authenticate/register", registerModel);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var errorResponse = await response.Content.ReadFromJsonAsync<Response>();
+                APIErrorMessages = $"{errorResponse.Message}";
+            }
+            else if(response.StatusCode == HttpStatusCode.OK)
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                APIErrorMessages = "Failed to register the user.";
+            }
+        }
     }
 }
+

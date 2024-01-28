@@ -77,9 +77,9 @@ namespace Bulldog.Api.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var userExists = await _userManager.FindByNameAsync(model.Username);
+            var userExists = await _userManager.FindByEmailAsync(model.Email);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = "Email address already registered." });
 
             User user = new()
             {

@@ -6,6 +6,8 @@
 @using System.IdentityModel.Tokens.Jwt
 @inject IServiceApiService ServiceApiService
 @inject IAuthenticationService AuthenticationService
+<MudDialog>
+    <DialogContent>
 <div class="rz-p-12 rz-text-align-center">
     <RadzenDatePicker @bind-Value=@selectedDate Inline="true" DateRender="OnDateRender" Change="() => OnDateSelected(selectedDate.Value)" />
 </div>
@@ -30,7 +32,7 @@
             <div style="display: flex; overflow: auto; white-space: nowrap;">
                 @foreach (var availableHour in availableHoursForDay)
                 {
-                    if(availableHour.IsAvailable)
+                    if (availableHour.IsAvailable)
                     {
                         <button type="button" class="btn btn-outline-primary" @onclick="() => SelectHour(availableHour.Hour)">
                             @availableHour.Hour.ToString("HH:mm")
@@ -48,6 +50,8 @@
     }
     <!-- TODO: Sending as a form and updating the scheduler for the employee (create scheduler) -->
 }
+    </DialogContent>
+</MudDialog>
 
 @code {
     [Parameter]
@@ -62,14 +66,23 @@
     IList<AvailableHour> allAvailableHours = new List<AvailableHour>();
     private int visibleHours = 5; // Initial number of visible hours
     private string UserId;
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
     protected override async Task OnInitializedAsync()
     {
         await LoadAvailableDates();
         await LoadAvailableHours();
         if (selectedDate.HasValue)
         {
-            await LoadAvailableHoursForDay(selectedDate.Value);
+            var availableDays = availableDates.Where(x => x.IsOpen).ToList();
+            foreach (var availableDay in availableDays)
+            {
+                if (availableDay.DayOfWeek == selectedDate.Value.DayOfWeek)
+                {
+                    await LoadAvailableHoursForDay(selectedDate.Value);
+                }
+            }
         }
 
         var jwtToken = await AuthenticationService.GetJwtAsync();
