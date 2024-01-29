@@ -2,12 +2,14 @@
 using Bulldog.Core.Repositories;
 using Bulldog.Infrastructure.EF;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Bulldog.Infrastructure.Repositories
@@ -36,12 +38,12 @@ namespace Bulldog.Infrastructure.Repositories
             }
         }
 
-        public async Task<IList<AvailableHour>> GetAvailableForDayAsync(Guid employeeId, DateTime date)
+        public async Task<IList<AvailableHour>> GetAvailableForDayAsync(Guid employeeId, DateTime? date)
         {
             var employee = await _dbContext.Employees.FirstOrDefaultAsync(x => x.Id == employeeId);
             if (employee != null)
             {
-                var availableHours = await _dbContext.AvailableHours.Where(x => x.EmployeeId == employeeId && x.IsAvailable && x.Hour.Date == date.Date)
+                var availableHours = await _dbContext.AvailableHours.Where(x => x.EmployeeId == employeeId && x.IsAvailable && x.Hour.Date == date.Value.Date)
                     .OrderBy(x => x.Hour).ToListAsync();
                 if (availableHours.Count > 0)
                 {
@@ -64,6 +66,17 @@ namespace Bulldog.Infrastructure.Repositories
         public async Task<bool> SaveChangesAsync()
         {
             return (await _dbContext.SaveChangesAsync() >= 0);
+        }
+
+        public void Update(AvailableHour availableHour)
+        {
+            var existingAvailableHour = _dbContext.AvailableHours.Find(availableHour.Id);
+            if (existingAvailableHour is null)
+            {
+                throw new Exception($"Error: No AvailableHour found with Id {availableHour.Id}");
+            }
+            existingAvailableHour.IsAvailable = availableHour.IsAvailable;
+            _dbContext.SaveChanges();
         }
     }
 }

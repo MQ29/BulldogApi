@@ -3,7 +3,9 @@
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
 @using System.Security.Claims
+@using System.IdentityModel.Tokens.Jwt
 @inject IServiceApiService ServiceApiService
+@inject IAuthenticationService AuthenticationService
 
 <h3>Godziny otwarcia</h3>
 
@@ -67,20 +69,26 @@ else
     private string selectedEndTime { get; set; } = "19:00";
     private bool Mode = true;
     private Guid EmployeeId;
+    private string UserId;
 
     protected override async Task OnInitializedAsync()
     {
-        // var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        // var user = authenticationState.User;
-        // if (user.Identity != null && user.Identity.IsAuthenticated)
-        // {
-        //     var userEmail = user.FindFirstValue(ClaimTypes.Email);
-        //     Console.WriteLine($"Email usera:{userEmail}");
-        //     var employee = await ServiceApiService.GetByEmailAsync(userEmail);
-        //     EmployeeId = employee.Id;
-        //     await LoadAvailableDates(employee.Id);
-        // }
+        var jwtToken = await AuthenticationService.GetJwtAsync();
+        if (!string.IsNullOrEmpty(jwtToken))
+        {
+            UserId = GetIdFromToken(jwtToken);
+        }
 
+
+        var employee = await ServiceApiService.GetByUserIdAsync(UserId);
+            EmployeeId = employee.Id;
+            await LoadAvailableDates(employee.Id);
+
+    }
+    private string GetIdFromToken(string token)
+    {
+        var jwt = new JwtSecurityToken(token);
+        return jwt.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
     }
 
     private async Task LoadAvailableDates(Guid Id)

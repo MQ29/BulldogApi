@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Bulldog.Infrastructure.Commands.AvailableDates;
 using Bulldog.Core.Domain;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using Bulldog.Infrastructure.Migrations;
 using Blazored.SessionStorage;
 
 namespace BulldogApiFrontend.Services
@@ -24,7 +23,7 @@ namespace BulldogApiFrontend.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"services/{Id}");
+                var response = await _httpClient.GetAsync($"api/services/{Id}");
                 response.EnsureSuccessStatusCode();
                 var service = await response.Content.ReadFromJsonAsync<ServiceDto>();
                 return service;
@@ -124,9 +123,9 @@ namespace BulldogApiFrontend.Services
             return await _httpClient.GetFromJsonAsync<EmployeeDto>($"employees/{email}");
         }
 
-        public Task<EmployeeDto> GetByUserIdAsync(string userId)
+        public async Task<EmployeeDto> GetByUserIdAsync(string userId)
         {
-            throw new NotImplementedException();
+            return await _httpClient.GetFromJsonAsync<EmployeeDto>($"employees/ByUserId/{userId}");
         }
 
         public async Task AddReservation(Reservation reservation)
@@ -167,6 +166,26 @@ namespace BulldogApiFrontend.Services
             {
                 PropertyNameCaseInsensitive = true
             });
+        }
+
+        public async Task<bool> UpdateAvailabileHours(Guid employeeId, UpdateAvailableHours request)
+        {
+            try
+            {
+                var itemJson = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"employees/UpdateAvailableHours/{employeeId}", itemJson);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw ex;
+            }
+        }
+
+        public async Task<ServiceDto> GetServiceById(Guid serviceId)
+        {
+            return await _httpClient.GetFromJsonAsync<ServiceDto>($"api/services/{serviceId}");
         }
     }
 }

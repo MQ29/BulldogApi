@@ -4,6 +4,7 @@ using Bulldog.Core.Repositories;
 using Bulldog.Infrastructure.Commands.AvailableDates;
 using Bulldog.Infrastructure.Services.DTO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -117,8 +118,13 @@ namespace Bulldog.Infrastructure.Services
             return availableDatesToReturn;
         }//TODO: Validation
 
-        public async Task<IList<AvailableHour>> GetAvailableHours(Guid employeeId, DateTime date)
+        public async Task<IList<AvailableHour>> GetAvailableHours(Guid employeeId, DateTime? date)
         {
+            var employee = await _employeeRepository.GetAsync(employeeId);
+            if (employee is null)
+            {
+                throw new Exception($"Employee with id: {employeeId} wasnt found.");
+            }
             return await _availableHourRepository.GetAvailableForDayAsync(employeeId, date);
         }
 
@@ -204,7 +210,43 @@ namespace Bulldog.Infrastructure.Services
             }
         }
 
+        public async Task UpdateAvailableHours(Guid employeeId,int duration, DateTime? selectedHour)
+        {
+            try
+            {
+                var availableHours = await GetAvailableHours(employeeId, selectedHour);
+                if (availableHours is null)
+                {
+                    throw new Exception("Error getting availablehours");
+                }
+                TimeSpan durationAsTimeSpan = TimeSpan.FromMinutes(duration);
+                var endTime = selectedHour.Value.TimeOfDay + durationAsTimeSpan;
+                foreach (var availableHour in availableHours)
+                {
+                    if (availableHour.Hour.TimeOfDay >= selectedHour.Value.TimeOfDay && availableHour.Hour.TimeOfDay < endTime)
+                    {
+                        availableHour.IsAvailable = false;
+                        _availableHourRepository.Update(availableHour);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
 
+        public async Task<EmployeeDto> GetByUserId(string userId)
+        {
+            var employee = await _employeeRepository.GetByUserIdAsync(userId);
+            if (employee is null)
+            {
+                throw new Exception($"employee with userId: {userId} wasnt found.");
+            }
+            var mappedemployee = _mapper.Map<EmployeeDto>(employee);
+
+            return mappedemployee;
+        }
     }
 }
 

@@ -1,6 +1,5 @@
 ﻿using Bulldog.Core.Domain;
 using Bulldog.Infrastructure.Commands.AvailableDates;
-using Bulldog.Infrastructure.Migrations;
 using Bulldog.Infrastructure.Services.DTO;
 
 namespace BulldogApiFrontend.Services
@@ -20,5 +19,7 @@ namespace BulldogApiFrontend.Services
         Task<bool> UpdateAvailabilityDates(Guid EmployeeId,IList<AvailableDateDto> availableDates);
         Task AddReservation(Reservation reservation);
         Task Register(RegisterModel registerModel);
+        Task<bool> UpdateAvailabileHours(Guid employeeId, UpdateAvailableHours updateAvailableHours);
+        Task<ServiceDto> GetServiceById(Guid serviceId);
     }
 }

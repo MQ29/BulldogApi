@@ -47,8 +47,6 @@ namespace Bulldog.Core.Domain
 
         public void SetDuration(int duration)
         {
-            if (duration < 0)
-                throw new Exception("Duration can't be a negative number");
             if (Duration == duration)
                 return;
             Duration = duration;

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bulldog.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("employees")]
     [ApiController]
     public class EmployeeController : ControllerBase
@@ -21,10 +21,17 @@ namespace Bulldog.Api.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpGet("employees/{Id}")]
+        [HttpGet("ById/{Id}")]
         public async Task<IActionResult> Get(Guid Id)
         {
             var employee = await _employeeService.GetById(Id);
+            return Ok(employee);
+        }
+
+        [HttpGet("ByUserId/{Id}")]
+        public async Task<IActionResult> GetByUserId(string Id)
+        {
+            var employee = await _employeeService.GetByUserId(Id);
             return Ok(employee);
         }
 
@@ -79,7 +86,6 @@ namespace Bulldog.Api.Controllers
                 return StatusCode(500, $"Internal server error: {ex}");
             }
         }
-        //ToDo Put InsertAvailableDate/{EmployeeId}
         [HttpPut("UpdateAvailableDates/{EmployeeId}")]
         public async Task<IActionResult> UpdateAvailableDate(Guid EmployeeId, [FromBody] IList<AvailableDateDto> availableDates)
         {
@@ -115,7 +121,20 @@ namespace Bulldog.Api.Controllers
             return Ok(availableHours);
         }
 
-        //puttodo
+        [HttpPut("UpdateAvailableHours/{EmployeeId}")]
+        public async Task<IActionResult> UpdateAvailableHours(Guid EmployeeId, [FromBody]UpdateAvailableHours request)
+        {
+            try
+            {
+                await _employeeService.UpdateAvailableHours(EmployeeId,request.Duration,request.SelectedHour);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
 
     }
 }

@@ -18,7 +18,7 @@ namespace Bulldog.Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly IEmployeeRepository _employeeRepository;
 
-        public ServiceService(Core.Repositories.IServiceRepository serviceRepository, IMapper mapper, IEmployeeRepository employeeRepository)
+        public ServiceService(IServiceRepository serviceRepository, IMapper mapper, IEmployeeRepository employeeRepository)
         {
             _serviceRepository = serviceRepository;
             _mapper = mapper;

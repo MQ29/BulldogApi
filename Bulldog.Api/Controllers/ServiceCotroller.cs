@@ -19,7 +19,7 @@ namespace Bulldog.Api.Controllers
             _serviceService = serviceService;
         }
 
-        [HttpGet("/services/{Id}")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetService(Guid Id)
         {
            var service = await _serviceService.GetAsync(Id);

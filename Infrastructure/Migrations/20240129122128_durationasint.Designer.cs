@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bulldog.Infrastructure.Migrations
 {
     [DbContext(typeof(BulldogDbContext))]
-    [Migration("20240123122222_user")]
-    partial class user
+    [Migration("20240129122128_durationasint")]
+    partial class durationasint
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -97,8 +97,11 @@ namespace Bulldog.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Email")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
@@ -116,7 +119,7 @@ namespace Bulldog.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("EmployeeId")
@@ -128,15 +131,13 @@ namespace Bulldog.Infrastructure.Migrations
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reservations");
                 });
@@ -417,7 +418,9 @@ namespace Bulldog.Infrastructure.Migrations
                 {
                     b.HasOne("Bulldog.Core.Domain.User", null)
                         .WithMany("Reservations")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Service", b =>

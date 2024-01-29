@@ -6,6 +6,7 @@
 @using System.IdentityModel.Tokens.Jwt
 @inject IServiceApiService ServiceApiService
 @inject IAuthenticationService AuthenticationService
+@inject HttpClient httpClient
 <MudDialog>
     <DialogContent>
 <div class="rz-p-12 rz-text-align-center">
@@ -67,10 +68,12 @@
     private int visibleHours = 5; // Initial number of visible hours
     private string UserId;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    private ServiceDto service;
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     protected override async Task OnInitializedAsync()
     {
+        await LoadService(ServiceId);
         await LoadAvailableDates();
         await LoadAvailableHours();
         if (selectedDate.HasValue)
@@ -91,6 +94,11 @@
             UserId = GetIdFromToken(jwtToken);
         }
 
+    }
+
+    private async Task LoadService(Guid serviceId)
+    {
+        service = await ServiceApiService.GetServiceById(ServiceId);
     }
 
     private string GetIdFromToken(string token)
@@ -129,8 +137,23 @@
     {
         try
         {
-            Reservation reservation = new Reservation(UserId, ServiceId, EmployeeId, selectedDateHour);
-            ServiceApiService.AddReservation(reservation);
+            if (selectedDateHour.HasValue)
+            {
+                Reservation reservation = new Reservation(UserId, ServiceId, EmployeeId, selectedDateHour.Value);
+                ServiceApiService.AddReservation(reservation);
+
+                UpdateAvailableHours updateAvailableHours = new UpdateAvailableHours
+                    {
+                        SelectedHour = selectedDateHour.Value,
+                        Duration = service.Duration,
+                    };
+                ServiceApiService.UpdateAvailabileHours(EmployeeId, updateAvailableHours);
+            }
+            else
+            {
+                // Handle the case where selectedDateHour is null
+                Console.WriteLine("Selected hour is not valid.");
+            }
         }
         catch (Exception Ex)
         {
@@ -154,5 +177,6 @@
             StateHasChanged();
         }
     }
+
 }
 

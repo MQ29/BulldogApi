@@ -41,13 +41,12 @@ namespace Bulldog.Infrastructure.Repositories
 
         public async Task<Service> GetByIdAsync(Guid Id)
         {
-            var service = _context.Services.FirstOrDefault(x => x.Id == Id);
-            if (service != null)
+            var service = await _context.Services.FirstOrDefaultAsync(x => x.Id == Id);
+            if (service is null)
             {
-                return service;
+                throw new Exception($"Service with id: {Id} not found.");
             }
-
-            throw new Exception($"Service with id: {Id} not found.");
+            return service;
         }
 
         public async Task<IList<Service>> GetByEmployeeIdAsync(Guid employeeId)
