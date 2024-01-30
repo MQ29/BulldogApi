@@ -187,6 +187,11 @@ namespace BulldogApiFrontend.Services
         {
             return await _httpClient.GetFromJsonAsync<ServiceDto>($"api/services/{serviceId}");
         }
+
+        public async Task<IList<ReservationDto>> GetReservations(Guid employeeId)
+        {
+            return await _httpClient.GetFromJsonAsync<IList<ReservationDto>>($"Reservations/{employeeId}");
+        }
     }
 }
 

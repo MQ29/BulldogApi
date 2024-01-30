@@ -1,6 +1,7 @@
 ﻿using Bulldog.Core.Domain;
 using Bulldog.Core.Repositories;
 using Bulldog.Infrastructure.EF;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,16 @@ namespace Bulldog.Infrastructure.Repositories
         {
             await _dbContext.Reservations.AddAsync(reservation);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<IList<Reservation>> GetForEmployeeId(Guid employeeId)
+        {
+            var reservations = await _dbContext.Reservations.Where(x => x.EmployeeId == employeeId).ToListAsync();
+            if (reservations is null)
+            {
+                throw new Exception($"Failed returning reservations for employee with id: {employeeId}");
+            }
+            return reservations;
         }
     }
 }

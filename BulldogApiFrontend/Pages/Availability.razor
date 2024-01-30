@@ -139,7 +139,8 @@
         {
             if (selectedDateHour.HasValue)
             {
-                Reservation reservation = new Reservation(UserId, ServiceId, EmployeeId, selectedDateHour.Value);
+                var finishDate = selectedDateHour.Value + TimeSpan.FromMinutes(service.Duration);
+                Reservation reservation = new Reservation(UserId, ServiceId, service.Name, EmployeeId, selectedDateHour.Value, finishDate);
                 ServiceApiService.AddReservation(reservation);
 
                 UpdateAvailableHours updateAvailableHours = new UpdateAvailableHours

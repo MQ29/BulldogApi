@@ -1,0 +1,29 @@
+﻿@page "/emailcheck"
+@layout EmptyLayout
+@using Bulldog.Core.Domain
+@using BulldogApiFrontend.Models
+@using BulldogApiFrontend.Services
+@using System.Text.Json
+@using System.Net
+@inject IServiceApiService ServiceApiService
+@inject IHttpClientFactory _httpClientFactory
+@inject NavigationManager NavigationManager
+<div class="ma-6 d-flex justify-content-center">
+    <MudCard Width="400px" Height="300px" Elevation="1">
+        <h4 class="text-center mt-6">Podaj adres e-mail</h4>
+        <MudCardContent>
+            <MudTextField @bind-Value="Email" Label="Adres e-mail" Variant="MudBlazor.Variant.Outlined" ></MudTextField>
+        </MudCardContent>
+        <MudCardActions Class="justify-content-center mt-8">
+            <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Style="width:370px "OnClick="Submit">DALEJ</MudButton>
+        </MudCardActions>
+    </MudCard>
+</div>
+@code {
+    public string Email { get; set; }
+
+    private void Submit()
+    {
+
+    }
+}

@@ -2,27 +2,31 @@
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
 @inject IServiceApiService ServiceApiService
+@inject IDialogService DialogService
 <h3>EmployeeProfile</h3>
 
-<RadzenScheduler Data="@availableDates" TItem="AvailableDateDto" StartProperty="StartTime" EndProperty="EndTime" TextProperty="Title"
+<RadzenScheduler Data="@reservations" TItem="ReservationDto" StartProperty="StartDate" EndProperty="FinishDate" TextProperty="ServiceName"
                  SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect>
+    <RadzenDayView />
+    <RadzenWeekView />
+    <RadzenMonthView />
+    <RadzenYearView />
 </RadzenScheduler>
 
 @code {
     [Parameter]
     public Guid EmployeeId { get; set; }
-    IList<AvailableDateDto> availableDates = new List<AvailableDateDto>();
+    IList<ReservationDto> reservations = new List<ReservationDto>();
+    RadzenScheduler<ReservationDto> scheduler;
+    private DialogParameters mudparameters = new DialogParameters();
     protected override async Task OnInitializedAsync()
     {
-        await LoadAvailableDates();
+        await LoadReservations();
     }
 
-    private async Task LoadAvailableDates()
+    private async Task LoadReservations()
     {
-
-        availableDates = await ServiceApiService.GetAvailableDates(EmployeeId);
-
-        // Jeśli istnieją dostępne daty, ustaw domyślną wartość na najwcześniejszą datę
+        reservations = await ServiceApiService.GetReservations(EmployeeId);
     }
 
     private async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
@@ -33,8 +37,14 @@
         }
     }
 
-    private async Task OnAppointmentSelect()
+    private async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<ReservationDto> args)
     {
-        
+        mudparameters.Add(nameof(ReservationDto.ServiceName), args.Data.ServiceName);
+        mudparameters.Add(nameof(ReservationDto.StartDate), args.Data.StartDate);
+        mudparameters.Add(nameof(ReservationDto.FinishDate), args.Data.FinishDate);
+
+        var options = new MudBlazor.DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<AppointmentPage>("AppointmentDetails", mudparameters, options);
+
     }
 }

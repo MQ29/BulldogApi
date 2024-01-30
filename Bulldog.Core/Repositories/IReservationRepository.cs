@@ -10,5 +10,6 @@ namespace Bulldog.Core.Repositories
     public interface IReservationRepository
     {
         Task AddAsync(Reservation reservation);
+        Task<IList<Reservation>> GetForEmployeeId(Guid employeeId);
     }
 }

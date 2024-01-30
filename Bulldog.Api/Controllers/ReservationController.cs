@@ -5,6 +5,7 @@ using Bulldog.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 
 namespace Bulldog.Api.Controllers
 {
@@ -22,8 +23,16 @@ namespace Bulldog.Api.Controllers
         public async Task<IActionResult> Post([FromBody] CreateReservation request)
         {
 
-            await _reservationService.Create(request.UserId, request.ServiceId, request.EmployeeId, request.Date);
+            await _reservationService.Create(request.UserId, request.ServiceId, request.ServiceName, request.EmployeeId
+                    , request.StartDate, request.FinishDate);
             return Ok();
+        }
+
+        [HttpGet("{employeeId}")]
+        public async Task<IActionResult> Get(Guid employeeId)
+        {
+            var reservations = await _reservationService.GetForEmployeeId(employeeId);
+            return Ok(reservations);
         }
 
     }

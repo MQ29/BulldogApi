@@ -11,8 +11,11 @@ namespace Bulldog.Infrastructure.Commands.Reservations
     {
         public string UserId { get; set; }
         public Guid ServiceId { get; set; }
+        public string ServiceName { get; set; }
         public Guid EmployeeId { get; set; }
-        public DateTime Date { get; set; }
-        public bool Status { get; set; }
+        public DateTime DateOfReservation { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime FinishDate { get; set; }
+        public bool IsFinsished { get; set; }
     }
 }

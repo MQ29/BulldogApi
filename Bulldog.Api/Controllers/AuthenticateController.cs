@@ -17,13 +17,15 @@ namespace Bulldog.Api.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IEmployeeService _employeeService;
 
         public AuthenticateController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration)
+            IConfiguration configuration, IEmployeeService employeeService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _employeeService = employeeService;
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
@@ -132,9 +134,9 @@ namespace Bulldog.Api.Controllers
         [Route("register-employee")]
         public async Task<IActionResult> RegisterEmployee([FromBody] RegisterModel model)
         {
-            var userExists = await _userManager.FindByNameAsync(model.Username);
+            var userExists = await _userManager.FindByEmailAsync(model.Email);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = "Email address already registered." });
 
             User user = new()
             {
@@ -142,6 +144,8 @@ namespace Bulldog.Api.Controllers
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Username
             };
+            await _employeeService.Create(model.Email);
+            
             //todo employee?
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)

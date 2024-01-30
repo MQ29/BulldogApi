@@ -1,0 +1,27 @@
+﻿<MudCard>
+    <MudCardContent>
+        <MudTextField Label="Service Name" @bind-Value="ServiceName" ReadOnly="@readOnly" />
+        <MudTimePicker Label="Start Time" @bind-Time="startTime" ReadOnly="@readOnly" />
+        <MudTimePicker Label="Finish Time" @bind-Time="finishTime" ReadOnly="@readOnly" />
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public DateTime StartDate { get; set; }
+    [Parameter]
+    public DateTime FinishDate { get; set; }
+    [Parameter]
+    public string ServiceName { get; set; }
+    public bool readOnly = true;
+
+    // Add these properties
+    public TimeSpan? startTime { get; set; }
+    public TimeSpan? finishTime { get; set; }
+
+    protected override void OnInitialized()
+    {
+        startTime = StartDate.TimeOfDay;
+        finishTime = FinishDate.TimeOfDay;
+    }
+}
