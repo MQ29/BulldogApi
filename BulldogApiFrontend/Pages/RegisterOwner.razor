@@ -1,5 +1,5 @@
 ﻿@layout EmptyLayout
-@page "/register"
+@page "/registerowner"
 @using Bulldog.Core.Domain
 @using BulldogApiFrontend.Models
 @using BulldogApiFrontend.Services
@@ -11,29 +11,40 @@
 <div class="ma-6 d-flex justify-content-center">
     <MudCard Width="500px">
         <MudForm Model="registerModel" @ref="form" Validation="validationModel.ValidateValue">
-        <MudCardContent>
-            @if(!string.IsNullOrEmpty(APIErrorMessages))
+            <MudCardContent>
+                @if (!string.IsNullOrEmpty(APIErrorMessages))
                 {
                     <MudAlert Class="d-flex justify-center" Severity="Severity.Error" Variant="MudBlazor.Variant.Filled" Dense="true">
                         @APIErrorMessages
                     </MudAlert>
                 }
                 <MudTextField @bind-Value="registerModel.Email"
-                          For="@(() => registerModel.Email)"
-                          Immediate="true"
-                          Label="Email">
-            </MudTextField>
-            <MudTextField @bind-Value="registerModel.Password"
-                          For="@(() => registerModel.Password)"
-                          Immediate="true"
-                          Label="Password" InputType="InputType.Password">
-            </MudTextField>
-        </MudCardContent>
+                              For="@(() => registerModel.Email)"
+                              Immediate="true"
+                              Label="Email">
+                </MudTextField>
+                <MudTextField @bind-Value="registerModel.Fullname"
+                              For="@(() => registerModel.Fullname)"
+                              Immediate="true"
+                              Label="Fullname">
+                </MudTextField>
+                <MudTextField @bind-Value="registerModel.PhoneNumber"
+                              For="@(() => registerModel.PhoneNumber)"
+                              Immediate="true"
+                              Label="Phone Number">
+                </MudTextField>
+
+                <MudTextField @bind-Value="registerModel.Password"
+                              For="@(() => registerModel.Password)"
+                              Immediate="true"
+                              Label="Password" InputType="InputType.Password">
+                </MudTextField>
+            </MudCardContent>
             <MudCardActions>
                 <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="DoRegisterAsync">Register</MudButton>
             </MudCardActions>
-    </MudForm>
-</MudCard>
+        </MudForm>
+    </MudCard>
 </div>
 
 @code {
@@ -53,16 +64,16 @@
     public async Task DoRegisterAsync()
     {
         await form.Validate();
-        if(form.IsValid)
+        if (form.IsValid)
         {
             var httpClient = _httpClientFactory.CreateClient("ServerApi");
-            var response = await httpClient.PostAsJsonAsync("Authenticate/register", registerModel);
+            var response = await httpClient.PostAsJsonAsync("Authenticate/register-owner", registerModel);
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 var errorResponse = await response.Content.ReadFromJsonAsync<Response>();
                 APIErrorMessages = $"{errorResponse.Message}";
             }
-            else if(response.StatusCode == HttpStatusCode.OK)
+            else if (response.StatusCode == HttpStatusCode.OK)
             {
                 NavigationManager.NavigateTo("/login");
             }
@@ -72,5 +83,13 @@
             }
         }
     }
+    private bool IsValidPhoneNumber(string phoneNumber)
+    {
+        // Dodaj logikę walidacji numeru telefonu
+        // Przykład: Sprawdź, czy phoneNumber zawiera tylko cyfry i ma odpowiednią długość
+        return !string.IsNullOrEmpty(phoneNumber) && phoneNumber.All(char.IsDigit) && phoneNumber.Length == 9;
+    }
+
 }
+
 

@@ -34,10 +34,6 @@ namespace Bulldog.Infrastructure.Repositories
         public async Task<User> GetByEmail(string email)
         {
             var user =  await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
-            if (user == null)
-            {
-                throw new Exception($"User wit email: {email} wasnt found.");
-            }
             return user;
         }
         public async Task RemoveAsync(string Id)

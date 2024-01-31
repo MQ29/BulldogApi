@@ -14,6 +14,7 @@ namespace Bulldog.Core.Domain
         public string UserId { get; protected set; }
         public string Email { get; protected set; }
         public string? Name { get; protected set; }
+        //public string? CompanyName { get; set; }
         public IEnumerable<Service> Services
         {
             get { return _services; }
@@ -29,7 +30,7 @@ namespace Bulldog.Core.Domain
         public Employee(User user)
         {
             Id = Guid.NewGuid();
-            Name = user.UserName;
+            Name = user.Fullname;
             UserId = user.Id;
             Email = user.Email;
         }

@@ -9,7 +9,8 @@ namespace BulldogApiFrontend.Models
         private readonly HttpClient _httpClient;
         public RegistrationValidationVm(HttpClient httpClient)
         {
-            RuleFor(x => x.Username).NotEmpty();
+            RuleFor(x => x.PhoneNumber).NotEmpty();
+            RuleFor(x => x.Fullname).NotEmpty();
             RuleFor(x => x.Email).NotEmpty().EmailAddress()
                 .When(_ => !string.IsNullOrEmpty(_.Email) && Regex.IsMatch(_.Email, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase), ApplyConditionTo.CurrentValidator)
                 .WithMessage("Email Is Already Exist");

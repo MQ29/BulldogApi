@@ -9,9 +9,11 @@ namespace Bulldog.Core.Domain
 {
     public class RegisterModel
     {
-        [Required(ErrorMessage = "User Name is required")]
-        public string? Username { get; set; }
-
+        //public string? CompanyName { get; set; }
+        [Required(ErrorMessage = "Fullname is required")]
+        public string? Fullname { get; set; }
+        [Required(ErrorMessage = "Phone number is required")]
+        public string? PhoneNumber { get; set; }
         [EmailAddress]
         [Required(ErrorMessage = "Email is required")]
         public string? Email { get; set; }

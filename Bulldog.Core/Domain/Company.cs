@@ -14,17 +14,19 @@ namespace Bulldog.Core.Domain
         public Address Address { get; protected set; }
         public string? Description { get; protected set; }
         public string PhoneNumber { get; protected set; }
-        public IEnumerable<Employee> Employees { get; protected set; }
-        public IEnumerable<Opinion> Opinions { get; protected set; }
+        public IList<Employee> Employees { get; protected set; } = new List<Employee>();
+        public IList<Opinion> Opinions { get; protected set; } = new List<Opinion>();
         protected Company()
         {
 
         }
-        public Company(string name, Address address, string phoneNumber)
+        public Company(string name, Address address, string phoneNumber, string description)
         {
+            Id = Guid.NewGuid();
             Name = name;
             Address = address;
             PhoneNumber = phoneNumber;
+            Description = description;
         }
 
         public void SetName(string name)

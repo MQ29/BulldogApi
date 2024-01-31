@@ -15,8 +15,24 @@ namespace Bulldog.Api.Controllers
         }
 
         [HttpGet("{email}")]
-        public async Task<UserDto> Get(string email)
-        => await _userService.GetAsync(email);
+        public async Task<ActionResult<UserDto>> Get(string email)
+        {
+            try
+            {
+                var user = await _userService.GetAsync(email);
+
+                if (user is null)
+                {
+                    return NotFound($"User with email: {email} was not found.");
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"User with email: {email} was not found");
+                return null;
+            }
+        }
 
         //[HttpPost("")]
         //public async Task Post([FromBody]CreateUser request)

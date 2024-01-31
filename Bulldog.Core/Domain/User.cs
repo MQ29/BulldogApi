@@ -12,6 +12,7 @@ namespace Bulldog.Core.Domain
     public class User : IdentityUser
     {
         public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+        public string? Fullname { get; set; }
 
     }
 }

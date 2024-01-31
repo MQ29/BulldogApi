@@ -247,6 +247,16 @@ namespace Bulldog.Infrastructure.Services
 
             return mappedemployee;
         }
+
+        public async Task CreateForUser(Employee employee)
+        {
+            var employeeCheck = await _employeeRepository.GetByEmailAsync(employee.Email);
+            if (employeeCheck is not null)
+            {
+                throw new Exception($"Employee with id: '{employee.Email}' already exists.");
+            }
+            await _employeeRepository.AddAsync(employee);
+        }
     }
 }
 

@@ -87,7 +87,8 @@ namespace Bulldog.Api.Controllers
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                Fullname = model.Fullname,
+                UserName = model.Fullname
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
@@ -100,7 +101,7 @@ namespace Bulldog.Api.Controllers
         [Route("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
         {
-            var userExists = await _userManager.FindByNameAsync(model.Username);
+            var userExists = await _userManager.FindByEmailAsync(model.Email);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
@@ -108,7 +109,7 @@ namespace Bulldog.Api.Controllers
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                Fullname = model.Fullname
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
@@ -130,6 +131,7 @@ namespace Bulldog.Api.Controllers
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
+
         [HttpPost]
         [Route("register-employee")]
         public async Task<IActionResult> RegisterEmployee([FromBody] RegisterModel model)
@@ -142,14 +144,17 @@ namespace Bulldog.Api.Controllers
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                Fullname = model.Fullname,
+                UserName = model.Fullname.Trim()
             };
-            await _employeeService.Create(model.Email);
             
             //todo employee?
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
+            {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+            }
+            await _employeeService.Create(model.Email);
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Employee))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.Employee));
@@ -165,6 +170,59 @@ namespace Bulldog.Api.Controllers
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+        }
+
+        [HttpPost]
+        [Route("register-owner")]
+        public async Task<IActionResult> RegisterOwner([FromBody] RegisterModel model)
+        {
+            var userExists = await _userManager.FindByEmailAsync(model.Email);
+            if (userExists != null)
+                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = "Error", Message = "Email address already registered." });
+
+            User user = new()
+            {
+                Email = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Fullname = model.Fullname,
+                UserName = model.Email
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+            }
+            else
+            {
+                Employee employee = new Employee(user);
+                await _employeeService.CreateForUser(employee);
+                if (!await _roleManager.RoleExistsAsync(UserRoles.Employee))
+                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.Employee));
+
+                if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+
+                if (!await _roleManager.RoleExistsAsync(UserRoles.Owner))
+                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.Owner));
+
+                if (await _roleManager.RoleExistsAsync(UserRoles.Employee))
+                {
+                    await _userManager.AddToRoleAsync(user, UserRoles.Employee);
+                }
+
+                if (await _roleManager.RoleExistsAsync(UserRoles.User))
+                {
+                    await _userManager.AddToRoleAsync(user, UserRoles.User);
+                }
+
+                if (await _roleManager.RoleExistsAsync(UserRoles.Owner))
+                {
+                    await _userManager.AddToRoleAsync(user, UserRoles.Owner);
+                }
+
+                return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            }
         }
     }
 }

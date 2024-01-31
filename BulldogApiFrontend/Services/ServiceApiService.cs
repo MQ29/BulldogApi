@@ -205,10 +205,10 @@ namespace BulldogApiFrontend.Services
                 var user = await response.Content.ReadFromJsonAsync<UserDto>();
                 return user;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                Console.WriteLine($"Error retrieving user by email: {ex.Message}");
-                throw;
+                Console.WriteLine(ex.Message);
+                return null;
             }
         }
     }
