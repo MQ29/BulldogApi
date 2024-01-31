@@ -22,5 +22,6 @@ namespace BulldogApiFrontend.Services
         Task<bool> UpdateAvailabileHours(Guid employeeId, UpdateAvailableHours updateAvailableHours);
         Task<ServiceDto> GetServiceById(Guid serviceId);
         Task<IList<ReservationDto>> GetReservations(Guid employeeId);
+        Task<UserDto> GetUserByEmail(string email);
     }
 }

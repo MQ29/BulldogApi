@@ -1,0 +1,24 @@
+﻿@page "/FirstTime"
+@using BulldogApiFrontend.Services
+@layout EmptyLayout
+@inject NavigationManager NavigationManager
+@inject IServiceApiService ServiceApiService
+<div class="ma-6 d-flex justify-content-center">
+<MudCard Width="400px" Height="550px" Elevation="1">
+    <MudCardMedia Image="Images/Bulldoglogo.jpg" Height="300"/>
+    <MudCardContent>
+            <MudText Typo="Typo.h5" Class="text-center">Utwórz swój profil w BulldogBarbers</MudText>
+            <MudText Typo="Typo.body2" Class="text-center mt-3">Korzystasz z BulldogBarbers po raz pierwszy?</MudText>
+            <MudText Typo="Typo.body2" Class="text-center mt-2">Pomożemy ci przejść przez profil zakładania konta.</MudText>
+    </MudCardContent>
+    <MudCardActions Class="justify-content-center mt-3">
+            <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Style="width:370px" OnClick="Submit">DALEJ</MudButton>
+    </MudCardActions>
+</MudCard>
+</div>
+@code {
+    private async Task Submit()
+    {
+        NavigationManager.NavigateTo("/register");
+    }
+}

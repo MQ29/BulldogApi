@@ -1,29 +1,47 @@
-﻿@page "/emailcheck"
+﻿@page "/welcome"
 @layout EmptyLayout
 @using Bulldog.Core.Domain
 @using BulldogApiFrontend.Models
 @using BulldogApiFrontend.Services
 @using System.Text.Json
 @using System.Net
+@using System.ComponentModel.DataAnnotations
 @inject IServiceApiService ServiceApiService
-@inject IHttpClientFactory _httpClientFactory
 @inject NavigationManager NavigationManager
 <div class="ma-6 d-flex justify-content-center">
     <MudCard Width="400px" Height="300px" Elevation="1">
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
         <h4 class="text-center mt-6">Podaj adres e-mail</h4>
         <MudCardContent>
-            <MudTextField @bind-Value="Email" Label="Adres e-mail" Variant="MudBlazor.Variant.Outlined" ></MudTextField>
+            <MudTextField @bind-Value="Email" T="string" Label="Adres e-mail" Required="true" Variant="MudBlazor.Variant.Outlined" 
+            RequiredError="Email is required!"
+                          Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
         </MudCardContent>
         <MudCardActions Class="justify-content-center mt-8">
             <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Style="width:370px "OnClick="Submit">DALEJ</MudButton>
         </MudCardActions>
+        </MudForm>
     </MudCard>
 </div>
 @code {
     public string Email { get; set; }
-
-    private void Submit()
+    bool success;
+    MudForm form;
+    string[] errors = { };
+    private async Task Submit()
     {
-
+        await form.Validate();
+        if(success)
+        {
+            var user = await ServiceApiService.GetUserByEmail(Email);
+            if (user is null)
+            {
+                NavigationManager.NavigateTo("/FirstTime");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
     }
 }
