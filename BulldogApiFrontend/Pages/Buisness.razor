@@ -1,0 +1,82 @@
+﻿@page "/buisness"
+@using Bulldog.Core.Domain
+@using Bulldog.Infrastructure.Services.DTO
+@using BulldogApiFrontend.Services
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+@inject IServiceApiService ServiceApiService
+@inject IAuthenticationService AuthenticationService
+
+<div class="ma-6 d-flex justify-content-center">
+    <MudCard Width="400px">
+        <MudForm Model="companyModel" @ref="form">
+            <h4 class="text-center mt-6">Skonfiguruj biznes</h4>
+            <h6 class="text-center mt-3" style="color: #888; font-weight: 300;">Uzupełnij informacje o twojej firmie.</h6>
+            <MudCardContent>
+                <MudTextField @bind-Value="companyModel.Name"
+                              For="@(() => companyModel.Name)"
+                              Immediate="true"
+                              Label="Company name"
+                              >
+                </MudTextField>
+                <MudTextField @bind-Value="companyModel.PhoneNumber"
+                              For="@(() => companyModel.PhoneNumber)"
+                              Immediate="true"
+                              Label="Phone number"
+                              >
+                </MudTextField>
+                <MudTextField @bind-Value="companyModel.Address.StreetAndHouseNumber"
+                              For="@(() => companyModel.Address.StreetAndHouseNumber)"
+                              Immediate="true"
+                              Label="Street and house number"
+                              >
+                </MudTextField>
+                <MudTextField @bind-Value="companyModel.Address.ApartNumber"
+                              For="@(() => companyModel.Address.ApartNumber)"
+                              Immediate="true"
+                              Label="Apartment number">
+                </MudTextField>
+                <MudTextField @bind-Value="companyModel.Address.City"
+                              For="@(() => companyModel.Address.City)"
+                              Immediate="true"
+                              Label="City">
+                </MudTextField>
+
+                <MudTextField @bind-Value="companyModel.Address.PostalCode"
+                              For="@(() => companyModel.Address.PostalCode)"
+                              Immediate="true"
+                              Label="Postal code">
+                </MudTextField>
+            </MudCardContent>
+            <MudCardActions Class="justify-content-center mt-3 mb-2">
+                <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Style="width:370px" OnClick="UpdateAsync">Dalej</MudButton>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</div>
+@code {
+    MudForm form;
+    private UpdateCompanyDto companyModel = new UpdateCompanyDto();
+    private string UserId;
+    private CompanyDto company = new CompanyDto();
+    protected override async Task OnInitializedAsync()
+    {
+        companyModel.Address = new Address();
+        var jwtToken = await AuthenticationService.GetJwtAsync();
+        if (!string.IsNullOrEmpty(jwtToken))
+        {
+            UserId = GetIdFromToken(jwtToken);
+        }
+        company = await ServiceApiService.GetCompanyByUserId(UserId);
+    }
+    private string GetIdFromToken(string token)
+    {
+        var jwt = new JwtSecurityToken(token);
+        return jwt.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+    }
+
+    private async Task UpdateAsync()
+    {
+        await ServiceApiService.UpdateCompany(company.Id, companyModel);
+    }
+}

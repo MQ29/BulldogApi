@@ -27,6 +27,8 @@ namespace Bulldog.Infrastructure.Mappers
                 cfg.CreateMap<AvailableDate, CreateAvailableDate>();
                 cfg.CreateMap<ReservationDto, Reservation>();
                 cfg.CreateMap<Reservation, ReservationDto>();
+                cfg.CreateMap<Company, CompanyDto>();
+                cfg.CreateMap<CompanyDto, Company>();
             });
             return configuration.CreateMapper();
         }

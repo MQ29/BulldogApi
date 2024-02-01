@@ -10,15 +10,21 @@ namespace Bulldog.Core.Domain
     public class Company
     {
         public Guid Id { get; protected set; }
-        public string Name { get; protected set; }
-        public Address Address { get; protected set; }
+        public string UserId  { get; set; }
+        public string? Name { get; protected set; }
+        public Address? Address { get; protected set; }
         public string? Description { get; protected set; }
-        public string PhoneNumber { get; protected set; }
+        public string? PhoneNumber { get; protected set; }
         public IList<Employee> Employees { get; protected set; } = new List<Employee>();
         public IList<Opinion> Opinions { get; protected set; } = new List<Opinion>();
         protected Company()
         {
 
+        }
+        public Company(User user)
+        {
+            Id = Guid.NewGuid();
+            UserId = user.Id;
         }
         public Company(string name, Address address, string phoneNumber, string description)
         {

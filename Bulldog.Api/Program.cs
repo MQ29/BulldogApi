@@ -36,6 +36,8 @@ namespace Bulldog.Api
             builder.Services.AddScoped<IAvailableHourRepository, AvailableHourRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, EFUserRepository>();
+            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+            builder.Services.AddScoped<ICompanyService, CompanyService>();
             builder.Services.AddSingleton(AutoMapperConfig.Initialize());
             builder.Services.AddDbContext<BulldogDbContext>();
             builder.Services.AddIdentity<User, IdentityRole>()

@@ -8,9 +8,13 @@
 @inject IServiceApiService ServiceApiService
 @inject IHttpClientFactory _httpClientFactory
 @inject NavigationManager NavigationManager
+@inject EmailService EmailService
+@inject ISnackbar Snackbar
 <div class="ma-6 d-flex justify-content-center">
-    <MudCard Width="500px">
+    <MudCard Width="400px">
         <MudForm Model="registerModel" @ref="form" Validation="validationModel.ValidateValue">
+            <h4 class="text-center mt-6">O Tobie</h4>
+            <h6 class="text-center mt-3" style="color: #888; font-weight: 300;">Dodaj kilka podstawowych informacji.</h6>
             <MudCardContent>
                 @if (!string.IsNullOrEmpty(APIErrorMessages))
                 {
@@ -21,7 +25,8 @@
                 <MudTextField @bind-Value="registerModel.Email"
                               For="@(() => registerModel.Email)"
                               Immediate="true"
-                              Label="Email">
+                              Label="Email"
+                              Disabled="true">
                 </MudTextField>
                 <MudTextField @bind-Value="registerModel.Fullname"
                               For="@(() => registerModel.Fullname)"
@@ -40,8 +45,8 @@
                               Label="Password" InputType="InputType.Password">
                 </MudTextField>
             </MudCardContent>
-            <MudCardActions>
-                <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="DoRegisterAsync">Register</MudButton>
+            <MudCardActions Class="justify-content-center mt-3 mb-2">
+                <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Style="width:370px" OnClick="DoRegisterAsync">Register</MudButton>
             </MudCardActions>
         </MudForm>
     </MudCard>
@@ -57,6 +62,7 @@
     string APIErrorMessages;
     protected override Task OnInitializedAsync()
     {
+        registerModel.Email = EmailService.Email;
         var httpClient = _httpClientFactory.CreateClient("ServerApi");
         validationModel = new RegistrationValidationVm(httpClient);
         return base.OnInitializedAsync();
@@ -75,6 +81,7 @@
             }
             else if (response.StatusCode == HttpStatusCode.OK)
             {
+                Snackbar.Add("Successfully regsitered", Severity.Success);
                 NavigationManager.NavigateTo("/login");
             }
             else

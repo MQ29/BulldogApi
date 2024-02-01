@@ -58,12 +58,12 @@ namespace Bulldog.Api.Controllers
 
         //TODO Employees for service id 
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CreateEmployee request)
-        {
-            await _employeeService.Create(request.Email);
-            return Ok();
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> Post([FromBody] CreateEmployee request)
+        //{
+        //    await _employeeService.Create(request.Email);
+        //    return Ok();
+        //}
 
         [HttpDelete("employees/{Id}")]
         public async Task<IActionResult> Remove(Guid Id)

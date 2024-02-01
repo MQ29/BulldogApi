@@ -18,14 +18,16 @@ namespace Bulldog.Api.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IEmployeeService _employeeService;
+        private readonly ICompanyService _companyService;
 
         public AuthenticateController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration, IEmployeeService employeeService)
+            IConfiguration configuration, IEmployeeService employeeService, ICompanyService companyService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _employeeService = employeeService;
+            _companyService = companyService;
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
@@ -46,7 +48,7 @@ namespace Bulldog.Api.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.Username);
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
@@ -154,7 +156,8 @@ namespace Bulldog.Api.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
             }
-            await _employeeService.Create(model.Email);
+            //await _employeeService.Create(model.Email);
+            //TODO
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Employee))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.Employee));
@@ -195,7 +198,9 @@ namespace Bulldog.Api.Controllers
             }
             else
             {
-                Employee employee = new Employee(user);
+                Company company = new Company(user);
+                await _companyService.Create(company);
+                Employee employee = new Employee(user, company.Id);
                 await _employeeService.CreateForUser(employee);
                 if (!await _roleManager.RoleExistsAsync(UserRoles.Employee))
                     await _roleManager.CreateAsync(new IdentityRole(UserRoles.Employee));

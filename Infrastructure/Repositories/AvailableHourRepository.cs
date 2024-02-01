@@ -73,7 +73,7 @@ namespace Bulldog.Infrastructure.Repositories
             var existingAvailableHour = _dbContext.AvailableHours.Find(availableHour.Id);
             if (existingAvailableHour is null)
             {
-                throw new Exception($"Error: No AvailableHour found with Id {availableHour.Id}");
+                throw new Exception($"Error: No AvailableHour found with Id: {availableHour.Id}");
             }
             existingAvailableHour.IsAvailable = availableHour.IsAvailable;
             _dbContext.SaveChanges();

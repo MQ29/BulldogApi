@@ -7,6 +7,7 @@ using Bulldog.Infrastructure.Commands.AvailableDates;
 using Bulldog.Core.Domain;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Blazored.SessionStorage;
+using Azure.Core;
 
 namespace BulldogApiFrontend.Services
 {
@@ -206,6 +207,40 @@ namespace BulldogApiFrontend.Services
                 return user;
             }
             catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateCompany(Guid companyId, UpdateCompanyDto updateCompanyDto)
+        {
+            try
+            {
+                var itemJson = new StringContent(JsonSerializer.Serialize(updateCompanyDto), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"Company/{companyId}", itemJson);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw ex;
+            }
+        }
+
+        public async Task<CompanyDto> GetCompanyByUserId(string userId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"Company/user/{userId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+                var company = await response.Content.ReadFromJsonAsync<CompanyDto>();
+                return company;
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return null;

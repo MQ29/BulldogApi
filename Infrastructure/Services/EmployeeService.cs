@@ -82,17 +82,17 @@ namespace Bulldog.Infrastructure.Services
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
-        public async Task Create(string email)
-        {
-            var user = await _userRepository.GetByEmail(email);
-            var employee = await _employeeRepository.GetByEmailAsync(email);
-            if (employee != null)
-            {
-                throw new Exception($"Employee with id: '{email}' already exists.");
-            }
-            employee = new Employee(user);
-            await _employeeRepository.AddAsync(employee);
-        }
+        //public async Task Create(string email)
+        //{
+        //    var user = await _userRepository.GetByEmail(email);
+        //    var employee = await _employeeRepository.GetByEmailAsync(email);
+        //    if (employee != null)
+        //    {
+        //        throw new Exception($"Employee with id: '{email}' already exists.");
+        //    }
+        //    employee = new Employee(user);
+        //    await _employeeRepository.AddAsync(employee);
+        //}
 
         public async Task<IList<EmployeeDto>> GetAll()
         {

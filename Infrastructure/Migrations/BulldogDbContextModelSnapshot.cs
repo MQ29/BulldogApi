@@ -22,6 +22,38 @@ namespace Bulldog.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Bulldog.Core.Domain.Address", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ApartNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StreetAndHouseNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId")
+                        .IsUnique();
+
+                    b.ToTable("Address");
+                });
+
             modelBuilder.Entity("Bulldog.Core.Domain.AvailableDate", b =>
                 {
                     b.Property<Guid>("Id")
@@ -88,11 +120,41 @@ namespace Bulldog.Infrastructure.Migrations
                     b.ToTable("Breaks");
                 });
 
+            modelBuilder.Entity("Bulldog.Core.Domain.Company", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companies");
+                });
+
             modelBuilder.Entity("Bulldog.Core.Domain.Employee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -107,7 +169,38 @@ namespace Bulldog.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("Bulldog.Core.Domain.Opinion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Opinion");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Reservation", b =>
@@ -376,6 +469,15 @@ namespace Bulldog.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Bulldog.Core.Domain.Address", b =>
+                {
+                    b.HasOne("Bulldog.Core.Domain.Company", null)
+                        .WithOne("Address")
+                        .HasForeignKey("Bulldog.Core.Domain.Address", "CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Bulldog.Core.Domain.AvailableDate", b =>
                 {
                     b.HasOne("Bulldog.Core.Domain.Employee", null)
@@ -422,6 +524,30 @@ namespace Bulldog.Infrastructure.Migrations
                         .HasForeignKey("AvailableDateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Bulldog.Core.Domain.Employee", b =>
+                {
+                    b.HasOne("Bulldog.Core.Domain.Company", null)
+                        .WithMany("Employees")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Bulldog.Core.Domain.Opinion", b =>
+                {
+                    b.HasOne("Bulldog.Core.Domain.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bulldog.Core.Domain.Company", null)
+                        .WithMany("Opinions")
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Reservation", b =>
@@ -496,6 +622,15 @@ namespace Bulldog.Infrastructure.Migrations
             modelBuilder.Entity("Bulldog.Core.Domain.AvailableDate", b =>
                 {
                     b.Navigation("Breaks");
+                });
+
+            modelBuilder.Entity("Bulldog.Core.Domain.Company", b =>
+                {
+                    b.Navigation("Address");
+
+                    b.Navigation("Employees");
+
+                    b.Navigation("Opinions");
                 });
 
             modelBuilder.Entity("Bulldog.Core.Domain.Employee", b =>

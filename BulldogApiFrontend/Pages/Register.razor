@@ -9,7 +9,7 @@
 @inject IHttpClientFactory _httpClientFactory
 @inject NavigationManager NavigationManager
 <div class="ma-6 d-flex justify-content-center">
-    <MudCard Width="500px">
+    <MudCard Width="400px">
         <MudForm Model="registerModel" @ref="form" Validation="validationModel.ValidateValue">
         <MudCardContent>
             @if(!string.IsNullOrEmpty(APIErrorMessages))
