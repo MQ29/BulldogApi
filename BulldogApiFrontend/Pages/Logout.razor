@@ -1,0 +1,12 @@
+﻿@page "/logout"
+@using BulldogApiFrontend.Services
+@inject NavigationManager Navigation
+@inject IAuthenticationService Auth
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.LogoutAsync();
+        Navigation.NavigateTo("/", true);
+    }
+}

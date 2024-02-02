@@ -3,12 +3,13 @@
 @layout EmptyLayout
 @inject NavigationManager NavigationManager
 @inject IServiceApiService ServiceApiService
+@inject EmailService EmailService
 <div class="ma-6 d-flex justify-content-center">
 <MudCard Width="400px" Height="550px" Elevation="1">
-    <MudCardMedia Image="Images/Bulldoglogo.jpg" Height="300"/>
+    <MudCardMedia Image="Images/Razownlogo.png" Height="300"/>
     <MudCardContent>
-            <MudText Typo="Typo.h5" Class="text-center">Utwórz swój profil w BulldogBarbers</MudText>
-            <MudText Typo="Typo.body2" Class="text-center mt-3">Korzystasz z BulldogBarbers po raz pierwszy?</MudText>
+            <MudText Typo="Typo.h5" Class="text-center">Utwórz swój profil w Razown</MudText>
+            <MudText Typo="Typo.body2" Class="text-center mt-3">Korzystasz z Razown po raz pierwszy?</MudText>
             <MudText Typo="Typo.body2" Class="text-center mt-2">Pomożemy ci przejść przez profil zakładania konta.</MudText>
     </MudCardContent>
     <MudCardActions Class="justify-content-center mt-3">
@@ -17,7 +18,12 @@
 </MudCard>
 </div>
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        if(!EmailService.isNew)
+            NavigationManager.NavigateTo("/");
 
+    }
     private async Task Submit()
     {
         NavigationManager.NavigateTo("/registerowner");

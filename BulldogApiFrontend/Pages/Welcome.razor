@@ -28,7 +28,7 @@
                     }
                     else
                     {
-                        <MudText>Click me</MudText>
+                        <MudText>DALEJ</MudText>
                     }
                 </MudButton>
         </MudCardActions>
@@ -52,6 +52,7 @@
             _processing = false;
             if (user is null)
             {
+                EmailService.isNew = true;
                 NavigationManager.NavigateTo("/FirstTime");
             }
             else

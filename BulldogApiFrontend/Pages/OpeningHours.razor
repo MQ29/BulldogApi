@@ -146,12 +146,10 @@ else
         {
             if (Mode == false)
             {
-                Console.WriteLine("Nie Istnieją");
                 await ServiceApiService.AddAvailabilityDates(EmployeeId, availableDates);
             }
             else
             {
-                Console.WriteLine("Istnieją");
                 await ServiceApiService.UpdateAvailabilityDates(EmployeeId, availableDates);
             }
         }

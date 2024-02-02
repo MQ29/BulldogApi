@@ -4,6 +4,7 @@
 @using BulldogApiFrontend.Services
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
+@inject EmailService EmailService
 <div class="ma-6 d-flex justify-content-center">
     <MudCard Width="400px" Class="transparent-card">
         <MudForm Model="model" @ref="form">
@@ -51,12 +52,19 @@
     private bool errors = false;
     private List<string> errorList = new List<string>();
     MudForm form;
+
+    protected override Task OnInitializedAsync()
+    {
+        model.Email = EmailService.Email;
+        return base.OnInitializedAsync();
+    }
+
     private async Task SubmitAsync()
     {
         try
         {
             expiration = await AuthenticationService.LoginAsync(model);
-            NavigationManager.NavigateTo("/buisness");
+            NavigationManager.NavigateTo("/home");
             errorMessage = null;
         }
         catch (Exception ex)
@@ -70,8 +78,8 @@
 <style>
      .page-background-class {
         background-image: url('/Images/barberback.jpg');
-         background-size: cover; /* Ustawienie, aby obraz tła zajmował całe tło */
-         height: 100vh; /* Ustawienie wysokości tła na wysokość okna przeglądarki */
+         background-size: cover;
+         height: 100vh; 
          display: flex;
          align-items: center;
          justify-content: center;

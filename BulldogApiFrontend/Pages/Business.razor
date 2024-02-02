@@ -1,11 +1,13 @@
-﻿@page "/buisness"
+﻿@page "/business"
 @using Bulldog.Core.Domain
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
 @using System.IdentityModel.Tokens.Jwt
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
 @inject IServiceApiService ServiceApiService
 @inject IAuthenticationService AuthenticationService
+@attribute [Authorize]
 
 <div class="ma-6 d-flex justify-content-center">
     <MudCard Width="400px">
