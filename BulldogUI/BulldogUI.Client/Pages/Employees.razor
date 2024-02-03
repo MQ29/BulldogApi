@@ -1,0 +1,19 @@
+﻿@page "/employees"
+@using Bulldog.Infrastructure.Services.DTO
+@using BulldogUI.Client.Services
+@rendermode InteractiveAuto
+@inject IApiEmployeeService ApiEmployeeService
+
+@foreach(var employee in employees)
+{
+    <p>@employee.Name</p>
+}
+
+@code {
+    private IList<EmployeeDto> employees = new List<EmployeeDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        employees = await ApiEmployeeService.GetAllEmployees();
+    }
+}

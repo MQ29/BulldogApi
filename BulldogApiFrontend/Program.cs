@@ -2,8 +2,10 @@ using Blazored.LocalStorage;
 using Blazored.Modal;
 using Blazored.SessionStorage;
 using BulldogApiFrontend.Handlers;
+using BulldogApiFrontend.Models;
 using BulldogApiFrontend.Pages;
 using BulldogApiFrontend.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -25,6 +27,7 @@ namespace BulldogApiFrontend
             builder.Configuration.AddJsonFile("appsettings.json");
             builder.Services.AddBlazoredModal();
             builder.Services.AddScoped<IServiceApiService, ServiceApiService>();
+            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
             builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<DialogService>();
             builder.Services.AddScoped<EmailService>();

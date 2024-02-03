@@ -69,7 +69,7 @@ namespace Bulldog.Api
             {
                 options.AddPolicy("AllowSpecificOrigin",
                     builder => builder
-                    .WithOrigins("https://localhost:7184")
+                    .WithOrigins("https://localhost:7184", "https://localhost:7198")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());

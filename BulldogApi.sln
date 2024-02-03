@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bulldog.Tests.EndToEnd", "B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulldogApiFrontend", "BulldogApiFrontend\BulldogApiFrontend.csproj", "{D8E63434-3C7D-40C6-A246-3C48652E8933}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulldogUI", "BulldogUI\BulldogUI\BulldogUI.csproj", "{B0B41159-742C-4D4D-AC57-46588DAEB751}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulldogUI.Client", "BulldogUI\BulldogUI.Client\BulldogUI.Client.csproj", "{D87B9D6B-0272-4D0D-992D-E1EABA27BD59}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{D8E63434-3C7D-40C6-A246-3C48652E8933}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8E63434-3C7D-40C6-A246-3C48652E8933}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8E63434-3C7D-40C6-A246-3C48652E8933}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0B41159-742C-4D4D-AC57-46588DAEB751}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0B41159-742C-4D4D-AC57-46588DAEB751}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0B41159-742C-4D4D-AC57-46588DAEB751}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0B41159-742C-4D4D-AC57-46588DAEB751}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D87B9D6B-0272-4D0D-992D-E1EABA27BD59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D87B9D6B-0272-4D0D-992D-E1EABA27BD59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D87B9D6B-0272-4D0D-992D-E1EABA27BD59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D87B9D6B-0272-4D0D-992D-E1EABA27BD59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
