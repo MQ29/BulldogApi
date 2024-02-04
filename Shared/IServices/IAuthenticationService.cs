@@ -1,5 +1,6 @@
 ﻿using Bulldog.Core.Domain;
-namespace BulldogUI.Client.Services
+
+namespace Shared.IServices
 {
     public interface IAuthenticationService
     {

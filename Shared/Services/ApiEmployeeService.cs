@@ -1,8 +1,9 @@
 ﻿using Bulldog.Infrastructure.Services.DTO;
+using Shared.IServices;
 using System.Net.Http;
 using System.Net.Http.Json;
 
-namespace BulldogUI.Client.Services
+namespace Shared.Services
 {
     public class ApiEmployeeService : IApiEmployeeService
     {

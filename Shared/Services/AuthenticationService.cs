@@ -1,10 +1,11 @@
 ﻿using Blazored.LocalStorage;
 using Bulldog.Core.Domain;
+using Shared.IServices;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
 
-namespace BulldogUI.Client.Services
+namespace Shared.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
@@ -55,7 +56,7 @@ namespace BulldogUI.Client.Services
         {
             await _localStorageService.RemoveItemAsync(JWT_KEY);
 
-            _jwtCache = null;
+            _jwtCache = null; 
 
             LoginChange?.Invoke(null);
         }
@@ -69,7 +70,6 @@ namespace BulldogUI.Client.Services
         public Task<bool> RefreshAsync()
         {
             throw new NotImplementedException();
-            //todo
         }
 
     }

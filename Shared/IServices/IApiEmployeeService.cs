@@ -1,8 +1,8 @@
 ﻿using Bulldog.Infrastructure.Services.DTO;
 
-namespace BulldogUI.Client.Services
+namespace Shared.IServices
 {
-    public interface IApiEmployeeService    
+    public interface IApiEmployeeService
     {
         Task<IList<EmployeeDto>> GetAllEmployees();
     }

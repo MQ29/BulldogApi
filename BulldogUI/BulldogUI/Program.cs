@@ -1,8 +1,9 @@
 using Blazored.LocalStorage;
-using BulldogUI.Client.Handlers;
 using BulldogUI.Client.Pages;
-using BulldogUI.Client.Services;
 using BulldogUI.Components;
+using MudBlazor.Services;
+using Shared.IServices;
+using Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,11 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
-builder.Services.AddTransient<AuthenticationHandler>();
 builder.Services.AddHttpClient("ServerApi")
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.Configuration["ServerUrl"] ?? ""))
-                .AddHttpMessageHandler<AuthenticationHandler>();
-
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7112"))
+    .AddHttpMessageHandler<AuthenticationHandler>();
+builder.Services.AddScoped<IApiEmployeeService, ApiEmployeeService>();
+builder.Services.AddTransient<AuthenticationHandler>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IApiUserService, ApiUserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddMudServices();
+builder.Configuration.AddJsonFile("appsettings.json");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,6 +44,6 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Counter).Assembly);
+    .AddAdditionalAssemblies(typeof(BulldogUI.Client._Imports).Assembly);
 
 app.Run();

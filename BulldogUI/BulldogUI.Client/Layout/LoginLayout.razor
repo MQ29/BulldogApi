@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<div class="page-background-class">
+    <div class="main">
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>
+</div>
+@code {
+
+}
+<style>
+    .page-background-class {
+        background-image: url('/Images/barberback.jpg');
+        background-size: cover; /* Ustawienie, aby obraz tła zajmował całe tło */
+        height: 100vh; /* Ustawienie wysokości tła na wysokość okna przeglądarki */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 0 0 0;
+    }
+</style>

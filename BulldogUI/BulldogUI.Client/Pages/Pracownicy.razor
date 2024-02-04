@@ -1,0 +1,36 @@
+﻿@page "/pracownicy"
+@using Bulldog.Infrastructure.Services.DTO
+@using Shared.IServices
+@rendermode InteractiveAuto
+@* @rendermode @(new InteractiveAutoRenderMode(prerender: false)) *@
+@inject IApiEmployeeService ApiEmployeeService
+<h3>Employees:</h3>
+@if (employees is null)
+{
+    <p>loading...</p>
+}
+else
+{
+    @foreach(var employee in employees)
+    {
+        <p>@employee.Name</p>
+    }
+}
+
+
+@code {
+    private IList<EmployeeDto>? employees;
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     employees = await ApiEmployeeService.GetAllEmployees();
+    // }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            employees = await ApiEmployeeService.GetAllEmployees();
+            StateHasChanged();
+        }
+    }
+}

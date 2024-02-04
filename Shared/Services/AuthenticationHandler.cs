@@ -1,7 +1,8 @@
-﻿using BulldogUI.Client.Services;
+﻿using Microsoft.Extensions.Configuration;
+using Shared.IServices;
 using System.Net.Http.Headers;
 
-namespace BulldogUI.Client.Handlers
+namespace Shared.Services
 {
     public class AuthenticationHandler : DelegatingHandler
     {

@@ -1,0 +1,103 @@
+﻿@layout EmptyLayout
+@page "/registerowner"
+@using Bulldog.Core.Domain
+@using System.Text.Json
+@using System.Net
+@using BulldogUI.Client.Layout
+@using BulldogUI.Client.Models
+@using Shared.IServices
+@inject IHttpClientFactory _httpClientFactory
+@inject NavigationManager NavigationManager
+@inject IEmailService EmailService
+@inject ISnackbar Snackbar
+<div class="ma-6 d-flex justify-content-center">
+    <MudCard Width="400px">
+        <MudForm Model="registerModel" @ref="form" Validation="validationModel.ValidateValue">
+            <h4 class="text-center mt-6">O Tobie</h4>
+            <h6 class="text-center mt-3" style="color: #888; font-weight: 300;">Dodaj kilka podstawowych informacji.</h6>
+            <MudCardContent>
+                @if (!string.IsNullOrEmpty(APIErrorMessages))
+                {
+                    <MudAlert Class="d-flex justify-center" Severity="Severity.Error" Variant="MudBlazor.Variant.Filled" Dense="true">
+                        @APIErrorMessages
+                    </MudAlert>
+                }
+                <MudTextField @bind-Value="registerModel.Email"
+                              For="@(() => registerModel.Email)"
+                              Immediate="true"
+                              Label="Email"
+                              Disabled="true">
+                </MudTextField>
+                <MudTextField @bind-Value="registerModel.Fullname"
+                              For="@(() => registerModel.Fullname)"
+                              Immediate="true"
+                              Label="Fullname">
+                </MudTextField>
+                <MudTextField @bind-Value="registerModel.PhoneNumber"
+                              For="@(() => registerModel.PhoneNumber)"
+                              Immediate="true"
+                              Label="Phone Number">
+                </MudTextField>
+
+                <MudTextField @bind-Value="registerModel.Password"
+                              For="@(() => registerModel.Password)"
+                              Immediate="true"
+                              Label="Password" InputType="InputType.Password">
+                </MudTextField>
+            </MudCardContent>
+            <MudCardActions Class="justify-content-center mt-3 mb-2">
+                <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Style="width:370px" OnClick="DoRegisterAsync">Register</MudButton>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</div>
+
+@code {
+    private RegisterModel registerModel = new RegisterModel();
+    private bool success = false;
+    private bool errors = false;
+    private List<string> errorList = new List<string>();
+    RegistrationValidationVm validationModel;
+    MudForm form;
+    string APIErrorMessages;
+    protected override Task OnInitializedAsync()
+    {
+        registerModel.Email = EmailService.Email;
+        var httpClient = _httpClientFactory.CreateClient("ServerApi");
+        validationModel = new RegistrationValidationVm(httpClient);
+        return base.OnInitializedAsync();
+    }
+    public async Task DoRegisterAsync()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            var httpClient = _httpClientFactory.CreateClient("ServerApi");
+            var response = await httpClient.PostAsJsonAsync("Authenticate/register-owner", registerModel);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var errorResponse = await response.Content.ReadFromJsonAsync<Response>();
+                APIErrorMessages = $"{errorResponse.Message}";
+            }
+            else if (response.StatusCode == HttpStatusCode.OK)
+            {
+                Snackbar.Add("Successfully regsitered", Severity.Success);
+                EmailService.PhoneNumber = registerModel.PhoneNumber;
+                NavigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                APIErrorMessages = "Failed to register the user.";
+            }
+        }
+    }
+    private bool IsValidPhoneNumber(string phoneNumber)
+    {
+        // Dodaj logikę walidacji numeru telefonu
+        // Przykład: Sprawdź, czy phoneNumber zawiera tylko cyfry i ma odpowiednią długość
+        return !string.IsNullOrEmpty(phoneNumber) && phoneNumber.All(char.IsDigit) && phoneNumber.Length == 9;
+    }
+
+}
+
+

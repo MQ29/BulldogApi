@@ -1,0 +1,94 @@
+﻿@page "/login"
+@using Bulldog.Core.Domain
+@using BulldogUI.Client.Layout
+@using Shared.IServices
+@using Shared.Services
+@layout LoginLayout
+@inject IAuthenticationService AuthenticationService
+@inject NavigationManager NavigationManager
+@inject EmailService EmailService
+<div class="ma-6 d-flex justify-content-center">
+    <MudCard Width="400px" Class="transparent-card">
+        <MudForm Model="model" @ref="form">
+            <h4 class="text-center mt-6">Please Log in</h4>
+            <MudCardContent>
+                @if (errorMessage is not null)
+                {
+                    <MudAlert Class="d-flex justify-center" Severity="Severity.Error" Variant="MudBlazor.Variant.Filled" Dense="true">
+                        @errorMessage
+                    </MudAlert>
+                }
+                <MudTextField @bind-Value="model.Email"
+                              For="@(() => model.Email)"
+                              Immediate="true"
+                              Label="Email" InputType="InputType.Email">
+                </MudTextField>
+                <MudTextField @bind-Value="model.Password"
+                              For="@(() => model.Password)"
+                              Immediate="true"
+                              Label="Password" InputType="InputType.Password">
+                </MudTextField>
+            </MudCardContent>
+            <MudCardActions Class="justify-content-center mt-3 mb-5">
+                <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Style="width:370px" OnClick="SubmitAsync">Login</MudButton>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</div>
+
+@* @if (expiration is not null)
+{
+    <p>You are logged in until @expiration?.ToLongTimeString()</p>
+} *@
+
+@* @if (errorMessage is not null)
+{
+    <p class="error">@errorMessage</p>
+} *@
+
+@code {
+    private LoginModel model = new LoginModel();
+    private DateTime? expiration;
+    private string? errorMessage;
+    private bool success = false;
+    private bool errors = false;
+    private List<string> errorList = new List<string>();
+    MudForm form;
+
+    protected override Task OnInitializedAsync()
+    {
+        model.Email = EmailService.Email;
+        return base.OnInitializedAsync();
+    }
+
+    private async Task SubmitAsync()
+    {
+        try
+        {
+            expiration = await AuthenticationService.LoginAsync(model);
+            NavigationManager.NavigateTo("/home");
+            errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            expiration = null;
+
+            errorMessage = ex.Message;
+        }
+    }
+}
+<style>
+     .page-background-class {
+        background-image: url('/Images/barberback.jpg');
+         background-size: cover;
+         height: 100vh; 
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         padding: 0 0 0 0;
+     }
+
+    .transparent-card {
+        background-color: rgba(255, 255, 255, 0.9); /* Adjust the alpha value (0.5) to set the desired transparency */
+    }
+</style>

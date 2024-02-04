@@ -1,0 +1,50 @@
+﻿@page "/employees"
+@using Bulldog.Infrastructure.Services.DTO
+@using Shared.IServices
+
+@inject IApiEmployeeService ApiEmployeeService
+
+@if (employees is null)
+{
+    <p>loading...</p>
+}
+else if (!string.IsNullOrEmpty(error))
+{
+    <p>@error</p>
+}
+else if (employees.Count == 0)
+{
+    <p>No games found.</p>
+}
+else
+{
+    @foreach (var employee in employees)
+    {
+        <p>@employee.Email</p>
+    }
+}
+
+
+
+@code {
+    private IList<EmployeeDto>? employees;
+    private bool firstRender = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            employees = await ApiEmployeeService.GetAllEmployees();
+            if (employees is null || employees.Count == 0)
+            {
+                error = "Brak danych do wyświetlenia.";
+            }
+        }
+        catch (Exception ex)
+        {
+            error = $"Wystąpił błąd podczas pobierania pracowników: {ex.Message}";
+        }
+    }
+}
+

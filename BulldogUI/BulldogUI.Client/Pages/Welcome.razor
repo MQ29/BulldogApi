@@ -1,0 +1,63 @@
+﻿@page "/"
+@page "/welcome"
+@rendermode InteractiveWebAssembly
+@using BulldogUI.Client.Layout
+@using Shared.IServices
+@using Shared.Services
+@using System.ComponentModel.DataAnnotations
+@layout EmptyLayout
+@inject IEmailService EmailService
+@inject IApiUserService ApiUserService
+@inject NavigationManager NavigationManager
+<div class="ma-6 d-flex justify-content-center">
+    <MudCard Width="400px" Height="300px" Elevation="1">
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <h4 class="text-center mt-6">Podaj adres e-mail</h4>
+            <MudCardContent>
+                <MudTextField @bind-Value="Email" T="string" Label="Adres e-mail" Required="true" Variant="MudBlazor.Variant.Outlined"
+                              RequiredError="Email is required!"
+                              Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
+            </MudCardContent>
+            <MudCardActions Class="justify-content-center mt-8">
+                <MudButton Disabled="@_processing" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Style="width:370px " OnClick="Submit">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Processing</MudText>
+                    }
+                    else
+                    {
+                        <MudText>DALEJ</MudText>
+                    }
+                </MudButton>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</div>
+@code {
+    private bool _processing = false;
+    public string Email { get; set; }
+    bool success;
+    MudForm form;
+    string[] errors = { };
+    private async Task Submit()
+    {
+        await form.Validate();
+        if (success)
+        {
+            _processing = true;
+            EmailService.Email = Email;
+            var user = await ApiUserService.GetUserByEmail(Email);
+            _processing = false;
+            if (user is null)
+            {
+                NavigationManager.NavigateTo("/FirstTime");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+}
+
