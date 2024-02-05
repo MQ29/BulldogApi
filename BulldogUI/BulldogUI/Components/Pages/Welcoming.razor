@@ -1,12 +1,12 @@
-﻿@* @page "/" *@
+﻿@page "/"
 @page "/welcome"
-@rendermode InteractiveWebAssembly
-@* @rendermode @(new InteractiveAutoRenderMode(prerender: false)) *@
 @using BulldogUI.Client.Layout
 @using Shared.IServices
-@using Shared.Services
 @using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+@* @rendermode @(new InteractiveAutoRenderMode(prerender: false)) *@
 @layout EmptyLayout
+@inject IJSRuntime JSRuntime
 @inject IEmailService EmailService
 @inject IApiUserService ApiUserService
 @inject NavigationManager NavigationManager
@@ -47,7 +47,7 @@
         if (success)
         {
             _processing = true;
-            EmailService.Email = Email;
+            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "email", Email);
             var user = await ApiUserService.GetUserByEmail(Email);
             _processing = false;
             if (user is null)
