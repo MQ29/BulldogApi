@@ -18,7 +18,7 @@ builder.Services.AddScoped<IApiEmployeeService, ApiEmployeeService>();
 builder.Services.AddTransient<AuthenticationHandler>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IApiUserService, ApiUserService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddMudServices();
 builder.Configuration.AddJsonFile("appsettings.json");

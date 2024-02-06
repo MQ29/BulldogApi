@@ -12,7 +12,7 @@ builder.Services.AddHttpClient("ServerApi")
     .AddHttpMessageHandler<AuthenticationHandler>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IApiUserService, ApiUserService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Configuration.AddJsonFile("appsettings.json");
 builder.Services.AddMudServices();

@@ -47,7 +47,8 @@
         if (success)
         {
             _processing = true;
-            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "email", Email);
+            EmailService.Email = Email;
+            // await JSRuntime.InvokeVoidAsync("localStorage.setItem", "email", Email);
             var user = await ApiUserService.GetUserByEmail(Email);
             _processing = false;
             if (user is null)
