@@ -1,5 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using Bulldog.Core.Domain;
+using BulldogApiFrontend.Models;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -12,10 +14,12 @@ namespace BulldogApiFrontend.Services
         private ILocalStorageService _localStorageService;
         private string JWT_KEY = nameof(JWT_KEY);
         private string? _jwtCache;
-        public AuthenticationService(IHttpClientFactory factory, ILocalStorageService localStorageService)
+        private readonly AuthenticationStateProvider _authenticationState;
+        public AuthenticationService(IHttpClientFactory factory, ILocalStorageService localStorageService, AuthenticationStateProvider authenticationStateProvider)
         {
             _factory = factory;
             _localStorageService = localStorageService;
+            _authenticationState = authenticationStateProvider;
         }
 
         public event Action<string?>? LoginChange;
@@ -45,7 +49,7 @@ namespace BulldogApiFrontend.Services
             }
 
             await _localStorageService.SetItemAsync(JWT_KEY, content.JwtToken);
-
+            (_authenticationState as CustomAuthProvider).NotifyAuthState();
             LoginChange?.Invoke(GetUsername(content.JwtToken));
 
             return content.Expiration;

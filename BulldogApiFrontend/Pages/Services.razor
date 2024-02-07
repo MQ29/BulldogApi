@@ -25,7 +25,6 @@
                     <td>@service.Price zł</td>
                     <td>@service.Duration min</td>
                     <td>
-                         @* <a href="@($"form/{service.Id}")" class="btn btn-primary">Umów</a> *@
                         <button @onclick="@(() => {AddServiceIdParameter(service.Id); OpenModal();})" class="btn btn-primary">Book</button>
                     </td>
                 </tr>

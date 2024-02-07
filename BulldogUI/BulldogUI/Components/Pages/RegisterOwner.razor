@@ -10,8 +10,9 @@
 @inject NavigationManager NavigationManager
 @inject IEmailService EmailService
 @inject ISnackbar Snackbar
-@inject IJSRuntime JSRuntime
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@inject IAuthenticationService AuthenticationService
+@rendermode InteractiveServer
+@* @rendermode @(new InteractiveServerRenderMode(prerender: false)) *@
 <div class="ma-6 d-flex justify-content-center">
     <MudCard Width="400px">
         <MudForm Model="registerModel" @ref="form" Validation="validationModel.ValidateValue">
@@ -62,14 +63,11 @@
     RegistrationValidationVm validationModel;
     MudForm form;
     string APIErrorMessages;
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
     {
-        if (firstRender)
-        {
-            registerModel.Email = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "email");
-            var httpClient = _httpClientFactory.CreateClient("ServerApi");
-            validationModel = new RegistrationValidationVm(httpClient);
-        }
+        registerModel.Email = EmailService.Email;
+        var httpClient = _httpClientFactory.CreateClient("ServerApi");
+        validationModel = new RegistrationValidationVm(httpClient);
     }
     public async Task DoRegisterAsync()
     {
@@ -95,13 +93,27 @@
             }
         }
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var jwt = await GetJwtAsync();
+            // Wykonaj dalsze operacje, które wymagają JWT
+        }
+    }
+
+    private async Task<string> GetJwtAsync()
+    {
+        return await AuthenticationService.GetJwtAsync();
+    }
+
     private bool IsValidPhoneNumber(string phoneNumber)
     {
-        // Dodaj logikę walidacji numeru telefonu
-        // Przykład: Sprawdź, czy phoneNumber zawiera tylko cyfry i ma odpowiednią długość
         return !string.IsNullOrEmpty(phoneNumber) && phoneNumber.All(char.IsDigit) && phoneNumber.Length == 9;
     }
 
+    
 }
 
 

@@ -15,7 +15,7 @@ namespace BulldogApiFrontend.Models
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var jwtToken = await _localStorageService.GetItemAsync<string>("jwt-access-token");
+            var jwtToken = await _localStorageService.GetItemAsync<string>("JWT_KEY");
             if (string.IsNullOrEmpty(jwtToken))
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
@@ -40,6 +40,11 @@ namespace BulldogApiFrontend.Models
                 case 3: base64 += "="; break;
             }
             return Convert.FromBase64String(base64);
+        }
+
+        public void NotifyAuthState()
+        {
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
     }
 }

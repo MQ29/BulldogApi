@@ -4,8 +4,10 @@
 @using Blazored.Modal.Services
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
+@using Microsoft.AspNetCore.Authorization
 @inject NavigationManager NavigationManager
 @inject IServiceApiService ServiceApiService
+@attribute [Authorize]
 
 <PageTitle>Home</PageTitle>
 <button class="btn btn-primary" @onclick=@Clicked>Schedule</button>

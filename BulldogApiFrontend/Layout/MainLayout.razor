@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Security.Claims
+@inherits LayoutComponentBase
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -9,14 +10,19 @@
     <MudAppBar Color="Color.Primary" Elevation="3">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudLink Color="Color.Inherit" Href="/" Underline="Underline.None">BulldogBarbers</MudLink>
-        <MudSpacer/>
-        <MudLink Color="Color.Inherit" Href="/logout" Underline="Underline.None" Class="mr-3">Logout</MudLink>
+        <MudSpacer />
+        <AuthorizeView>
+            <Authorized>
+                <span class="mr-3">@UserDisplayEmail(context.User.Claims.ToList())</span>
+                <MudLink Color="Color.Inherit" Href="/logout" Underline="Underline.None" Class="mr-3">Logout</MudLink>
+            </Authorized>
+        </AuthorizeView>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" Elevation="1">
         <MudDrawerHeader>
             <MudAvatar Color="Color.Transparent" Size="Size.Large" Image="Images/Razownlogo" />
         </MudDrawerHeader>
-        <RazownNavMenu/>
+        <RazownNavMenu />
     </MudDrawer>
     <MudMainContent>
         @Body
@@ -24,10 +30,16 @@
 </MudLayout>
 
 @code {
-    bool _drawerOpen = true;
+        bool _drawerOpen = true;
 
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
+        void DrawerToggle()
+        {
+            _drawerOpen = !_drawerOpen;
+        }
+
+        private string UserDisplayEmail(List<Claim> claims)
+        {
+            var email = claims.Where(x => x.Type == ClaimTypes.Email).Select(x => x.Value).FirstOrDefault();
+            return email;
+        }
 }

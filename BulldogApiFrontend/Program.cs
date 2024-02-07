@@ -28,7 +28,8 @@ namespace BulldogApiFrontend
             builder.Services.AddBlazoredModal();
             builder.Services.AddScoped<IServiceApiService, ServiceApiService>();
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
-            builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<DialogService>();
             builder.Services.AddScoped<EmailService>();
             builder.Services.AddBlazoredLocalStorageAsSingleton();
