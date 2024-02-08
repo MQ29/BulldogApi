@@ -1,12 +1,14 @@
-﻿@page "/Schedule/{EmployeeId:guid}"
+﻿@page "/Schedule"
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
+@using System.Security.Claims
+@using System.IdentityModel.Tokens.Jwt
 @inject IServiceApiService ServiceApiService
 @inject IDialogService DialogService
-<h3>EmployeeProfile</h3>
+@inject IAuthenticationService AuthenticationService
 
 <RadzenScheduler Data="@reservations" TItem="ReservationDto" StartProperty="StartDate" EndProperty="FinishDate" TextProperty="ServiceName"
-                 SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect>
+                 SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect Style="height: 768px;">
     <RadzenDayView />
     <RadzenWeekView />
     <RadzenMonthView />
@@ -14,14 +16,29 @@
 </RadzenScheduler>
 
 @code {
-    [Parameter]
-    public Guid EmployeeId { get; set; }
+    private string UserId;
+    private Guid EmployeeId;
     IList<ReservationDto> reservations = new List<ReservationDto>();
     RadzenScheduler<ReservationDto> scheduler;
     private DialogParameters mudparameters = new DialogParameters();
     protected override async Task OnInitializedAsync()
     {
+        var jwtToken = await AuthenticationService.GetJwtAsync();
+        if (!string.IsNullOrEmpty(jwtToken))
+        {
+            UserId = GetIdFromToken(jwtToken);
+        }
+
+
+        var employee = await ServiceApiService.GetByUserIdAsync(UserId);
+        EmployeeId = employee.Id;
         await LoadReservations();
+    }
+
+    private string GetIdFromToken(string token)
+    {
+        var jwt = new JwtSecurityToken(token);
+        return jwt.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
     }
 
     private async Task LoadReservations()

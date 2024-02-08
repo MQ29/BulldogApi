@@ -2,6 +2,8 @@
 @layout LoginLayout
 @using Bulldog.Core.Domain
 @using BulldogApiFrontend.Services
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
 @inject EmailService EmailService
@@ -34,16 +36,6 @@
     </MudCard>
 </div>
 
-@* @if (expiration is not null)
-{
-    <p>You are logged in until @expiration?.ToLongTimeString()</p>
-} *@
-
-@* @if (errorMessage is not null)
-{
-    <p class="error">@errorMessage</p>
-} *@
-
 @code {
     private LoginModel model = new LoginModel();
     private DateTime? expiration;
@@ -52,6 +44,7 @@
     private bool errors = false;
     private List<string> errorList = new List<string>();
     MudForm form;
+    private bool IsConfigured;
 
     protected override Task OnInitializedAsync()
     {
@@ -64,7 +57,19 @@
         try
         {
             expiration = await AuthenticationService.LoginAsync(model);
-            NavigationManager.NavigateTo("/home");
+            var jwtToken = await AuthenticationService.GetJwtAsync();
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                IsConfigured = GetIsConfiguredFromToken(jwtToken);
+            }
+            if (IsConfigured == false)
+            {
+                NavigationManager.NavigateTo("/openinghours");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
             errorMessage = null;
         }
         catch (Exception ex)
@@ -73,6 +78,12 @@
 
             errorMessage = ex.Message;
         }
+    }
+
+    private bool GetIsConfiguredFromToken(string token)
+    {
+        var jwt = new JwtSecurityToken(token);
+        return bool.Parse(jwt.Claims.First(x => x.Type == "IsConfigured").Value);
     }
 }
 <style>
@@ -87,6 +98,6 @@
      }
 
     .transparent-card {
-        background-color: rgba(255, 255, 255, 0.9); /* Adjust the alpha value (0.5) to set the desired transparency */
+        background-color: rgba(255, 255, 255, 0.9); 
     }
 </style>

@@ -1,4 +1,4 @@
-﻿@page "/home"
+﻿@page "/"
 @using System.Security.Claims
 @using Blazored.Modal
 @using Blazored.Modal.Services
@@ -10,8 +10,7 @@
 @attribute [Authorize]
 
 <PageTitle>Home</PageTitle>
-<button class="btn btn-primary" @onclick=@Clicked>Schedule</button>
-<button class="btn btn-primary" @onclick=@ClickedHours>BuisnessHours</button>
+<EmployeeSchedule></EmployeeSchedule>
 
 
 @code

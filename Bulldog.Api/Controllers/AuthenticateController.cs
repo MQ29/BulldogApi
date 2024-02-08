@@ -58,6 +58,7 @@ namespace Bulldog.Api.Controllers
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim("IsConfigured",user.IsConfigured.ToString(), ClaimValueTypes.Boolean),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
@@ -188,7 +189,8 @@ namespace Bulldog.Api.Controllers
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 Fullname = model.Fullname,
-                UserName = model.Email
+                UserName = model.Email,
+                IsConfigured = false
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);

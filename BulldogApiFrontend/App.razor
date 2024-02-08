@@ -1,15 +1,13 @@
 ﻿@using BulldogApiFrontend.Pages
 @using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
 <CascadingAuthenticationState>
     <CascadingBlazoredModal HideHeader="true" Position="ModalPosition.Middle">
         <Router AppAssembly="@typeof(App).Assembly">
             <Found Context="routeData">
                 <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                     <NotAuthorized>
-                        @if(!context.User.Identity.IsAuthenticated)
-                        {
-                            <RedirectToLogin></RedirectToLogin>
-                        }
+                        <RedirectToLogin/>
                     </NotAuthorized>
                 </AuthorizeRouteView>
                 <FocusOnNavigate RouteData="@routeData" Selector="h1" />

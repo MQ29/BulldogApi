@@ -1,4 +1,5 @@
-﻿@page "/openinghours"
+﻿@layout EmptyLayout
+@page "/openinghours"
 @using Bulldog.Core.Domain
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
@@ -6,61 +7,56 @@
 @using System.IdentityModel.Tokens.Jwt
 @inject IServiceApiService ServiceApiService
 @inject IAuthenticationService AuthenticationService
+<div class="ma-6 d-flex justify-content-center">
+    @if (availableDates != null && availableDates.Any())
+    {
+        <MudTable Items="@availableDates" T="AvailableDateDto">
+            <HeaderContent>
+                <MudTh>Dzień</MudTh>
+                <MudTh></MudTh>
+                <MudTh>Godziny otwarcia</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.DayOfWeek</MudTd>
+                <MudTd>
+                        <MudSwitch @bind-Value="@context.IsOpen" Color="Color.Primary" />
+                </MudTd>
+                    <MudTd>
 
-<h3>Godziny otwarcia</h3>
-
-@if (availableDates != null && availableDates.Any())
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Dzień</th>
-                <th scope="col">Godziny otwarcia</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var availableDate in availableDates)
-            {
-                <tr>
-                    <td>@availableDate.DayOfWeek</td>
-                    <td>
+                        @if (@context.IsOpen)
+                    {
                         <div>
-                            <input type="checkbox" @bind="availableDate.IsOpen" />
-                            @if (availableDate.IsOpen)
-                            {
-                                <div>
-                                    <label>Rozpoczęcie:</label>
-                                    <select @bind="availableDate.WorkingHours.StartTime">
-                                        @foreach (var time in TimeHelper.GetHoursList())
-                                        {
-                                            var timeSpanValue = TimeSpan.Parse(time);
-                                            <option value="@timeSpanValue" selected="@IsHourSelected(timeSpanValue, availableDate.WorkingHours.StartTime)">@time</option>
-                                        }
-                                    </select>
+                            <MudText>Rozpoczęcie:</MudText>
+                            <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.StartTime">
+                                @foreach (var time in TimeHelper.GetHoursList())
+                                {
+                                    var timeSpanValue = TimeSpan.Parse(time);
+                                    <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.StartTime)">@time</MudSelectItem>
+                                }
+                            </MudSelect>
 
-                                    <label>Zakończenie:</label>
-                                    <select @bind="availableDate.WorkingHours.EndTime">
-                                        @foreach (var time in TimeHelper.GetHoursList())
-                                        {
-                                            var timeSpanValue = TimeSpan.Parse(time);
-                                            <option value="@timeSpanValue" selected="@IsHourSelected(timeSpanValue, availableDate.WorkingHours.EndTime)">@time</option>
-                                        }
-                                    </select>
-
-                                </div>
-                            }
+                            <MudText>Zakończenie:</MudText>
+                            <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.EndTime">
+                                @foreach (var time in TimeHelper.GetHoursList())
+                                {
+                                    var timeSpanValue = TimeSpan.Parse(time);
+                                    <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.EndTime)">@time</MudSelectItem>
+                                }
+                            </MudSelect>
                         </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <button class="btn btn-primary" @onclick="SaveAvailability">Zapisz dostępność</button>
-}
-else
-{
-    <p>Brak dostępnych dat.</p>
-}
+                    }
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+    else
+    {
+        <MudText>Brak dostępnych dat.</MudText>
+    }
+</div>
+
+
+
 
 @code {
 
@@ -81,8 +77,8 @@ else
 
 
         var employee = await ServiceApiService.GetByUserIdAsync(UserId);
-            EmployeeId = employee.Id;
-            await LoadAvailableDates(employee.Id);
+        EmployeeId = employee.Id;
+        await LoadAvailableDates(employee.Id);
 
     }
     private string GetIdFromToken(string token)

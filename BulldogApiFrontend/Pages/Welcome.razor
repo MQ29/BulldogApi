@@ -1,5 +1,4 @@
-﻿@page "/"
-@page "/welcome"
+﻿@page "/welcome"
 @layout EmptyLayout
 @using Bulldog.Core.Domain
 @using BulldogApiFrontend.Models
@@ -11,7 +10,7 @@
 @inject IServiceApiService ServiceApiService
 @inject NavigationManager NavigationManager
 <div class="ma-6 d-flex justify-content-center">
-    <MudCard Width="400px" Height="300px" Elevation="1">
+    <MudCard Width="400px" Height="300px" Elevation="3">
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
         <h4 class="text-center mt-6">Podaj adres e-mail</h4>
         <MudCardContent>

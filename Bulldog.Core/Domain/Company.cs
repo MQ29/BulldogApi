@@ -17,6 +17,7 @@ namespace Bulldog.Core.Domain
         public string? PhoneNumber { get; protected set; }
         public IList<Employee> Employees { get; protected set; } = new List<Employee>();
         public IList<Opinion> Opinions { get; protected set; } = new List<Opinion>();
+        public bool IsConfigured { get; set; }
         protected Company()
         {
 
@@ -25,6 +26,7 @@ namespace Bulldog.Core.Domain
         {
             Id = Guid.NewGuid();
             UserId = user.Id;
+            IsConfigured = false;
         }
         public Company(string name, Address address, string phoneNumber, string description)
         {
@@ -33,6 +35,7 @@ namespace Bulldog.Core.Domain
             Address = address;
             PhoneNumber = phoneNumber;
             Description = description;
+            IsConfigured = true;
         }
 
         public void SetName(string name)
