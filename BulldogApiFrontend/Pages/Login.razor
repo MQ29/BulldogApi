@@ -7,6 +7,7 @@
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
 @inject EmailService EmailService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 <div class="ma-6 d-flex justify-content-center">
     <MudCard Width="400px" Class="transparent-card">
         <MudForm Model="model" @ref="form">
@@ -46,10 +47,14 @@
     MudForm form;
     private bool IsConfigured;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
+        var auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if(auth.User.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/");
+        }
         model.Email = EmailService.Email;
-        return base.OnInitializedAsync();
     }
 
     private async Task SubmitAsync()

@@ -10,42 +10,41 @@
 <div class="ma-6 d-flex justify-content-center">
     @if (availableDates != null && availableDates.Any())
     {
-        <MudTable Items="@availableDates" T="AvailableDateDto">
+        <MudTable Items="@availableDates" T="AvailableDateDto" Elevation="3">
             <HeaderContent>
                 <MudTh>Dzień</MudTh>
                 <MudTh></MudTh>
-                <MudTh>Godziny otwarcia</MudTh>
+                <MudTh>Otwarcie</MudTh>
+                <MudTh>Zamknięcie</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd>@context.DayOfWeek</MudTd>
-                <MudTd>
+                    <MudTd>
                         <MudSwitch @bind-Value="@context.IsOpen" Color="Color.Primary" />
-                </MudTd>
+                    </MudTd>
+                    @if (@context.IsOpen)
+                {
+                    <MudTd>
+                        <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.StartTime">
+                            @foreach (var timeSpanValue in hoursList)
+                            {
+                                var timeString = timeSpanValue.ToString("hh\\:mm");
+                                <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.StartTime)">@timeString</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudTd>
                     <MudTd>
 
-                        @if (@context.IsOpen)
-                    {
-                        <div>
-                            <MudText>Rozpoczęcie:</MudText>
-                            <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.StartTime">
-                                @foreach (var time in TimeHelper.GetHoursList())
-                                {
-                                    var timeSpanValue = TimeSpan.Parse(time);
-                                    <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.StartTime)">@time</MudSelectItem>
-                                }
-                            </MudSelect>
+                        <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.EndTime">
+                            @foreach (var timeSpanValue in hoursList)
+                            {
+                                var timeString = timeSpanValue.ToString("hh\\:mm");
+                                <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.EndTime)">@timeString</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudTd>
 
-                            <MudText>Zakończenie:</MudText>
-                            <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.EndTime">
-                                @foreach (var time in TimeHelper.GetHoursList())
-                                {
-                                    var timeSpanValue = TimeSpan.Parse(time);
-                                    <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.EndTime)">@time</MudSelectItem>
-                                }
-                            </MudSelect>
-                        </div>
-                    }
-                </MudTd>
+                }
             </RowTemplate>
         </MudTable>
     }
@@ -61,6 +60,7 @@
 @code {
 
     IList<AvailableDateDto> availableDates = new List<AvailableDateDto>();
+    private List<TimeSpan> hoursList;
     private string selectedStartTime { get; set; } = "11:00";
     private string selectedEndTime { get; set; } = "19:00";
     private bool Mode = true;
@@ -78,9 +78,11 @@
 
         var employee = await ServiceApiService.GetByUserIdAsync(UserId);
         EmployeeId = employee.Id;
+        hoursList = GetHoursList();
         await LoadAvailableDates(employee.Id);
-
+        availableDates = availableDates.OrderBy(x => x.DayOfWeek).ToList();
     }
+
     private string GetIdFromToken(string token)
     {
         var jwt = new JwtSecurityToken(token);
@@ -110,25 +112,23 @@
         }
     }
 
-    private static class TimeHelper
+    private static List<TimeSpan> GetHoursList()
     {
-        public static List<string> GetHoursList()
+        var hoursList = new List<TimeSpan>();
+
+        for (int hours = 0; hours < 24; hours++)
         {
-            var hoursList = new List<string>();
-
-            for (int hours = 0; hours < 24; hours++)
+            for (int minutes = 0; minutes < 60; minutes += 15)
             {
-                for (int minutes = 0; minutes < 60; minutes += 15)
-                {
-                    var time = new TimeSpan(hours, minutes, 0);
-                    var timeString = time.ToString("hh\\:mm");
-                    hoursList.Add(timeString);
-                }
+                var time = new TimeSpan(hours, minutes, 0);
+                hoursList.Add(time);
             }
-
-            return hoursList;
         }
+
+        return hoursList;
     }
+
+
 
     private bool IsHourSelected(TimeSpan optionValue, TimeSpan selectedTime)
     {
