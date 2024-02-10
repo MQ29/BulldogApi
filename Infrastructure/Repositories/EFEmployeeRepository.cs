@@ -75,5 +75,10 @@ namespace Bulldog.Infrastructure.Repositories
         {
             return await _dbContext.Employees.FirstOrDefaultAsync(x => x.UserId == userId);
         }
+
+        public async Task<IList<Employee>> GetByCompanyId(Guid companyId)
+        {
+            return await _dbContext.Employees.Where(x => x.CompanyId == companyId).ToListAsync();
+        }
     }
 }

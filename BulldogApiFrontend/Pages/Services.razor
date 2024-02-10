@@ -1,7 +1,8 @@
 ﻿@using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
+@using Microsoft.AspNetCore.Authorization
 @page "/services"
-@* @attribute [Authorize] *@
+@attribute [Authorize]
 <h3>Reservation</h3>
 @inject IServiceApiService ServiceApiService
 @inject IModalService modal

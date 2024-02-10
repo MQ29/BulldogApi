@@ -1,5 +1,6 @@
 ﻿using Bulldog.Core.Domain;
 using Bulldog.Infrastructure.Commands.AvailableDates;
+using Bulldog.Infrastructure.Migrations;
 using Bulldog.Infrastructure.Services.DTO;
 
 namespace BulldogApiFrontend.Services
@@ -25,5 +26,6 @@ namespace BulldogApiFrontend.Services
         Task<UserDto> GetUserByEmail(string email);
         Task<CompanyDto> GetCompanyByUserId(string userId);
         Task<bool> UpdateCompany(Guid companyId, UpdateCompanyDto updateAvailableHours);
+        Task<IList<EmployeeDto>> GetAllEmployeesForCompanyId(Guid companyId);
     }
 }

@@ -25,5 +25,6 @@ namespace Bulldog.Infrastructure.Services
         Task<IList<AvailableHour>> GetAvailableHours(Guid employeeId, DateTime? date);
         Task<IList<AvailableHour>> GetAllAvailableHours(Guid Id);
         Task UpdateAvailableHours(Guid EmployeeId, int duration, DateTime? selectedHour);
+        Task<IList<EmployeeDto>> GetByCompanyId(Guid companyId);
     }
 }

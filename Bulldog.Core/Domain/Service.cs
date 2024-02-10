@@ -10,6 +10,7 @@ namespace Bulldog.Core.Domain
     {
         public Guid Id { get; protected set; }
         public Guid EmployeeId { get; set; }
+        public Guid CompanyId { get; set; }
         public string Name { get; protected set; }
         public decimal Price { get; protected set; }
         public int Duration { get; protected set; }
@@ -25,6 +26,7 @@ namespace Bulldog.Core.Domain
             Price = price;
             Duration = duration;
             EmployeeId = employee.Id;
+            CompanyId = employee.CompanyId;
         }
 
         public void SetName(string name)

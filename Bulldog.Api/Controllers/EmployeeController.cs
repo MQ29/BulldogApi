@@ -135,6 +135,11 @@ namespace Bulldog.Api.Controllers
             }
         }
 
-
+        [HttpGet("byCompanyId/{Id}")]
+        public async Task<IActionResult> GetByCompanyId(Guid Id)
+        {
+            var employee = await _employeeService.GetByCompanyId(Id);
+            return Ok(employee);
+        }
     }
 }

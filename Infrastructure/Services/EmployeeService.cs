@@ -257,6 +257,18 @@ namespace Bulldog.Infrastructure.Services
             }
             await _employeeRepository.AddAsync(employee);
         }
+
+        public async Task<IList<EmployeeDto>> GetByCompanyId(Guid companyId)
+        {
+            var employees = await _employeeRepository.GetByCompanyId(companyId);
+            if (employees is null)
+            {
+                throw new Exception($"No employees found with companyId: {companyId}");
+            }
+
+            var mappedEmployees = _mapper.Map<IList<EmployeeDto>>(employees);
+            return mappedEmployees;
+        }
     }
 }
 

@@ -246,6 +246,20 @@ namespace BulldogApiFrontend.Services
                 return null;
             }
         }
+
+        public async Task<IList<EmployeeDto>> GetAllEmployeesForCompanyId(Guid companyId)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<IList<EmployeeDto>>($"employees/byCompanyId/{companyId}");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving employyes for company with Id: {ex.Message}");
+                throw;
+            }
+        }
     }
 }
 

@@ -7,52 +7,79 @@
 @using System.IdentityModel.Tokens.Jwt
 @inject IServiceApiService ServiceApiService
 @inject IAuthenticationService AuthenticationService
-<div class="ma-6 d-flex justify-content-center">
-    @if (availableDates != null && availableDates.Any())
-    {
-        <MudTable Items="@availableDates" T="AvailableDateDto" Elevation="3">
-            <HeaderContent>
-                <MudTh>Dzień</MudTh>
-                <MudTh></MudTh>
-                <MudTh>Otwarcie</MudTh>
-                <MudTh>Zamknięcie</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd>@context.DayOfWeek</MudTd>
-                    <MudTd>
-                        <MudSwitch @bind-Value="@context.IsOpen" Color="Color.Primary" />
-                    </MudTd>
-                    @if (@context.IsOpen)
-                {
-                    <MudTd>
-                        <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.StartTime">
-                            @foreach (var timeSpanValue in hoursList)
-                            {
-                                var timeString = timeSpanValue.ToString("hh\\:mm");
-                                <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.StartTime)">@timeString</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </MudTd>
-                    <MudTd>
-
-                        <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.EndTime">
-                            @foreach (var timeSpanValue in hoursList)
-                            {
-                                var timeString = timeSpanValue.ToString("hh\\:mm");
-                                <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.EndTime)">@timeString</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </MudTd>
-
-                }
-            </RowTemplate>
-        </MudTable>
-    }
-    else
-    {
-        <MudText>Brak dostępnych dat.</MudText>
-    }
+<div class="ma-6 d-flex flex-column align-items-center">
+    <div>
+        @if (availableDates != null && availableDates.Any())
+        {
+            <MudTable Items="@availableDates" T="AvailableDateDto" Elevation="3">
+                <HeaderContent>
+                    <MudTh>Dzień</MudTh>
+                    <MudTh></MudTh>
+                    <MudTh>Otwarcie</MudTh>
+                    <MudTh>Zamknięcie</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@context.DayOfWeek</MudTd>
+                        <MudTd>
+                            <MudSwitch @bind-Value="@context.IsOpen" Color="Color.Primary" />
+                        </MudTd>
+                        @if (@context.IsOpen)
+                    {
+                        <MudTd>
+                            <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.StartTime">
+                                @foreach (var timeSpanValue in hoursList)
+                                {
+                                    var timeString = timeSpanValue.ToString("hh\\:mm");
+                                    <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.StartTime)">@timeString</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudTd>
+                        <MudTd>
+                            <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.EndTime">
+                                @foreach (var timeSpanValue in hoursList)
+                                {
+                                    var timeString = timeSpanValue.ToString("hh\\:mm");
+                                    <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.EndTime)">@timeString</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudTd>
+                    }
+                    else
+                    {
+                        <MudTd>
+                            <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.StartTime" Disabled="true">
+                                @foreach (var timeSpanValue in hoursList)
+                                {
+                                    var timeString = timeSpanValue.ToString("hh\\:mm");
+                                    <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.StartTime)">@timeString</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudTd>
+                        <MudTd>
+                            <MudSelect T="TimeSpan" @bind-Value="@context.WorkingHours.EndTime" Disabled="true">
+                                @foreach (var timeSpanValue in hoursList)
+                                {
+                                    var timeString = timeSpanValue.ToString("hh\\:mm");
+                                    <MudSelectItem Value="@timeSpanValue" Selected="@IsHourSelected(timeSpanValue, @context.WorkingHours.EndTime)">@timeString</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudTd>
+                    }
+                </RowTemplate>
+            </MudTable>
+        }
+        else
+        {
+            <MudText>Brak dostępnych dat.</MudText>
+        }
+    </div>
+    <div class="mt-3">
+        <MudCardActions Class="justify-content-center">
+            <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Style="width:370px" OnClick="SaveAvailability">Save</MudButton>
+        </MudCardActions>
+    </div>
 </div>
+
 
 
 

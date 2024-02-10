@@ -1,0 +1,38 @@
+﻿@page "/employees"
+@using Bulldog.Infrastructure.Services.DTO
+@using BulldogApiFrontend.Services
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+@inject IAuthenticationService AuthenticationService
+@inject IServiceApiService ServiceApiService
+<h3>Employees:</h3>
+@foreach(var employee in _employees)
+{
+    <p>@employee.Name</p>
+}
+
+
+@code {
+    private string UserId;
+    private Guid EmployeeId;
+    IList<EmployeeDto> _employees = new List<EmployeeDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var jwtToken = await AuthenticationService.GetJwtAsync();
+        if (!string.IsNullOrEmpty(jwtToken))
+        {
+            UserId = GetIdFromToken(jwtToken);
+        }
+
+
+        var company = await ServiceApiService.GetCompanyByUserId(UserId);
+        _employees = await ServiceApiService.GetAllEmployeesForCompanyId(company.Id);
+    }
+
+    private string GetIdFromToken(string token)
+    {
+        var jwt = new JwtSecurityToken(token);
+        return jwt.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+    }
+}

@@ -39,7 +39,7 @@ namespace Bulldog.Api.Controllers
         }
 
         [HttpPost]
-        public async Task Post(Guid employeeId,[FromBody] CreateService request) //dodac employeeId
+        public async Task Post(Guid employeeId,[FromBody] CreateService request) 
         {
             await _serviceService.Create(employeeId, request.Name, request.Price, request.Duration);
         }

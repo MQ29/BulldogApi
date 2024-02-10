@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulldogUI", "BulldogUI\Bull
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulldogUI.Client", "BulldogUI\BulldogUI.Client\BulldogUI.Client.csproj", "{036F68C4-7CC7-4E18-8891-35714B7AE330}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{90986587-68D6-49D9-98D6-7E5368A7F56D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{90986587-68D6-49D9-98D6-7E5368A7F56D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

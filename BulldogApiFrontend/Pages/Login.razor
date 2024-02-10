@@ -61,7 +61,7 @@
     {
         try
         {
-            expiration = await AuthenticationService.LoginAsync(model);
+            await AuthenticationService.LoginAsync(model);
             var jwtToken = await AuthenticationService.GetJwtAsync();
             if (!string.IsNullOrEmpty(jwtToken))
             {
