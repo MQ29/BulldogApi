@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Bulldog.Core.Domain
 {
-    public class LoginResponse
+    public class RefreshModel
     {
-        public required string JwtToken { get; set; }
-        public DateTime Expiration { get; set; }
+        public required string AccessToken { get; set; }
         public required string RefreshToken { get; set; }
     }
 }

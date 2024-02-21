@@ -1,0 +1,23 @@
+﻿@page "/addService{EmployeeId:guid}"
+@using Bulldog.Infrastructure.Services.DTO
+<h3>AddService</h3>
+<div class="ma-6 d-flex justify-content-center">
+    <MudCard Width="400px" Class="transparent-card">
+        <MudForm Model="model">
+            <h4 class="text-center mt-6">Please Log in</h4>
+            <MudCardContent>
+            </MudCardContent>
+            <MudCardActions Class="justify-content-center mt-3 mb-5">
+                <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" Style="width:370px" OnClick="SubmitAsync">Login</MudButton>
+            </MudCardActions>
+        </MudForm>
+    </MudCard>
+</div>
+@code {
+    private ServiceDto model = new ServiceDto();
+
+    private async Task SubmitAsync()
+    {
+        
+    }
+}

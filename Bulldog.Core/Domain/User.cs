@@ -13,6 +13,8 @@ namespace Bulldog.Core.Domain
     {
         public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
         public string? Fullname { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiry { get; set; }
         public bool IsConfigured { get; set; }
 
     }

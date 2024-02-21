@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using System.Threading.Channels;
 
 namespace BulldogApiFrontend.Services
 {
@@ -13,6 +14,7 @@ namespace BulldogApiFrontend.Services
         private readonly IHttpClientFactory _factory;
         private ILocalStorageService _localStorageService;
         private string JWT_KEY = nameof(JWT_KEY);
+        private string REFRESH_KEY = nameof(REFRESH_KEY);
         private string? _jwtCache;
         private readonly AuthenticationStateProvider _authenticationState;
         public AuthenticationService(IHttpClientFactory factory, ILocalStorageService localStorageService, AuthenticationStateProvider authenticationStateProvider)
@@ -49,6 +51,8 @@ namespace BulldogApiFrontend.Services
             }
 
             await _localStorageService.SetItemAsync(JWT_KEY, content.JwtToken);
+            await _localStorageService.SetItemAsync(REFRESH_KEY, content.RefreshToken);
+
             (_authenticationState as CustomAuthProvider).NotifyAuthState();
             LoginChange?.Invoke(GetUsername(content.JwtToken));
 
@@ -57,9 +61,14 @@ namespace BulldogApiFrontend.Services
 
         public async Task LogoutAsync()
         {
-            await _localStorageService.RemoveItemAsync(JWT_KEY);
+            var response = await _factory.CreateClient("ServerApi").DeleteAsync("Authenticate/revoke");
 
-            _jwtCache = null; 
+            await _localStorageService.RemoveItemAsync(JWT_KEY);
+            await _localStorageService.RemoveItemAsync(REFRESH_KEY);
+
+            _jwtCache = null;
+
+            await Console.Out.WriteLineAsync($"Revoke gave response {response.StatusCode}");
 
             LoginChange?.Invoke(null);
         }
@@ -70,10 +79,33 @@ namespace BulldogApiFrontend.Services
             return jwt.Claims.First(x => x.Type == ClaimTypes.Name).Value;
         }
 
-        public Task<bool> RefreshAsync()
+        public async Task<bool> RefreshAsync()
         {
-            throw new NotImplementedException();
-        }
+            var model = new RefreshModel
+            { 
+                AccessToken = await _localStorageService.GetItemAsync<string>(JWT_KEY),
+                RefreshToken = await _localStorageService.GetItemAsync<string>(REFRESH_KEY)
+            };
 
+            var response = await _factory.CreateClient("ServerApi").PostAsJsonAsync("Authenticate/refresh", model);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                await LogoutAsync();
+                return false;
+            }
+
+            var content = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            if (content is null)
+                throw new InvalidDataException();
+
+            await _localStorageService.SetItemAsync(JWT_KEY, content.JwtToken);
+            await _localStorageService.SetItemAsync(REFRESH_KEY, content.RefreshToken);
+
+            _jwtCache = content.JwtToken;
+
+            return true;
+        }
     }
 }

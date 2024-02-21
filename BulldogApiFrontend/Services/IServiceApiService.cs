@@ -27,5 +27,6 @@ namespace BulldogApiFrontend.Services
         Task<CompanyDto> GetCompanyByUserId(string userId);
         Task<bool> UpdateCompany(Guid companyId, UpdateCompanyDto updateAvailableHours);
         Task<IList<EmployeeDto>> GetAllEmployeesForCompanyId(Guid companyId);
+        Task<IList<ServiceDto>> GetServicesByEmployeeId(Guid employeeId);
     }
 }

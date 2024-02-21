@@ -3,9 +3,11 @@
 @using BulldogApiFrontend.Services
 @using System.Security.Claims
 @using System.IdentityModel.Tokens.Jwt
+@using Microsoft.AspNetCore.Authorization
 @inject IServiceApiService ServiceApiService
 @inject IDialogService DialogService
 @inject IAuthenticationService AuthenticationService
+@attribute [Authorize]
 
 <RadzenScheduler Data="@reservations" TItem="ReservationDto" StartProperty="StartDate" EndProperty="FinishDate" TextProperty="ServiceName"
                  SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect Style="height: 768px;">

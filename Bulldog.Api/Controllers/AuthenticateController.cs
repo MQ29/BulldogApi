@@ -1,11 +1,13 @@
 ﻿using Bulldog.Core.Domain;
 using Bulldog.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Bulldog.Api.Controllers
@@ -45,6 +47,39 @@ namespace Bulldog.Api.Controllers
             return token;
         }
 
+        private static string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+
+            using var generator = RandomNumberGenerator.Create();
+
+            generator.GetBytes(randomNumber);
+
+            return Convert.ToBase64String(randomNumber);
+        }
+
+        private JwtSecurityToken GenerateJwt(string username)
+        {
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, username),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                _configuration["JWT:Secret"] ?? throw new InvalidOperationException("Secret not configured")));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.UtcNow.AddSeconds(30),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+                );
+
+            return token;
+        }
+
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
@@ -68,14 +103,88 @@ namespace Bulldog.Api.Controllers
                 }
 
                 var token = GetToken(authClaims);
+                var refreshToken = GenerateRefreshToken();
+
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiry = DateTime.Now.AddMinutes(1);
+
+                await _userManager.UpdateAsync(user);
 
                 return Ok(new LoginResponse
                 {
                     JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
-                    Expiration = token.ValidTo
+                    Expiration = token.ValidTo,
+                    RefreshToken = refreshToken
                 });
             }
             return Unauthorized();
+        }
+
+        [HttpPost("Refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshModel model)
+        {
+            await Console.Out.WriteLineAsync("Refresh called");
+
+            var principal = GetPrincipalFromExpiredToken(model.AccessToken);
+
+            if (principal?.Identity?.Name is null)
+                return Unauthorized();
+
+            var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+
+            if (user is null || user.RefreshToken != model.RefreshToken || user.RefreshTokenExpiry < DateTime.UtcNow)
+                return Unauthorized();
+
+            var token = GenerateJwt(principal.Identity.Name);
+
+            await Console.Out.WriteLineAsync("Refresh Sukces!");
+
+            return Ok(new LoginResponse
+            { 
+                JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
+                Expiration = token.ValidTo,
+                RefreshToken = model.RefreshToken
+            });
+        }
+
+        [Authorize]
+        [HttpDelete("Revoke")]
+        public async Task<IActionResult> Revoke()
+        {
+            await Console.Out.WriteLineAsync("Revoke called");
+
+            var username = HttpContext.User.Identity?.Name;
+
+            if (username is null) 
+                return Unauthorized();
+
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user is null)
+                return Unauthorized();
+
+            user.RefreshToken = null;
+
+            await _userManager.UpdateAsync(user);
+
+            await Console.Out.WriteLineAsync("Revoke sukces.pl!");
+
+            return Ok();
+        }
+
+        private ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
+        {
+            var secret = _configuration["JWT:Secret"] ?? throw new InvalidOperationException("Secret not configured");
+
+            var validation = new TokenValidationParameters()
+            {
+                ValidAudience = _configuration["JWT:ValidAudience"],
+                ValidIssuer = _configuration["JWT:ValidIssuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                ValidateLifetime = false
+            };
+
+            return new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
         }
 
         [HttpPost]

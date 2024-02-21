@@ -15,45 +15,5 @@
 
 @code
 {
-    IList<EmployeeDto> employees = new List<EmployeeDto>();
-    private EmployeeDto terry;
-    protected override async Task OnInitializedAsync()
-    {
-        employees = await ServiceApiService.GetAllEmployees();
-    }
-
-    private void Clicked()
-    {
-        terry = employees.FirstOrDefault(x => x.Name == "terry");
-        if(terry == null)
-        {
-            Console.WriteLine("No employye found.");
-        }
-        NavigationManager.NavigateTo($"/Schedule/{terry.Id}");
-    }
-    private void ClickedHours()
-    {
-        // var authenticationState = authenticationStateTask.Result;
-        // var user = authenticationState.User;
-
-        // if (user.Identity != null && user.Identity.IsAuthenticated)
-        // {
-        //     // Pobierz identyfikator zalogowanego użytkownika
-        //     var email = user.FindFirstValue(ClaimTypes.Email);
-        //     var Id = user.FindFirstValue(ClaimTypes.NameIdentifier);
-        //     Console.WriteLine(email);
-        //     Console.WriteLine($"ID usera:{Id}");
-        //     // Znajdź pracownika na podstawie identyfikatora
-        //     terry = employees.FirstOrDefault(x => x.Name == email);
-        //     if (terry == null)
-        //     {
-        //         Console.WriteLine("No employee found.");
-        //     }
-        //     NavigationManager.NavigateTo($"/openinghours/{terry.Id}");
-        // }
-        // else
-        // {
-        //     Console.WriteLine("User is not authenticated.");
-        // }
-    }
+   
 }

@@ -45,6 +45,8 @@ namespace Bulldog.Api
                 .AddDefaultTokenProviders();
             builder.Services.Configure<JwtSection>(builder.Configuration.GetSection("JwtSection"));
 
+            var secret = builder.Configuration["JWT:Secret"] ?? throw new InvalidOperationException("Secret not configured");
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,11 +59,10 @@ namespace Bulldog.Api
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
                         ValidAudience = configuration["JWT:ValidAudience"],
                         ValidIssuer = configuration["JWT:ValidIssuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                        ClockSkew = new TimeSpan(0, 0, 5) //co to 
                     };
                 });
             

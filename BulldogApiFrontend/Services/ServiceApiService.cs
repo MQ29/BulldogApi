@@ -8,6 +8,7 @@ using Bulldog.Core.Domain;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Blazored.SessionStorage;
 using Azure.Core;
+using Bulldog.Infrastructure.Migrations;
 
 namespace BulldogApiFrontend.Services
 {
@@ -257,6 +258,20 @@ namespace BulldogApiFrontend.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Error retrieving employyes for company with Id: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<IList<ServiceDto>> GetServicesByEmployeeId(Guid employeeId)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<IList<ServiceDto>>($"/services/by-employee/{employeeId}");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving services for employee with Id: {ex.Message}");
                 throw;
             }
         }
