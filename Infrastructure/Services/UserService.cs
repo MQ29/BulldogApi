@@ -32,6 +32,16 @@ namespace Bulldog.Infrastructure.Services
             return mappedUser;
         }
 
+        public async Task UpdateIsConfigured(string userId, bool isConfigured)
+        {
+            var user = await _userRepository.GetByUserId(userId);
+            if (user is null)
+                throw new Exception($"No user was found with id: {userId}.");
+
+            user.IsConfigured = isConfigured;
+            await _userRepository.UpdateAsync(user);
+        }
+
         public User ValidateUserCredentials(string? username, string? password)
         {
             throw new Exception();

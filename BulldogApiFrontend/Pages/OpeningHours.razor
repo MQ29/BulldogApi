@@ -5,8 +5,13 @@
 @using BulldogApiFrontend.Services
 @using System.Security.Claims
 @using System.IdentityModel.Tokens.Jwt
+@using BulldogApiFrontend.Services.IServices
 @inject IServiceApiService ServiceApiService
 @inject IAuthenticationService AuthenticationService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IUserService UserService
+
 <div class="ma-6 d-flex flex-column align-items-center">
     <div>
         @if (availableDates != null && availableDates.Any())
@@ -170,10 +175,17 @@
             if (Mode == false)
             {
                 await ServiceApiService.AddAvailabilityDates(EmployeeId, availableDates);
+                await UserService.UpdateUserIsConfigured(UserId, true);
+                NavigationManager.NavigateTo("/");
+                Snackbar.Add("Opening hours saved", Severity.Success);
             }
             else
             {
                 await ServiceApiService.UpdateAvailabilityDates(EmployeeId, availableDates);
+                await UserService.UpdateUserIsConfigured(UserId, true);
+                NavigationManager.NavigateTo("/");
+                Snackbar.Add("Opening hours saved", Severity.Success);
+
             }
         }
         catch (Exception ex)

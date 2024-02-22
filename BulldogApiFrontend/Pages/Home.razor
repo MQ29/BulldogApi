@@ -5,8 +5,10 @@
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
 @using Microsoft.AspNetCore.Authorization
+@using System.IdentityModel.Tokens.Jwt
 @inject NavigationManager NavigationManager
 @inject IServiceApiService ServiceApiService
+@inject IAuthenticationService AuthenticationService
 @attribute [Authorize]
 
 <PageTitle>Home</PageTitle>
@@ -15,5 +17,25 @@
 
 @code
 {
-   
+    private bool IsConfigured;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //get do bazy isCofigured a nie z tokena. Token przeciez ma dane takie jak byly w momencie logowania 
+        var jwtToken = await AuthenticationService.GetJwtAsync();
+        if (!string.IsNullOrEmpty(jwtToken))
+        {
+            IsConfigured = GetIsConfiguredFromToken(jwtToken);
+        }
+        if (IsConfigured == false)
+        {
+            NavigationManager.NavigateTo("/openinghours");
+        }
+    }
+
+    private bool GetIsConfiguredFromToken(string token)
+    {
+        var jwt = new JwtSecurityToken(token);
+        return bool.Parse(jwt.Claims.First(x => x.Type == "IsConfigured").Value);
+    }
 }

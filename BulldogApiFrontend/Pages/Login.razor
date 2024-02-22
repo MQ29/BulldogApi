@@ -65,26 +65,18 @@
             var jwtToken = await AuthenticationService.GetJwtAsync();
             if (!string.IsNullOrEmpty(jwtToken))
             {
-                IsConfigured = GetIsConfiguredFromToken(jwtToken);
-            }
-            if (IsConfigured == false)
-            {
-                NavigationManager.NavigateTo("/openinghours");
-            }
-            else
-            {
                 NavigationManager.NavigateTo("/");
             }
-            errorMessage = null;
+            
         }
         catch (Exception ex)
         {
             expiration = null;
-
+            
             errorMessage = ex.Message;
         }
     }
-
+    
     private bool GetIsConfiguredFromToken(string token)
     {
         var jwt = new JwtSecurityToken(token);

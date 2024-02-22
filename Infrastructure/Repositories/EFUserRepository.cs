@@ -1,6 +1,7 @@
 ﻿using Bulldog.Core.Domain;
 using Bulldog.Core.Repositories;
 using Bulldog.Infrastructure.EF;
+using Bulldog.Infrastructure.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using System;
@@ -36,6 +37,12 @@ namespace Bulldog.Infrastructure.Repositories
             var user =  await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
             return user;
         }
+
+        public async Task<User> GetByUserId(string Id)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == Id);
+        }
+
         public async Task RemoveAsync(string Id)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == Id);
@@ -45,9 +52,16 @@ namespace Bulldog.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(User user)
+        public async Task UpdateAsync(User user)
         {
-            throw new NotImplementedException(); //TODO
+            var existingUser = _dbContext.Users.Find(user.Id);
+            if (existingUser is null)
+            {
+                throw new Exception($"Error: No user found with Id: {existingUser.Id}");
+            }
+            existingUser.IsConfigured = user.IsConfigured;
+            await _dbContext.SaveChangesAsync();
         }
+
     }
 }

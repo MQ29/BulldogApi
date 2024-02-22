@@ -10,6 +10,7 @@ namespace Bulldog.Core.Repositories
     public interface IUserRepository
     {
         Task<User> GetByEmail(string email);
+        Task<User> GetByUserId(string Id);
         Task<IEnumerable<User>> GetAllAsync();
         Task AddAsync(User user);
         Task UpdateAsync(User user);

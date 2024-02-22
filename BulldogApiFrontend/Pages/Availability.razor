@@ -21,7 +21,7 @@
             <span>Selected Hour: @selectedDateHour.Value.ToString("HH:mm")</span>
         }
     </div>
-    @if (availableDates.Any(ad => ad.DayOfWeek == selectedDate.Value.DayOfWeek))
+    @if (availableDates.Any(ad => ad.DayOfWeek == selectedDate.Value.DayOfWeek) && availableHoursForDay.Count > 0)
     {
         var availableDate = availableDates
             .Where(ad => ad.DayOfWeek == selectedDate.Value.DayOfWeek)

@@ -9,7 +9,9 @@ namespace BulldogApiFrontend.Models
         private readonly HttpClient _httpClient;
         public RegistrationValidationVm(HttpClient httpClient)
         {
-            RuleFor(x => x.PhoneNumber).NotEmpty();
+            RuleFor(x => x.PhoneNumber).NotEmpty()
+            .Matches(@"^\d{9}$").WithMessage("Phone number must contain exactly 9 digits")
+            .When(x => !string.IsNullOrEmpty(x.PhoneNumber));
             RuleFor(x => x.Fullname).NotEmpty();
             RuleFor(x => x.Email).NotEmpty().EmailAddress()
                 .When(_ => !string.IsNullOrEmpty(_.Email) && Regex.IsMatch(_.Email, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase), ApplyConditionTo.CurrentValidator)

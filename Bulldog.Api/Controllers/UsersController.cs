@@ -40,5 +40,19 @@ namespace Bulldog.Api.Controllers
         //    await _userService.RegisterAsync(request.Email,request.Username,request.Password);
         //}
 
+        [HttpPut("{userId}/{isConfigured}")]
+        public async Task<IActionResult> UpdateIsConfigured(string userId, bool isConfigured)
+        {
+            try
+            {
+                await _userService.UpdateIsConfigured(userId, isConfigured);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 }

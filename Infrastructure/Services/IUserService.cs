@@ -12,5 +12,6 @@ namespace Bulldog.Infrastructure.Services
     {
         User ValidateUserCredentials(string? username, string? password);
         Task<UserDto> GetAsync(string email);
+        Task UpdateIsConfigured(string userId, bool isConfigured);
     }
 }

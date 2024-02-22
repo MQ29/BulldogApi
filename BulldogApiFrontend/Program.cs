@@ -5,6 +5,7 @@ using BulldogApiFrontend.Handlers;
 using BulldogApiFrontend.Models;
 using BulldogApiFrontend.Pages;
 using BulldogApiFrontend.Services;
+using BulldogApiFrontend.Services.IServices;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -27,6 +28,7 @@ namespace BulldogApiFrontend
             builder.Configuration.AddJsonFile("appsettings.json");
             builder.Services.AddBlazoredModal();
             builder.Services.AddScoped<IServiceApiService, ServiceApiService>();
+            builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
