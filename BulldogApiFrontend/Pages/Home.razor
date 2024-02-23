@@ -4,11 +4,13 @@
 @using Blazored.Modal.Services
 @using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
+@using BulldogApiFrontend.Services.IServices
 @using Microsoft.AspNetCore.Authorization
 @using System.IdentityModel.Tokens.Jwt
 @inject NavigationManager NavigationManager
 @inject IServiceApiService ServiceApiService
 @inject IAuthenticationService AuthenticationService
+@inject IUserService UserService
 @attribute [Authorize]
 
 <PageTitle>Home</PageTitle>
@@ -18,14 +20,17 @@
 @code
 {
     private bool IsConfigured;
-
+    private string email;
+    private UserDto user;
     protected override async Task OnInitializedAsync()
     {
         //get do bazy isCofigured a nie z tokena. Token przeciez ma dane takie jak byly w momencie logowania 
         var jwtToken = await AuthenticationService.GetJwtAsync();
+        email = GetEmailFromToken(jwtToken);
         if (!string.IsNullOrEmpty(jwtToken))
         {
-            IsConfigured = GetIsConfiguredFromToken(jwtToken);
+            user = await UserService.GetUserByEmail(email);
+            IsConfigured = user.IsConfigured;
         }
         if (IsConfigured == false)
         {
@@ -33,9 +38,9 @@
         }
     }
 
-    private bool GetIsConfiguredFromToken(string token)
+    private string GetEmailFromToken(string token)
     {
         var jwt = new JwtSecurityToken(token);
-        return bool.Parse(jwt.Claims.First(x => x.Type == "IsConfigured").Value);
+        return jwt.Claims.First(x => x.Type == ClaimTypes.Email).Value;
     }
 }

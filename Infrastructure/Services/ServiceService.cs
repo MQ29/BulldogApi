@@ -79,5 +79,17 @@ namespace Bulldog.Infrastructure.Services
             var serviceDto = _mapper.Map<ServiceDto>(service);
             return serviceDto;
         }
+
+        public async Task<IList<ServiceDto>> GetByCompanyIdAsync(Guid companyId)
+        {
+            var services = await _serviceRepository.GetByCompanyId(companyId);
+            if (services is null)
+            {
+                throw new Exception($"Service with companyId: {companyId} wasnt found.");
+            }
+            var servicesDto = _mapper.Map<IList<ServiceDto>>(services);
+            return servicesDto;
+
+        }
     }
 }

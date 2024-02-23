@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Text.Json;
 using System.Text;
 using Bulldog.Infrastructure.Migrations;
+using System.Net.Http.Json;
 
 namespace BulldogApiFrontend.Services
 {
@@ -28,5 +29,23 @@ namespace BulldogApiFrontend.Services
             }
         }
 
+        public async Task<UserDto> GetUserByEmail(string email)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"Users/{email}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+                var user = await response.Content.ReadFromJsonAsync<UserDto>();
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
     }
 }

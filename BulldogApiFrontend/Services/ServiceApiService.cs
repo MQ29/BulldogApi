@@ -195,24 +195,7 @@ namespace BulldogApiFrontend.Services
             return await _httpClient.GetFromJsonAsync<IList<ReservationDto>>($"Reservations/{employeeId}");
         }
 
-        public async Task<UserDto> GetUserByEmail(string email)
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync($"Users/{email}");
-                if (!response.IsSuccessStatusCode)
-                {
-                    return null;
-                }
-                var user = await response.Content.ReadFromJsonAsync<UserDto>();
-                return user;
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
-        }
+        
 
         public async Task<bool> UpdateCompany(Guid companyId, UpdateCompanyDto updateCompanyDto)
         {

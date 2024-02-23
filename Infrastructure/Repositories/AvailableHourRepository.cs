@@ -27,9 +27,9 @@ namespace Bulldog.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task EmptyTableAsync()
+        public async Task EmptyTableAsync(Guid employeeId)
         {
-            var entitiesToRemove = await _dbContext.AvailableHours.Where(x => x.IsAvailable == true).ToListAsync();
+            var entitiesToRemove = await _dbContext.AvailableHours.Where(x => x.IsAvailable == true && x.EmployeeId == employeeId).ToListAsync();
 
             if (entitiesToRemove.Any())
             {

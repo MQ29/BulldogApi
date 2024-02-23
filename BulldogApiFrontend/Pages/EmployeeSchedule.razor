@@ -29,11 +29,9 @@
         if (!string.IsNullOrEmpty(jwtToken))
         {
             UserId = GetIdFromToken(jwtToken);
+            var employee = await ServiceApiService.GetByUserIdAsync(UserId);
+            EmployeeId = employee.Id;
         }
-
-
-        var employee = await ServiceApiService.GetByUserIdAsync(UserId);
-        EmployeeId = employee.Id;
         await LoadReservations();
     }
 

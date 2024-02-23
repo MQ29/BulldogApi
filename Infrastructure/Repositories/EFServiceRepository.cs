@@ -70,5 +70,10 @@ namespace Bulldog.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<IList<Service>> GetByCompanyId(Guid companyId)
+        {
+            return await _context.Services.Where(x => x.CompanyId == companyId).ToListAsync();
+        }
     }
 }

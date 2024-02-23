@@ -182,7 +182,7 @@ namespace Bulldog.Infrastructure.Services
                 employee.AvailableDates = mappedAvailableDates;
                 await _availableDateRepository.SaveChangesAsync();
 
-                await _availableHourRepository.EmptyTableAsync();
+                await _availableHourRepository.EmptyTableAsync(employeeId);
                 DateTime currentDate = DateTime.Today;
                 for (int i = 0; i < 14; i++) // 14 dni, czyli 2 tygodnie
                 {

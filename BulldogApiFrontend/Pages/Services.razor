@@ -1,11 +1,15 @@
 ﻿@using Bulldog.Infrastructure.Services.DTO
 @using BulldogApiFrontend.Services
+@using BulldogApiFrontend.Services.IServices
 @using Microsoft.AspNetCore.Authorization
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
 @page "/services"
 @attribute [Authorize]
-<h3>Reservation</h3>
-@inject IServiceApiService ServiceApiService
+@inject IServiceService ServiceService
+@inject IAuthenticationService AuthenticationService
 @inject IModalService modal
+@inject IServiceApiService ServiceApiService
 @if (services != null)
 {
     <table class="table">
@@ -41,14 +45,27 @@ else
 
 
 @code {
-    private IList<ServiceDto> services;
+    private IList<ServiceDto> services = new List<ServiceDto>();
     private Guid selectedServiceId;
+    private string UserId;
     private ModalParameters parameters = new ModalParameters();
     protected override async Task OnInitializedAsync()
     {
-        services = await ServiceApiService.GetAllServies();
-
+        var jwtToken = await AuthenticationService.GetJwtAsync();
+        if (!string.IsNullOrEmpty(jwtToken))
+        {
+            UserId = GetIdFromToken(jwtToken);
+            CompanyDto Company = await ServiceApiService.GetCompanyByUserId(UserId);
+            services = await ServiceService.GetServicesByCompanyId(Company.Id);
+        }
     }
+
+    private string GetIdFromToken(string token)
+    {
+        var jwt = new JwtSecurityToken(token);
+        return jwt.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+    }
+
     private void AddServiceIdParameter(Guid serviceId)
     {
         parameters.Add(nameof(Form.Id), serviceId);

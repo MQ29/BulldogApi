@@ -14,6 +14,7 @@ namespace Bulldog.Infrastructure.Services
         Task<IList<ServiceDto>> GetByEmployeeIdAsync(Guid employeeId);
         Task<IList<ServiceDto>> GetAll();
         Task RemoveAsync(Guid Id);
+        Task<IList<ServiceDto>> GetByCompanyIdAsync(Guid companyId);
 
 
     }
