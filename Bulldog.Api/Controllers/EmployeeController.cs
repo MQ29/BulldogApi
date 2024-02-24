@@ -28,7 +28,7 @@ namespace Bulldog.Api.Controllers
             return Ok(employee);
         }
 
-        [HttpGet("ByUserId/{Id}")]
+        [HttpGet("users/{Id}")]
         public async Task<IActionResult> GetByUserId(string Id)
         {
             var employee = await _employeeService.GetByUserId(Id);
@@ -49,7 +49,7 @@ namespace Bulldog.Api.Controllers
             return Ok(employees);
         }
 
-        [HttpGet("by-service/{Id}")]
+        [HttpGet("services/{Id}")]
         public async Task<IActionResult> GetByServiceId(Guid Id)
         {
             var employees = await _employeeService.GetByServiceId(Id);

@@ -59,7 +59,7 @@ namespace BulldogApiFrontend.Services
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<IList<EmployeeDto>>($"employees/by-service/{Id}");
+                return await _httpClient.GetFromJsonAsync<IList<EmployeeDto>>($"employees/services/{Id}");
 
             }
             catch (Exception ex)
@@ -127,7 +127,7 @@ namespace BulldogApiFrontend.Services
 
         public async Task<EmployeeDto> GetByUserIdAsync(string userId)
         {
-            return await _httpClient.GetFromJsonAsync<EmployeeDto>($"employees/ByUserId/{userId}");
+            return await _httpClient.GetFromJsonAsync<EmployeeDto>($"employees/users/{userId}");
         }
 
         public async Task AddReservation(Reservation reservation)
