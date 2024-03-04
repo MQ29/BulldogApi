@@ -1,0 +1,27 @@
+﻿@page "/Company/{CompanyId:guid}"
+@using Bulldog.Infrastructure.Services.DTO
+@using BulldogApiFrontend.Services.IServices
+@inject IServiceService ServiceService
+@inject ICompanyService CompanyService
+
+<h3>@company.Name</h3>
+@foreach (var service in _services)
+{
+    <p>@service.Name</p>
+}
+
+
+@code {
+    [Parameter]
+    public Guid CompanyId { get; set; }
+    private CompanyDto company = new CompanyDto();
+
+    private IList<ServiceDto> _services = new List<ServiceDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        company = await CompanyService.GetCompanyAsync(CompanyId);
+        _services = await ServiceService.GetServicesByCompanyId(CompanyId);
+    }
+
+}

@@ -30,6 +30,7 @@ namespace BulldogApiFrontend
             builder.Services.AddScoped<IServiceApiService, ServiceApiService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
+            builder.Services.AddScoped<ICompanyService, CompanyService>();
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
